@@ -8,7 +8,7 @@ const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 const ACCOUNT_1 = "0xc783df8a850f42e7F7e57013759C285caa701eB6";
 
 // TODO(fabio): Update these with actual values once tokens have been added to deployer
-const CTOKEN_ADDRESS = "0x4a77faee9650b09849ff459ea1476eab01606c7a";
+const TOKEN_ADDRESS = "0x4a77faee9650b09849ff459ea1476eab01606c7a";
 const YIELD_TOKEN_ADDRESS = "0xb3f7fB482492f4220833De6D6bfCC81157214bEC";
 const CAPITAL_TOKEN_ADDRESS = "0x41B5844f4680a8C38fBb695b7F9CFd1F64474a72";
 
@@ -21,9 +21,9 @@ describe("SplitVaultComp", function () {
       const splitVaultComp = (await SplitVaultComp.deploy()) as SplitVaultComp;
 
       await splitVaultComp.deployed();
-      await splitVaultComp.add(CTOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS);
+      await splitVaultComp.add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS);
 
-      expect(await splitVaultComp.getComponentSet(CTOKEN_ADDRESS)).to.be.deep.equal([
+      expect(await splitVaultComp.getComponentSet(TOKEN_ADDRESS)).to.be.deep.equal([
         YIELD_TOKEN_ADDRESS,
         CAPITAL_TOKEN_ADDRESS,
       ]);
@@ -41,11 +41,11 @@ describe("SplitVaultComp", function () {
         signers[1],
       )) as SplitVaultComp;
 
-      await expect(splitVaultComp.add(CTOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS)).to.be.revertedWith(
+      await expect(splitVaultComp.add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS)).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
 
-      expect(await splitVaultComp.getComponentSet(CTOKEN_ADDRESS)).to.be.deep.equal([NULL_ADDRESS, NULL_ADDRESS]);
+      expect(await splitVaultComp.getComponentSet(TOKEN_ADDRESS)).to.be.deep.equal([NULL_ADDRESS, NULL_ADDRESS]);
     });
   });
   describe("split function", function () {
@@ -82,7 +82,7 @@ describe("SplitVaultComp", function () {
       await splitVaultComp.deployed();
       const recipient = ACCOUNT_1;
       const amount = 10;
-      await expect(splitVaultComp.payout(amount, CTOKEN_ADDRESS, recipient)).to.be.revertedWith(
+      await expect(splitVaultComp.payout(amount, TOKEN_ADDRESS, recipient)).to.be.revertedWith(
         "Attempted to request a payout for an unsupported token",
       );
     });
@@ -92,11 +92,11 @@ describe("SplitVaultComp", function () {
 
       await splitVaultComp.deployed();
       // Add a CToken to the contract, so we don't revert because the token is unregistered
-      await splitVaultComp.add(CTOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS);
+      await splitVaultComp.add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS);
 
       const recipient = ACCOUNT_1;
       const amount = 10;
-      await expect(splitVaultComp.payout(amount, CTOKEN_ADDRESS, recipient)).to.be.revertedWith(
+      await expect(splitVaultComp.payout(amount, TOKEN_ADDRESS, recipient)).to.be.revertedWith(
         "Payout can only be called by the corresponding yield token",
       );
     });
