@@ -16,6 +16,10 @@
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
+    "prettier": "^2.1.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.58",
+    "solhint": "^3.2.1",
+    "solhint-plugin-prettier": "^0.0.5",
     "ts-generator": "^0.0.8",
     "ts-node": "^9.0.0",
     "typechain": "^2.0.1",
@@ -25,6 +29,7 @@
     "buidler": "buidler",
     "build": "yarn compile && buidler typechain",
     "compile": "buidler compile",
-    "test": "buidler test"
+    "test": "buidler test",
+    "prettier": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\""
   }
 }

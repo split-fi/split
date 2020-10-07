@@ -3,7 +3,6 @@ pragma solidity ^0.6.8;
 
 import "@nomiclabs/buidler/console.sol";
 
-
 contract Greeter {
   string greeting;
 
