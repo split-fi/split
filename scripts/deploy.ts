@@ -15,8 +15,13 @@ async function main() {
   const greeter = await Greeter.deploy("Hello, Buidler!");
 
   await greeter.deployed();
-
   console.log("Greeter deployed to:", greeter.address);
+
+  const SplitVaultComp = await ethers.getContractFactory("SplitVaultComp");
+  const splitVaultComp = await SplitVaultComp.deploy();
+
+  await splitVaultComp.deployed();
+  console.log("SplitVaultComp deployed to:", splitVaultComp.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
