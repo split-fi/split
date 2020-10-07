@@ -3,9 +3,7 @@ import { ethers } from "@nomiclabs/buidler";
 import { solidity } from "ethereum-waffle";
 
 import { SplitVault } from "../typechain/SplitVault";
-
-const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
-const ACCOUNT_1 = "0xc783df8a850f42e7F7e57013759C285caa701eB6";
+import { ACCOUNT_1, NULL_ADDRESS } from "./constants";
 
 // TODO(fabio): Update these with actual values once tokens have been added to deployer
 const TOKEN_ADDRESS = "0x4a77faee9650b09849ff459ea1476eab01606c7a";
