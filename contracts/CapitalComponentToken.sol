@@ -8,11 +8,16 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract CapitalComponentToken is ERC20, Ownable {
   constructor(string memory name, string memory symbol) public ERC20(name, symbol) {}
 
-  function mint(address owner, uint256 amount) public onlyOwner {
-    _mint(owner, amount);
+  /// @dev Mint new tokens if the contract owner
+  /// @param account address of account to mint tokens to
+  /// @param amount amount of tokens to mint
+  function mint(address account, uint256 amount) public onlyOwner {
+    _mint(account, amount);
   }
-
-  function burn(address owner, uint256 amount) public onlyOwner {
-    _burn(owner, amount);
+  /// @dev Burn tokens if the contract owner
+  /// @param account address of account to burn tokens from
+  /// @param amount amount of tokens to burn
+  function burn(address account, uint256 amount) public onlyOwner {
+    _burn(account, amount);
   }
 }
