@@ -35,11 +35,7 @@ describe("SplitVault", function () {
       await splitVault.deployed();
       const signers = await ethers.getSigners();
       // Instatiate splitVault instance with a signer that isn't the contract owner
-      splitVault = (await ethers.getContractAt(
-        "SplitVault",
-        splitVault.address,
-        signers[1],
-      )) as SplitVault;
+      splitVault = (await ethers.getContractAt("SplitVault", splitVault.address, signers[1])) as SplitVault;
 
       await expect(splitVault.add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS)).to.be.revertedWith(
         "Ownable: caller is not the owner",
@@ -108,10 +104,7 @@ describe("SplitVault", function () {
 
       await splitVault.deployed();
       const unregisteredTokenAddress = NULL_ADDRESS;
-      expect(await splitVault.getComponentSet(unregisteredTokenAddress)).to.be.deep.equal([
-        NULL_ADDRESS,
-        NULL_ADDRESS,
-      ]);
+      expect(await splitVault.getComponentSet(unregisteredTokenAddress)).to.be.deep.equal([NULL_ADDRESS, NULL_ADDRESS]);
     });
   });
 });
