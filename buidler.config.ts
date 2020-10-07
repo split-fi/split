@@ -1,7 +1,7 @@
 import { task, usePlugin, BuidlerConfig } from "@nomiclabs/buidler/config";
 
 usePlugin("@nomiclabs/buidler-waffle");
-usePlugin("buidler-typechain")
+usePlugin("buidler-typechain");
 
 // This is a sample Buidler task. To learn how to create your own go to
 // https://buidler.dev/guides/create-task.html
@@ -21,6 +21,6 @@ const config: BuidlerConfig = {
     outDir: "typechain",
     target: "ethers-v5",
   },
-}
+};
 
 export default config;
