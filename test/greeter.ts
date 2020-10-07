@@ -5,7 +5,7 @@ import { Greeter } from "../typechain/Greeter";
 
 describe("Greeter", function () {
   it("Should return the new greeting once it's changed", async function () {
-    const GreeterFactory = await ethers.getContractFactory("GreeterFactory");
+    const GreeterFactory = await ethers.getContractFactory("Greeter");
     const greeter = (await GreeterFactory.deploy("Hello, world!")) as Greeter;
 
     await greeter.deployed();
