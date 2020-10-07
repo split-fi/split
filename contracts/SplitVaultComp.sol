@@ -5,7 +5,6 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SplitVaultComp is Ownable {
-
   /*
    *  Storage
    */
@@ -13,7 +12,7 @@ contract SplitVaultComp is Ownable {
     address yieldToken;
     address capitalToken;
   }
-  mapping (address => ComponentSet) public tokensToComponents;
+  mapping(address => ComponentSet) public tokensToComponents;
 
   constructor() public {}
 
@@ -27,7 +26,11 @@ contract SplitVaultComp is Ownable {
   /// @param cTokenAddress the address of CToken to support
   /// @param yieldTokenAddress the corresponding yieldERC20Comp token address
   /// @param capitalTokenAddress the corresponding capitalERC20Comp token address
-  function add(address cTokenAddress, address yieldTokenAddress, address capitalTokenAddress) public onlyOwner {
+  function add(
+    address cTokenAddress,
+    address yieldTokenAddress,
+    address capitalTokenAddress
+  ) public onlyOwner {
     tokensToComponents[cTokenAddress] = ComponentSet({
       yieldToken: yieldTokenAddress,
       capitalToken: capitalTokenAddress
@@ -40,7 +43,7 @@ contract SplitVaultComp is Ownable {
   function split(uint256 amount, address cTokenAddress) public {
     ComponentSet memory componentSet = tokensToComponents[cTokenAddress];
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
-      revert('Attempted to split unsupported token');
+      revert("Attempted to split unsupported token");
     }
     // TODO(fabio): Withdraw C-token from msg.sender to vault
     // TODO(fabio): Mint YieldERC20 & CapitalERC20 tokens to msg.sender
@@ -50,25 +53,29 @@ contract SplitVaultComp is Ownable {
   /// @param amount of CTokens to recombine
   /// @param cTokenAddress is the address of CToken to recombine
   function recombine(uint256 amount, address cTokenAddress) public {
-      ComponentSet memory componentSet = tokensToComponents[cTokenAddress];
-      if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
-        revert('Attempted to recombine unsupported token');
-      }
-      // TODO(fabio): burn `amount` YieldERC20 & CapitalERC20 tokens
-      // TODO(fabio): Transfer `amount` C-tokens from vault to msg.sender
+    ComponentSet memory componentSet = tokensToComponents[cTokenAddress];
+    if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
+      revert("Attempted to recombine unsupported token");
+    }
+    // TODO(fabio): burn `amount` YieldERC20 & CapitalERC20 tokens
+    // TODO(fabio): Transfer `amount` C-tokens from vault to msg.sender
   }
 
   /// @dev Allows the YieldERC20 token to request a payout to a specific YieldTokenHolder of their accrued C-tokens
   /// @param amount of CTokens to payout
   /// @param recipient address of payout recipient
-  function payout(uint256 amount, address cTokenAddress, address recipient) public {
-      ComponentSet memory componentSet = tokensToComponents[cTokenAddress];
-      if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
-        revert('Attempted to request a payout for an unsupported token');
-      }
-      if (msg.sender != componentSet.yieldToken) {
-        revert('Payout can only be called by the corresponding yield token');
-      }
-      // TODO(fabio): Transfer `amount` C-tokens from vault to recipient
+  function payout(
+    uint256 amount,
+    address cTokenAddress,
+    address recipient
+  ) public {
+    ComponentSet memory componentSet = tokensToComponents[cTokenAddress];
+    if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
+      revert("Attempted to request a payout for an unsupported token");
+    }
+    if (msg.sender != componentSet.yieldToken) {
+      revert("Payout can only be called by the corresponding yield token");
+    }
+    // TODO(fabio): Transfer `amount` C-tokens from vault to recipient
   }
 }
