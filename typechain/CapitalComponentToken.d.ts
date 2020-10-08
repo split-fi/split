@@ -27,8 +27,10 @@ interface CapitalComponentTokenInterface extends ethers.utils.Interface {
     "burn(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "fullToken()": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
+    "mintFromFull(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -57,12 +59,17 @@ interface CapitalComponentTokenInterface extends ethers.utils.Interface {
     functionFragment: "decreaseAllowance",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "fullToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintFromFull",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -98,11 +105,16 @@ interface CapitalComponentTokenInterface extends ethers.utils.Interface {
     functionFragment: "decreaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "fullToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "increaseAllowance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintFromFull",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -192,13 +204,13 @@ export class CapitalComponentToken extends Contract {
     }>;
 
     burn(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "burn(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
@@ -227,6 +239,18 @@ export class CapitalComponentToken extends Contract {
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
+    fullToken(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
+    "fullToken()"(
+      overrides?: CallOverrides
+    ): Promise<{
+      0: string;
+    }>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -240,14 +264,26 @@ export class CapitalComponentToken extends Contract {
     ): Promise<ContractTransaction>;
 
     mint(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
     "mint(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    mintFromFull(
+      account: string,
+      amountOfFull: BigNumberish,
+      overrides?: Overrides
+    ): Promise<ContractTransaction>;
+
+    "mintFromFull(address,uint256)"(
+      account: string,
+      amountOfFull: BigNumberish,
       overrides?: Overrides
     ): Promise<ContractTransaction>;
 
@@ -372,13 +408,13 @@ export class CapitalComponentToken extends Contract {
   ): Promise<BigNumber>;
 
   burn(
-    owner: string,
+    account: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "burn(address,uint256)"(
-    owner: string,
+    account: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
@@ -399,6 +435,10 @@ export class CapitalComponentToken extends Contract {
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
+  fullToken(overrides?: CallOverrides): Promise<string>;
+
+  "fullToken()"(overrides?: CallOverrides): Promise<string>;
+
   increaseAllowance(
     spender: string,
     addedValue: BigNumberish,
@@ -412,14 +452,26 @@ export class CapitalComponentToken extends Contract {
   ): Promise<ContractTransaction>;
 
   mint(
-    owner: string,
+    account: string,
     amount: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
   "mint(address,uint256)"(
-    owner: string,
+    account: string,
     amount: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  mintFromFull(
+    account: string,
+    amountOfFull: BigNumberish,
+    overrides?: Overrides
+  ): Promise<ContractTransaction>;
+
+  "mintFromFull(address,uint256)"(
+    account: string,
+    amountOfFull: BigNumberish,
     overrides?: Overrides
   ): Promise<ContractTransaction>;
 
@@ -512,13 +564,13 @@ export class CapitalComponentToken extends Contract {
     ): Promise<BigNumber>;
 
     burn(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "burn(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -539,6 +591,10 @@ export class CapitalComponentToken extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    fullToken(overrides?: CallOverrides): Promise<string>;
+
+    "fullToken()"(overrides?: CallOverrides): Promise<string>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -552,14 +608,26 @@ export class CapitalComponentToken extends Contract {
     ): Promise<boolean>;
 
     mint(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "mint(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    mintFromFull(
+      account: string,
+      amountOfFull: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mintFromFull(address,uint256)"(
+      account: string,
+      amountOfFull: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -668,13 +736,13 @@ export class CapitalComponentToken extends Contract {
     ): Promise<BigNumber>;
 
     burn(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "burn(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
@@ -695,6 +763,10 @@ export class CapitalComponentToken extends Contract {
       overrides?: Overrides
     ): Promise<BigNumber>;
 
+    fullToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "fullToken()"(overrides?: CallOverrides): Promise<BigNumber>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -708,14 +780,26 @@ export class CapitalComponentToken extends Contract {
     ): Promise<BigNumber>;
 
     mint(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
     "mint(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    mintFromFull(
+      account: string,
+      amountOfFull: BigNumberish,
+      overrides?: Overrides
+    ): Promise<BigNumber>;
+
+    "mintFromFull(address,uint256)"(
+      account: string,
+      amountOfFull: BigNumberish,
       overrides?: Overrides
     ): Promise<BigNumber>;
 
@@ -812,13 +896,13 @@ export class CapitalComponentToken extends Contract {
     ): Promise<PopulatedTransaction>;
 
     burn(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "burn(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
@@ -839,6 +923,10 @@ export class CapitalComponentToken extends Contract {
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
+    fullToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "fullToken()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     increaseAllowance(
       spender: string,
       addedValue: BigNumberish,
@@ -852,14 +940,26 @@ export class CapitalComponentToken extends Contract {
     ): Promise<PopulatedTransaction>;
 
     mint(
-      owner: string,
+      account: string,
       amount: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 
     "mint(address,uint256)"(
-      owner: string,
+      account: string,
       amount: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    mintFromFull(
+      account: string,
+      amountOfFull: BigNumberish,
+      overrides?: Overrides
+    ): Promise<PopulatedTransaction>;
+
+    "mintFromFull(address,uint256)"(
+      account: string,
+      amountOfFull: BigNumberish,
       overrides?: Overrides
     ): Promise<PopulatedTransaction>;
 

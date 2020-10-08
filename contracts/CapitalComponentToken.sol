@@ -4,9 +4,35 @@ pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+
+import "./interfaces/PriceOracle.sol";
 
 contract CapitalComponentToken is ERC20, Ownable {
-  constructor(string memory name, string memory symbol) public ERC20(name, symbol) {}
+  using SafeMath for uint256;
+
+  address public fullToken;
+  PriceOracle private priceOracle;
+
+  constructor(
+    string memory name,
+    string memory symbol,
+    address _fullToken,
+    address priceOracleAddress
+  ) public ERC20(name, symbol) {
+    priceOracle = PriceOracle(priceOracleAddress);
+    fullToken = _fullToken;
+  }
+
+  /// @dev Mint new capital component tokens, but compute the amount from an amount of full tokens.
+  /// @param account address of account to mint tokens to
+  /// @param amountOfFull amount of full tokens to use for the calculation
+  function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
+    uint256 price = priceOracle.getPrice(fullToken);
+    // TODO(fragosti): figure out decimal issues here.
+    // price is always 18, capital tokens are 18, but amountOfFull could be something else...
+    _mint(account, amountOfFull.mul(price));
+  }
 
   /// @dev Mint new tokens if the contract owner
   /// @param account address of account to mint tokens to

@@ -32,7 +32,6 @@ describe("SplitVault", function () {
 
       await splitVault.deployed();
       const signers = await ethers.getSigners();
-      // Instatiate splitVault instance with a signer that isn't the contract owner
 
       await expect(
         splitVault.connect(signers[1]).add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS),
