@@ -32,9 +32,10 @@ describe("SplitVault", function () {
 
       await splitVault.deployed();
       const signers = await ethers.getSigners();
+      const nonOwner = signers[1];
 
       await expect(
-        splitVault.connect(signers[1]).add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS),
+        splitVault.connect(nonOwner).add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS),
       ).to.be.revertedWith("Ownable: caller is not the owner");
 
       expect(await splitVault.getComponentSet(TOKEN_ADDRESS)).to.be.deep.equal([NULL_ADDRESS, NULL_ADDRESS]);
