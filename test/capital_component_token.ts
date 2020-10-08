@@ -15,7 +15,12 @@ const getDeployedCapitalComponentToken = async (name: string, symbol: string) =>
   const priceOracleMock = (await PriceOracleMockFactory.deploy()) as PriceOracle;
   await priceOracleMock.deployed();
   const CapitalComponentTokenFactory = await ethers.getContractFactory("CapitalComponentToken");
-  const capitalComponentToken = (await CapitalComponentTokenFactory.deploy(name, symbol, TOKEN_ADDRESS, priceOracleMock.address)) as CapitalComponentToken;
+  const capitalComponentToken = (await CapitalComponentTokenFactory.deploy(
+    name,
+    symbol,
+    TOKEN_ADDRESS,
+    priceOracleMock.address,
+  )) as CapitalComponentToken;
 
   await capitalComponentToken.deployed();
   return capitalComponentToken;
