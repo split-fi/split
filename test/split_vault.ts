@@ -3,9 +3,7 @@ import { ethers } from "@nomiclabs/buidler";
 import { solidity } from "ethereum-waffle";
 
 import { SplitVault } from "../typechain/SplitVault";
-
-const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
-const ACCOUNT_1 = "0xc783df8a850f42e7F7e57013759C285caa701eB6";
+import { ACCOUNT_1, NULL_ADDRESS } from "./constants";
 
 // TODO(fabio): Update these with actual values once tokens have been added to deployer
 const TOKEN_ADDRESS = "0x4a77faee9650b09849ff459ea1476eab01606c7a";
@@ -35,11 +33,10 @@ describe("SplitVault", function () {
       await splitVault.deployed();
       const signers = await ethers.getSigners();
       // Instatiate splitVault instance with a signer that isn't the contract owner
-      splitVault = (await ethers.getContractAt("SplitVault", splitVault.address, signers[1])) as SplitVault;
 
-      await expect(splitVault.add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS)).to.be.revertedWith(
-        "Ownable: caller is not the owner",
-      );
+      await expect(
+        splitVault.connect(signers[1]).add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS),
+      ).to.be.revertedWith("Ownable: caller is not the owner");
 
       expect(await splitVault.getComponentSet(TOKEN_ADDRESS)).to.be.deep.equal([NULL_ADDRESS, NULL_ADDRESS]);
     });
