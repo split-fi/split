@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/PriceOracle.sol";
 import "./lib/math.sol";
 
-contract CapitalComponentToken is ERC20, Ownable, DSMath {
+contract CapitalComponentToken is ERC20, Ownable {
   using SafeMath for uint256;
 
   address public fullToken;
@@ -32,10 +32,10 @@ contract CapitalComponentToken is ERC20, Ownable, DSMath {
     uint256 price = priceOracle.getPrice(fullToken);
     // convert amountOfFull to 18 decimal places if not already
     uint8 fullTokenDecimals = ERC20(fullToken).decimals();
-    // assume fullTokenDecimals < 18
+    require(super.decimals() >= fullTokenDecimals, "fullTokenDecimals greater than decimals");
     uint256 decimalAdjustment = super.decimals() - fullTokenDecimals;
     uint256 adjustedFullAmount = amountOfFull.mul(10 ** decimalAdjustment);
-    _mint(account, wmul(price, adjustedFullAmount));
+    _mint(account, DSMath.wmul(price, adjustedFullAmount));
   }
 
   /// @dev Mint new tokens if the contract owner
