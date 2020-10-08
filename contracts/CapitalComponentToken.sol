@@ -14,6 +14,7 @@ contract CapitalComponentToken is ERC20, Ownable {
   function mint(address account, uint256 amount) public onlyOwner {
     _mint(account, amount);
   }
+
   /// @dev Burn tokens if the contract owner
   /// @param account address of account to burn tokens from
   /// @param amount amount of tokens to burn
