@@ -29,9 +29,12 @@ contract CapitalComponentToken is ERC20, Ownable {
   /// @param amountOfFull amount of full tokens to use for the calculation
   function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
     uint256 price = priceOracle.getPrice(fullToken);
-    // TODO(fragosti): figure out decimal issues here.
-    // price is always 18, capital tokens are 18, but amountOfFull could be something else...
-    _mint(account, amountOfFull.mul(price));
+    // convert amountOfFull to 18 decimal places if not already
+    uint8 fullTokenDecimals = ERC20(fullToken).decimals();
+    // assume fullTokenDecimals < 18
+    uint256 decimalAdjustment = super.decimals() - fullTokenDecimals;
+    uint256 adjustedFullAmount = amountOfFull.mul(10 ** decimalAdjustment);
+    _mint(account, adjustedFullAmount.mul(price));
   }
 
   /// @dev Mint new tokens if the contract owner
