@@ -7,8 +7,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./interfaces/PriceOracle.sol";
+import "./lib/math.sol";
 
-contract CapitalComponentToken is ERC20, Ownable {
+contract CapitalComponentToken is ERC20, Ownable, DSMath {
   using SafeMath for uint256;
 
   address public fullToken;
@@ -34,7 +35,7 @@ contract CapitalComponentToken is ERC20, Ownable {
     // assume fullTokenDecimals < 18
     uint256 decimalAdjustment = super.decimals() - fullTokenDecimals;
     uint256 adjustedFullAmount = amountOfFull.mul(10 ** decimalAdjustment);
-    _mint(account, adjustedFullAmount.mul(price));
+    _mint(account, wmul(price, adjustedFullAmount));
   }
 
   /// @dev Mint new tokens if the contract owner
