@@ -50,9 +50,10 @@ describe("CapitalComponentToken", () => {
   describe("mint", async () => {
     it("should revert when called by non-owner", async () => {
       const signers = await ethers.getSigners();
+      const nonOwner = signers[1];
       const address = await signers[1].getAddress();
       let capitalComponentToken = await getDeployedCapitalComponentToken("X Token", "XXX");
-      await expect(capitalComponentToken.connect(signers[1]).mint(address, "1000000000")).to.be.revertedWith(
+      await expect(capitalComponentToken.connect(nonOwner).mint(address, "1000000000")).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
     });
@@ -69,9 +70,10 @@ describe("CapitalComponentToken", () => {
   describe("burn", async () => {
     it("should revert when called by non-owner", async () => {
       const signers = await ethers.getSigners();
+      const nonOwner = signers[1];
       const address = await signers[1].getAddress();
       let capitalComponentToken = await getDeployedCapitalComponentToken("X Token", "XXX");
-      await expect(capitalComponentToken.connect(signers[1]).burn(address, "1000000000")).to.be.revertedWith(
+      await expect(capitalComponentToken.connect(nonOwner).burn(address, "1000000000")).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
     });
