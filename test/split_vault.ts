@@ -32,7 +32,7 @@ describe("SplitVault", function () {
 
       await splitVault.deployed();
       const signers = await ethers.getSigners();
-      const nonOwner = signers[0];
+      const nonOwner = signers[1];
 
       await expect(
         splitVault.connect(nonOwner).add(TOKEN_ADDRESS, YIELD_TOKEN_ADDRESS, CAPITAL_TOKEN_ADDRESS),
