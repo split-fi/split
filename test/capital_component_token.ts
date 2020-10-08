@@ -3,17 +3,25 @@ import { ethers } from "@nomiclabs/buidler";
 import { solidity } from "ethereum-waffle";
 
 import { CapitalComponentToken } from "../typechain/CapitalComponentToken";
+import { PriceOracle } from "../typechain/PriceOracle";
 
 use(solidity);
 
+// TODO(fragosti): Update these with actual values once tokens have been added to deployer
+const TOKEN_ADDRESS = "0x4a77faee9650b09849ff459ea1476eab01606c7a";
+
 const getDeployedCapitalComponentToken = async (name: string, symbol: string) => {
+  const PriceOracleMockFactory = await ethers.getContractFactory("PriceOracleMock");
+  const priceOracleMock = (await PriceOracleMockFactory.deploy()) as PriceOracle;
+  await priceOracleMock.deployed();
   const CapitalComponentTokenFactory = await ethers.getContractFactory("CapitalComponentToken");
-  const capitalComponentToken = (await CapitalComponentTokenFactory.deploy(name, symbol)) as CapitalComponentToken;
+  const capitalComponentToken = (await CapitalComponentTokenFactory.deploy(name, symbol, TOKEN_ADDRESS, priceOracleMock.address)) as CapitalComponentToken;
 
   await capitalComponentToken.deployed();
   return capitalComponentToken;
 };
 
+// TODO(fragosti): Write tests for mintFromFull
 describe("CapitalComponentToken", () => {
   describe("initialization", () => {
     it("should use correct name and symbol", async () => {
