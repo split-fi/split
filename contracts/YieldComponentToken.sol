@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./interfaces/PriceOracle.sol";
 import "./SplitVault.sol";
+import "./lib/PriceUtils.sol";
 
 contract YieldComponentToken is ERC20, Ownable {
   using SafeMath for uint256;
@@ -34,6 +35,15 @@ contract YieldComponentToken is ERC20, Ownable {
     priceOracle = PriceOracle(priceOracleAddress);
     splitVault = SplitVault(splitVaultAddress);
     fullToken = _fullToken;
+  }
+
+  /// @dev Mint new yield component tokens, computing the amount from an amount of full tokens
+  /// @param account address of account to mint tokens to
+  /// @param amountOfFull amount of full tokens to use for the calculation
+  function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
+    uint256 currPrice = priceOracle.getPrice(fullToken);
+    uint8 fullTokenDecimals = ERC20(fullToken).decimals();
+    uint256 yieldTokenAmount = PriceUtils.fullTokenValueInWads(currPrice, amountOfFull, fullTokenDecimals);
   }
 
   /// @dev Mint new tokens if the contract owner
