@@ -142,6 +142,20 @@ describe("CapitalComponentToken", () => {
     afterEach(async () => {
       priceOracle.setPrice(WAD);
     });
+    it("should revert when called by non-owner", async () => {
+      const signers = await ethers.getSigners();
+      const nonOwner = signers[1];
+      const address = await nonOwner.getAddress();
+      let capitalComponentToken = await getDeployedCapitalComponentToken(
+        "X Token",
+        "XXX",
+        erc20Token.address,
+        priceOracle.address,
+      );
+      await expect(capitalComponentToken.connect(nonOwner).mintFromFull(address, "1000000000")).to.be.revertedWith(
+        "Ownable: caller is not the owner",
+      );
+    });
     it("should mint capital tokens corresponding to the underlying value of the fullToken in wads", async () => {
       const signers = await ethers.getSigners();
       const address = await signers[1].getAddress();
