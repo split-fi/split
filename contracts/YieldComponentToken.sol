@@ -9,8 +9,9 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/PriceOracle.sol";
 import "./SplitVault.sol";
 import "./lib/PriceUtils.sol";
+import "./lib/ERC20Base.sol";
 
-contract YieldComponentToken is ERC20, Ownable {
+contract YieldComponentToken is ERC20Base, Ownable {
   using SafeMath for uint256;
 
   /*
@@ -31,7 +32,7 @@ contract YieldComponentToken is ERC20, Ownable {
     address _fullToken,
     address priceOracleAddress,
     address splitVaultAddress
-  ) public ERC20(name, symbol) {
+  ) public ERC20Base(name, symbol) {
     priceOracle = PriceOracle(priceOracleAddress);
     splitVault = SplitVault(splitVaultAddress);
     fullToken = _fullToken;
@@ -57,8 +58,11 @@ contract YieldComponentToken is ERC20, Ownable {
     // Update account information with updated balance and lastPrice
     Account memory acc = accounts[account];
     accounts[account] = Account({ balance: acc.balance.add(amount), lastPrice: currPrice });
+  }
 
-    _mint(account, amount);
+  /// @dev Returns the amount of tokens owned by `account`.
+  function balanceOf(address account) public override view returns (uint256) {
+    return accounts[account].balance;
   }
 
   /// @dev Burn tokens if the contract owner
@@ -67,7 +71,6 @@ contract YieldComponentToken is ERC20, Ownable {
   function burn(address account, uint256 amount) public onlyOwner {
     // TODO(fabio): Call _payoutYield(owner)
     // TODO(fabio): Set lastPrice for account
-    _burn(account, amount);
   }
 
   /// @dev Withdraw any yield accrued to msg.sender since the last withdrawal
@@ -84,10 +87,10 @@ contract YieldComponentToken is ERC20, Ownable {
   /// @param recipient The receiver of the transfer
   /// @param amount The amount to transfer
   /// @return Returns a boolean value indicating whether the operation succeeded.
-  function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+  function transfer(address recipient, uint256 amount) public override returns (bool) {
     // TODO(fabio): Call _payoutYield(msg.sender)
     // TODO(fabio): Call _payoutYield(to)
-    return super.transfer(recipient, amount);
+    // return super.transfer(recipient, amount);
   }
 
   /// @dev Moves `amount` tokens from `sender` to `recipient` using the
@@ -101,10 +104,10 @@ contract YieldComponentToken is ERC20, Ownable {
     address sender,
     address recipient,
     uint256 amount
-  ) public virtual override returns (bool) {
+  ) public override returns (bool) {
     // TODO(fabio): Call _payoutYield(sender)
     // TODO(fabio): Call _payoutYield(to)
-    return super.transferFrom(sender, recipient, amount);
+    // return super.transferFrom(sender, recipient, amount);
   }
 
   /// @dev Internal yield payout function that computes the yield and transfers it to the owner
