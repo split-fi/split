@@ -8,7 +8,7 @@ import { WAD } from "../constants";
 type StringOrNum = string | number;
 export type FullTokenValueInWadsTest = [StringOrNum, StringOrNum, StringOrNum, StringOrNum];
 
-describe.only("PriceUtils", function () {
+describe("PriceUtils", function () {
   let priceUtils: PriceUtilsMock;
 
   before(async () => {
@@ -24,6 +24,7 @@ describe.only("PriceUtils", function () {
       ["150000000000000000", "2500000000000000000000", "22", "37500000000000000"],
       ["0", "100", "2", "0"],
       ["0", "2500000000000000000000", "22", "0"],
+      ["150000000000000", "3000", "2", "4500000000000000"],
     ];
     permutations.forEach(([fullTokenPrice, amountOfFull, fullTokenDecimals, correctResult]) => {
       it(`fullTokenPrice = ${fullTokenPrice}, amountOfFull = ${amountOfFull}, fullTokenDecimals = ${fullTokenDecimals}, correctResult = ${correctResult}`, async () => {
