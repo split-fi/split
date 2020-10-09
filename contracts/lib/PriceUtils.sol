@@ -28,4 +28,14 @@ library PriceUtils {
       return DSMath.wmul(fullTokenPrice, adjustedFullAmount);
     }
   }
+
+  function fromWadToDecimals(uint256 wadAmount, uint256 targetDecimals) internal pure returns (uint256) {
+    if (targetDecimals >= 18) {
+      uint256 decimalAdjustment = targetDecimals - 18;
+      return wadAmount.mul(10**decimalAdjustment);
+    } else {
+      uint256 decimalAdjustment = 18 - targetDecimals;
+      return wadAmount.div(10**decimalAdjustment);
+    }
+  }
 }

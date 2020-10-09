@@ -61,6 +61,8 @@ contract SplitVault is Ownable {
     // TODO(fabio): Transfer `amount` tokens from vault to msg.sender
   }
 
+  // TODO(fragosti): make sure that only certain contracts can call this!!!
+
   /// @dev Allows the YieldERC20 token to request a payout to a specific YieldTokenHolder of their accrued tokens
   /// @param amount of tokens to payout
   /// @param recipient address of payout recipient

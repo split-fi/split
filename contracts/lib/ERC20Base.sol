@@ -12,9 +12,9 @@ abstract contract ERC20Base is IERC20, Context {
   using SafeMath for uint256;
   using Address for address;
 
-  mapping(address => mapping(address => uint256)) private _allowances;
+  mapping(address => mapping(address => uint256)) internal _allowances;
 
-  uint256 private _totalSupply;
+  uint256 internal _totalSupply;
 
   string private _name;
   string private _symbol;

@@ -47,5 +47,6 @@ contract CapitalComponentToken is ERC20, Ownable {
   /// @param amount amount of tokens to burn
   function burn(address account, uint256 amount) public onlyOwner {
     _burn(account, amount);
+    // TODO(fragosti): tell vault to return the corresponding amount of full tokens.
   }
 }
