@@ -11,12 +11,6 @@ async function main() {
   // await bre.run('compile');
 
   // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Buidler!");
-
-  await greeter.deployed();
-  console.log("Greeter deployed to:", greeter.address);
-
   const SplitVault = await ethers.getContractFactory("SplitVault");
   const splitVault = await SplitVault.deploy();
 
