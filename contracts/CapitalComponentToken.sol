@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./interfaces/PriceOracle.sol";
-import "./lib/math.sol";
+import "./lib/PriceUtils.sol";
 
 contract CapitalComponentToken is ERC20, Ownable {
   using SafeMath for uint256;
@@ -30,12 +30,9 @@ contract CapitalComponentToken is ERC20, Ownable {
   /// @param amountOfFull amount of full tokens to use for the calculation
   function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
     uint256 price = priceOracle.getPrice(fullToken);
-    // convert amountOfFull to 18 decimal places if not already
     uint8 fullTokenDecimals = ERC20(fullToken).decimals();
-    require(super.decimals() >= fullTokenDecimals, "fullTokenDecimals greater than decimals");
-    uint256 decimalAdjustment = super.decimals() - fullTokenDecimals;
-    uint256 adjustedFullAmount = amountOfFull.mul(10 ** decimalAdjustment);
-    _mint(account, DSMath.wmul(price, adjustedFullAmount));
+    uint256 componentTokenAmount = PriceUtils.fullTokenValueInWads(price, amountOfFull, fullTokenDecimals);
+    _mint(account, componentTokenAmount);
   }
 
   /// @dev Mint new tokens if the contract owner
