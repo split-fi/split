@@ -6,12 +6,14 @@ import { YieldComponentToken } from "../typechain/YieldComponentToken";
 import { CapitalComponentToken } from "../typechain/CapitalComponentToken";
 import { PriceOracle } from "../typechain/PriceOracle";
 
+import { WAD } from "./constants";
+
 use(solidity);
 
 // TODO(fabio): Update these with actual values once tokens have been added to deployer
 const FULL_TOKEN = "0x4a77faee9650b09849ff459ea1476eab01606c7a";
 // TODO(fabio): Instantiate as a BigNumber
-const DEFAULT_PRICE_FROM_ORACLE = "1";
+const DEFAULT_PRICE_FROM_ORACLE = WAD;
 
 const getDeployedYieldComponentToken = async (name: string, symbol: string) => {
   const PriceOracleMockFactory = await ethers.getContractFactory("PriceOracleMock");
@@ -55,7 +57,7 @@ const getYieldSymbol = (symbol: string) => {
   return `yc${symbol}`;
 };
 
-describe("YieldComponentToken", () => {
+describe.only("YieldComponentToken", () => {
   describe("initialization", () => {
     it("should use correct name and symbol", async () => {
       const name = "Compound DAI";
@@ -98,7 +100,6 @@ describe("YieldComponentToken", () => {
       // TODO(fabio): Use native BigNumber comparison instead of converting to strings
       expect(account.balance.toString()).to.equal(amount.toString());
       expect(account.lastPrice.toString()).to.equal(DEFAULT_PRICE_FROM_ORACLE);
-      console.log("lastPrice:", account.lastPrice.toString());
     });
   });
   describe("burn", async () => {
