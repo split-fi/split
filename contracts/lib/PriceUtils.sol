@@ -13,6 +13,7 @@ library PriceUtils {
   /// @param fullTokenPrice The current price of a full token in an underlying token, expressed in 18 decimals
   /// @param amountOfFull The number of full tokens
   /// @param fullTokenDecimals The decimals of the full token ERC20
+  /// @return Returns the value of the token in wads
   function fullTokenValueInWads(
     uint256 fullTokenPrice,
     uint256 amountOfFull,
@@ -29,6 +30,10 @@ library PriceUtils {
     }
   }
 
+  /// @dev Convert any wad amount to a different decimal precision
+  /// @param wadAmount The amount in wads
+  /// @param targetDecimals The desired decimal precision
+  /// @return Returns the wad amount in a different decimal precision
   function fromWadToDecimals(uint256 wadAmount, uint256 targetDecimals) internal pure returns (uint256) {
     if (targetDecimals >= 18) {
       uint256 decimalAdjustment = targetDecimals - 18;
