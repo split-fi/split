@@ -6,7 +6,6 @@ import { YieldComponentToken } from "../typechain/YieldComponentToken";
 import { CapitalComponentToken } from "../typechain/CapitalComponentToken";
 import { PriceOracleMock } from "../typechain/PriceOracleMock";
 import { CTokenMock } from "../typechain/CTokenMock";
-import { PriceOracle } from "../typechain/PriceOracle";
 import { SplitVault } from "../typechain/SplitVault";
 
 import { WAD } from "./constants";
@@ -181,7 +180,31 @@ describe("YieldComponentToken", () => {
       // TODO(fabio): Assert that accrued yield was paid out and lastPrice updated
     });
   });
-  describe("mintFromFull", async () => {});
+  describe("mintFromFull", async () => {
+    afterEach(async () => {
+      priceOracle.setPrice(WAD);
+    });
+    it("should revert when called by non-owner", async () => {
+      const signers = await ethers.getSigners();
+      const nonOwner = signers[1];
+      const address = await nonOwner.getAddress();
+      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      await expect(yieldComponentToken.connect(nonOwner).mintFromFull(address, "1000000000")).to.be.revertedWith(
+        "Ownable: caller is not the owner",
+      );
+    });
+    it("should mint capital tokens corresponding to the underlying value of the fullToken in wads", async () => {
+      const signers = await ethers.getSigners();
+      const address = await signers[1].getAddress();
+      // ERC20_DECIMALS decimals
+      const amountOfFull = "2000000000";
+      priceOracle.setPrice("12345678900000000000");
+      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
+      await yieldComponentToken.mintFromFull(address, amountOfFull);
+      expect(await yieldComponentToken.balanceOf(address)).to.eq("246913578000000000000");
+    });
+  });
   describe("withdrawYield", async () => {
     it("should withdraw the accrued yield to msg.sender and update lastPrice", async () => {
       // TODO(fabio): Write me!
