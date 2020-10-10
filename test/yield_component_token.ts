@@ -57,7 +57,7 @@ const getYieldSymbol = (symbol: string) => {
   return `yc${symbol}`;
 };
 
-describe.only("YieldComponentToken", () => {
+describe("YieldComponentToken", () => {
   describe("initialization", () => {
     it("should use correct name and symbol", async () => {
       const name = "Compound DAI";
@@ -96,10 +96,11 @@ describe.only("YieldComponentToken", () => {
       await yieldComponentToken.mint(address, amount);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(amount);
       // TODO(fabio): Assert that accrued yield was paid out and lastPrice updated
-      const account = await yieldComponentToken.accounts(address);
+      const balance = await yieldComponentToken.balanceOf(address);
+      const lastPrice = await yieldComponentToken.lastPrices(address);
       // TODO(fabio): Use native BigNumber comparison instead of converting to strings
-      expect(account.balance.toString()).to.equal(amount.toString());
-      expect(account.lastPrice.toString()).to.equal(DEFAULT_PRICE_FROM_ORACLE);
+      expect(balance.toString()).to.equal(amount.toString());
+      expect(lastPrice.toString()).to.equal(DEFAULT_PRICE_FROM_ORACLE);
     });
   });
   describe("burn", async () => {

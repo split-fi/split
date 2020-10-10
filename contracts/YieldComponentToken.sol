@@ -21,11 +21,11 @@ contract YieldComponentToken is ERC20Base, Ownable {
   address public fullToken;
   PriceOracle private priceOracle;
   SplitVault private splitVault;
-  struct Account {
-    uint256 balance;
-    uint256 lastPrice;
-  }
-  mapping(address => Account) public accounts;
+
+  /// @dev The yield component token balances
+  mapping(address => uint256) public balances;
+  /// @dev The price from the last yield payout for an address
+  mapping(address => uint256) public lastPrices;
 
   constructor(
     string memory name,
@@ -62,7 +62,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
     _payoutYield(account);
 
     // Update account information with updated balance
-    accounts[account].balance = accounts[account].balance.add(amount);
+    balances[account] = balances[account].add(amount);
 
     // Update the total supply
     _totalSupply = _totalSupply.add(amount);
@@ -73,7 +73,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
 
   /// @dev Returns the amount of tokens owned by `account`.
   function balanceOf(address account) public override view returns (uint256) {
-    return accounts[account].balance;
+    return balances[account];
   }
 
   /// @dev Burn tokens if the contract owner
@@ -85,8 +85,8 @@ contract YieldComponentToken is ERC20Base, Ownable {
     // First payout any accrued yield
     _payoutYield(account);
 
-    // Then Update balances.
-    accounts[account].balance = accounts[account].balance.sub(amount);
+    // Then update balances.
+    balances[account] = balances[account].sub(amount);
 
     // Update the total supply
     _totalSupply = _totalSupply.sub(amount);
@@ -145,8 +145,8 @@ contract YieldComponentToken is ERC20Base, Ownable {
     _payoutYield(sender);
     _payoutYield(recipient);
 
-    accounts[sender].balance = accounts[sender].balance.sub(amount, "ERC20: transfer amount exceeds balance");
-    accounts[recipient].balance = accounts[recipient].balance.add(amount);
+    balances[sender] = balances[sender].sub(amount, "ERC20: transfer amount exceeds balance");
+    balances[recipient] = balances[recipient].add(amount);
 
     emit Transfer(sender, recipient, amount);
   }
@@ -154,23 +154,24 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @dev Internal yield payout function that computes the yield and transfers it to the owner
   /// @param owner Owner and recipient of the accrued yield
   function _payoutYield(address owner) private {
-    Account memory acc = accounts[owner];
-    if (acc.lastPrice == 0 || acc.balance == 0) {
+    uint256 lastPrice = lastPrices[owner];
+    uint256 balance = balances[owner];
+    uint256 currPrice = priceOracle.getPrice(fullToken);
+    // Make sure the last price is always updated when paying out yield.
+    lastPrices[owner] = currPrice;
+    if (balance == 0 || lastPrice == 0) {
       return;
     }
-    uint256 currPrice = priceOracle.getPrice(fullToken);
     // Compare to old price
     // NOTE(fabio): We assume here that if the price changed, it is strictly increasing
-    uint256 priceDiff = currPrice.sub(acc.lastPrice, "Price has decreased");
+    uint256 priceDiff = currPrice.sub(lastPrice, "Price has decreased");
     if (priceDiff == 0) {
       return; // Noop if the price hasn't changed
     }
-    uint256 increasePercentage = DSMath.wdiv(priceDiff, acc.lastPrice);
-    uint256 fullTokenPayoutWads = DSMath.wdiv(DSMath.wmul(increasePercentage, acc.balance), currPrice);
+    uint256 increasePercentage = DSMath.wdiv(priceDiff, lastPrice);
+    uint256 fullTokenPayoutWads = DSMath.wdiv(DSMath.wmul(increasePercentage, balance), currPrice);
     uint256 payoutAmount = PriceUtils.fromWadToDecimals(fullTokenPayoutWads, ERC20(fullToken).decimals());
     // Call the payout function on the SplitVault contract, just for the yield
     splitVault.payout(payoutAmount, fullToken, owner);
-    // Make sure the last price is always update when paying out yield.
-    accounts[owner].lastPrice = currPrice;
   }
 }
