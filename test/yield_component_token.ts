@@ -152,8 +152,8 @@ describe("YieldComponentToken", () => {
       // TODO(fabio): Assert that accrued yield was paid out and lastPrice updated
       const balance = await yieldComponentToken.balanceOf(address);
       const lastPrice = await yieldComponentToken.lastPrices(address);
-        expect(balance).to.equal(amount);
-        expect(lastPrice).to.equal(DEFAULT_PRICE_FROM_ORACLE);
+      expect(balance).to.equal(amount);
+      expect(lastPrice).to.equal(DEFAULT_PRICE_FROM_ORACLE);
     });
   });
   describe("burn", async () => {
