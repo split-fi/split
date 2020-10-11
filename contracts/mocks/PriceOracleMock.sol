@@ -7,7 +7,7 @@ import "../interfaces/PriceOracle.sol";
 contract PriceOracleMock is PriceOracle {
   constructor() public {}
 
-  uint256 private price = 1**18;
+  uint256 private price = 10**18;
 
   function getPrice(address token) external override view returns (uint256) {
     return price;

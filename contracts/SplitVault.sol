@@ -22,7 +22,7 @@ contract SplitVault is Ownable {
     return tokensToComponents[tokenAddress];
   }
 
-  /// @dev Allows Split protocol governance to add support for new Compound tokens
+  /// @dev Allows Split protocol governance to add support for new tokens
   /// @param tokenAddress the address of token to support
   /// @param yieldTokenAddress the corresponding yieldERC20Comp token address
   /// @param capitalTokenAddress the corresponding capitalERC20Comp token address
@@ -35,6 +35,12 @@ contract SplitVault is Ownable {
       yieldToken: yieldTokenAddress,
       capitalToken: capitalTokenAddress
     });
+  }
+
+  /// @dev Allows Split protocol governance to remove support for new tokens
+  /// @param tokenAddress the address of token to remove support for
+  function remove(address tokenAddress) public onlyOwner {
+    delete tokensToComponents[tokenAddress];
   }
 
   /// @dev Allows a holder of a whitelisted Compound token to split it into it's corresponding Yield and Capital tokens
