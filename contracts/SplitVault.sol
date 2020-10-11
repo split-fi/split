@@ -38,7 +38,7 @@ contract SplitVault is Ownable {
   }
 
   /// @dev Allows Split protocol governance to remove support for new tokens
-  /// @param tokenAddress the address of token to support
+  /// @param tokenAddress the address of token to remove support for
   function remove(address tokenAddress) public onlyOwner {
     delete tokensToComponents[tokenAddress];
   }
