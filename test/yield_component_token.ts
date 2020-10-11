@@ -1,4 +1,5 @@
 import { expect, use } from "chai";
+import { BigNumber } from "ethers";
 import { ethers } from "@nomiclabs/buidler";
 import { solidity } from "ethereum-waffle";
 
@@ -12,8 +13,7 @@ import { WAD } from "./constants";
 
 use(solidity);
 
-// TODO(fabio): Instantiate as a BigNumber
-const DEFAULT_PRICE_FROM_ORACLE = WAD;
+const DEFAULT_PRICE_FROM_ORACLE = BigNumber.from(WAD);
 
 const ERC20_DECIMALS = 8;
 
@@ -144,7 +144,7 @@ describe("YieldComponentToken", () => {
     it("should payout accrued yield and then mint new tokens for any address when called by owner", async () => {
       const signers = await ethers.getSigners();
       const address = await signers[1].getAddress();
-      const amount = "10000000000000000";
+      const amount = BigNumber.from("10000000000000000");
       const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
       await yieldComponentToken.mint(address, amount);
@@ -152,9 +152,8 @@ describe("YieldComponentToken", () => {
       // TODO(fabio): Assert that accrued yield was paid out and lastPrice updated
       const balance = await yieldComponentToken.balanceOf(address);
       const lastPrice = await yieldComponentToken.lastPrices(address);
-      // TODO(fabio): Use native BigNumber comparison instead of converting to strings
-      expect(balance.toString()).to.equal(amount.toString());
-      expect(lastPrice.toString()).to.equal(DEFAULT_PRICE_FROM_ORACLE);
+        expect(balance).to.equal(amount);
+        expect(lastPrice).to.equal(DEFAULT_PRICE_FROM_ORACLE);
     });
   });
   describe("burn", async () => {
