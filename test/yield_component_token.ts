@@ -171,32 +171,44 @@ describe.only("YieldComponentToken", () => {
   });
   describe("transfer", async () => {
     it("should revert if trying to send more than balance", async () => {
-      const [ownerSigner, senderSigner] = await ethers.getSigners();
-      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
       const amountToSend = "12340000";
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       expect(await yieldComponentToken.balanceOf(sender)).to.eq(0);
-      await expect(yieldComponentToken.connect(senderSigner).transfer(owner, amountToSend)).to.be.revertedWith(
+      await expect(yieldComponentToken.connect(senderSigner).transfer(receiver, amountToSend)).to.be.revertedWith(
         "ERC20: transfer amount exceeds balance",
       );
     });
     it("should correctly transfer balances from msg.sender", async () => {
-      const [ownerSigner, senderSigner] = await ethers.getSigners();
-      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
       const amountToSend = "12340000";
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await yieldComponentToken.mint(sender, "10000000000000");
-      expect(await yieldComponentToken.balanceOf(owner)).to.eq(0);
-      await yieldComponentToken.connect(senderSigner).transfer(owner, amountToSend);
-      expect(await yieldComponentToken.balanceOf(owner)).to.eq(amountToSend);
+      expect(await yieldComponentToken.balanceOf(receiver)).to.eq(0);
+      await yieldComponentToken.connect(senderSigner).transfer(receiver, amountToSend);
+      expect(await yieldComponentToken.balanceOf(receiver)).to.eq(amountToSend);
       // should allow to transfer entire balance.
       await expect(
-        yieldComponentToken.connect(senderSigner).transfer(owner, await yieldComponentToken.balanceOf(sender)),
+        yieldComponentToken.connect(senderSigner).transfer(receiver, await yieldComponentToken.balanceOf(sender)),
       ).not.to.be.reverted;
     });
     it("should payout yield to msg.sender", async () => {
-      const [ownerSigner, senderSigner] = await ethers.getSigners();
-      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await priceOracle.setPrice("1100000000");
       // There is no price at first
@@ -217,36 +229,48 @@ describe.only("YieldComponentToken", () => {
   });
   describe("transferFrom", async () => {
     it("should not allow a transfer when an allowance has not been set", async () => {
-      const [ownerSigner, senderSigner] = await ethers.getSigners();
-      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
       const amountToSend = "12340000";
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
-      await yieldComponentToken.mint(owner, "10000000000000");
+      await yieldComponentToken.mint(sender, "10000000000000");
       await expect(
-        yieldComponentToken.connect(senderSigner).transferFrom(owner, sender, amountToSend),
+        yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend),
       ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
     });
     it("should not allow a transfer when an allowance is too small", async () => {
-      const [ownerSigner, senderSigner] = await ethers.getSigners();
-      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
       const amountToSend = "12340000";
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
-      await yieldComponentToken.mint(owner, "10000000000000");
-      await yieldComponentToken.approve(sender, "1234");
+      await yieldComponentToken.mint(sender, "10000000000000");
+      await yieldComponentToken.connect(senderSigner).approve(receiver, "1234");
       await expect(
-        yieldComponentToken.connect(senderSigner).transferFrom(owner, sender, amountToSend),
+        yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend),
       ).to.be.revertedWith("ERC20: transfer amount exceeds allowance");
     });
     it("should allow a transfer when an allowance is set and is great enough", async () => {
-      const [ownerSigner, senderSigner] = await ethers.getSigners();
-      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
       const amountToSend = "12340000";
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
-      await yieldComponentToken.mint(owner, "10000000000000");
-      await yieldComponentToken.approve(sender, amountToSend);
-      expect(await yieldComponentToken.balanceOf(sender)).to.eq(0);
-      await yieldComponentToken.connect(senderSigner).transferFrom(owner, sender, amountToSend);
-      expect(await yieldComponentToken.balanceOf(sender)).to.eq(amountToSend);
+      await yieldComponentToken.mint(sender, "10000000000000");
+      await yieldComponentToken.connect(senderSigner).approve(receiver, amountToSend);
+      expect(await yieldComponentToken.balanceOf(receiver)).to.eq(0);
+      await yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend);
+      expect(await yieldComponentToken.balanceOf(receiver)).to.eq(amountToSend);
     });
     it("should withdraw the accrued yield to msg.sender and `recipient` accounts and update their lastPrice's", async () => {
       // TODO(fabio): Write me!
