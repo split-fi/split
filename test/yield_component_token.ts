@@ -6,7 +6,7 @@ import { solidity } from "ethereum-waffle";
 import { YieldComponentToken } from "../typechain/YieldComponentToken";
 import { PriceOracleMock } from "../typechain/PriceOracleMock";
 import { CTokenMock } from "../typechain/CTokenMock";
-import { SplitVault } from "../typechain/SplitVault";
+import { SplitVaultMock } from "../typechain/SplitVaultMock";
 
 import { WAD } from "./constants";
 
@@ -52,7 +52,7 @@ const getYieldSymbol = (symbol: string) => {
 describe.only("YieldComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
-  let splitVault: SplitVault;
+  let splitVault: SplitVaultMock;
   let deployedAddresses: ComponentTokenDependencyAddresses;
 
   before(async () => {
@@ -64,10 +64,10 @@ describe.only("YieldComponentToken", () => {
     erc20Token = (await CTokenMockFactory.deploy("A Token", "AAA", ERC20_DECIMALS)) as CTokenMock;
     await erc20Token.deployed();
 
-    const SplitVaultFactory = await ethers.getContractFactory("SplitVault");
-    splitVault = (await SplitVaultFactory.deploy()) as SplitVault;
+    const SplitVaultFactory = await ethers.getContractFactory("SplitVaultMock");
+    splitVault = (await SplitVaultFactory.deploy()) as SplitVaultMock;
     await splitVault.deployed();
-    
+
     deployedAddresses = {
       fullTokenAddress: erc20Token.address,
       oracleAddress: priceOracle.address,
@@ -77,7 +77,7 @@ describe.only("YieldComponentToken", () => {
 
   afterEach(async () => {
     priceOracle.setPrice(WAD);
-    splitVault.remove(erc20Token.address);
+    splitVault.reset();
   });
 
   describe("initialization", () => {
@@ -202,9 +202,6 @@ describe.only("YieldComponentToken", () => {
       // There is no price at first
       expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
       await yieldComponentToken.mint(sender, "12340000000000");
-      await priceOracle.setPrice("1200000000");
-      await yieldComponentToken.connect(senderSigner).withdrawYield()
-      // expect("payout").not.to.be.calledOnContract(splitVault);
       // minting triggers a payout as well, updating price
       // expect(await yieldComponentToken.lastPrices(sender)).to.eq("1100000000");
       // expect(await erc20Token.balanceOf(sender)).to.eq(0);
