@@ -1,7 +1,7 @@
 import { expect, use } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "@nomiclabs/buidler";
-import { solidity } from "ethereum-waffle";
+import { deployContract, solidity, MockProvider } from "ethereum-waffle";
 
 import { YieldComponentToken } from "../typechain/YieldComponentToken";
 import { CapitalComponentToken } from "../typechain/CapitalComponentToken";
@@ -92,9 +92,11 @@ describe("YieldComponentToken", () => {
     priceOracle = (await PriceOracleMockFactory.deploy()) as PriceOracleMock;
     await priceOracle.deployed();
 
-    const CTokenMockFactory = await ethers.getContractFactory("CTokenMock");
+    const wallets = new MockProvider().getWallets();
+    const CTokenMockFactory = await ethers.getContractFactory("CTokenMock", wallets[0]);
     erc20Token = (await CTokenMockFactory.deploy("A Token", "AAA", ERC20_DECIMALS)) as CTokenMock;
     await erc20Token.deployed();
+    console.log(await erc20Token.decimals());
 
     const SplitVault = await ethers.getContractFactory("SplitVault");
     splitVault = (await SplitVault.deploy()) as SplitVault;
