@@ -81,7 +81,7 @@ contract SplitVault is Ownable {
       revert("Attempted to request a payout for an unsupported token");
     }
     if (msg.sender != componentSet.yieldToken && msg.sender != componentSet.capitalToken) {
-      revert("Payout can only be called by the corresponding yield token");
+      revert("Payout can only be called by the corresponding yield or capital token");
     }
     IERC20(tokenAddress).transfer(recipient, amount);
   }
