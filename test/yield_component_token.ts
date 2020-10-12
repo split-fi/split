@@ -1,10 +1,9 @@
 import { expect, use } from "chai";
 import { BigNumber } from "ethers";
 import { ethers } from "@nomiclabs/buidler";
-import { deployContract, solidity, MockProvider } from "ethereum-waffle";
+import { solidity } from "ethereum-waffle";
 
 import { YieldComponentToken } from "../typechain/YieldComponentToken";
-import { CapitalComponentToken } from "../typechain/CapitalComponentToken";
 import { PriceOracleMock } from "../typechain/PriceOracleMock";
 import { CTokenMock } from "../typechain/CTokenMock";
 import { SplitVault } from "../typechain/SplitVault";
@@ -22,22 +21,6 @@ interface ComponentTokenDependencyAddresses {
   oracleAddress: string;
   splitVaultAddress: string;
 }
-
-const getDeployedCapitalComponentToken = async (
-  name: string,
-  symbol: string,
-  addresses: ComponentTokenDependencyAddresses,
-) => {
-  const CapitalComponentTokenFactory = await ethers.getContractFactory("CapitalComponentToken");
-  const capitalComponentToken = (await CapitalComponentTokenFactory.deploy(
-    `${name} Capital Component`,
-    `cc${symbol}`,
-    addresses.fullTokenAddress,
-    addresses.oracleAddress,
-  )) as CapitalComponentToken;
-  await capitalComponentToken.deployed();
-  return capitalComponentToken;
-};
 
 const getDeployedYieldComponentToken = async (
   name: string,
@@ -58,21 +41,6 @@ const getDeployedYieldComponentToken = async (
   return yieldComponentToken;
 };
 
-const deployAll = async (
-  name: string,
-  symbol: string,
-  addresses: ComponentTokenDependencyAddresses,
-  splitVault: SplitVault,
-) => {
-  const capitalComponentToken = await getDeployedCapitalComponentToken(name, symbol, addresses);
-  const yieldComponentToken = await getDeployedYieldComponentToken(name, symbol, addresses);
-  splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
-  return {
-    capitalComponentToken: capitalComponentToken,
-    yieldComponentToken: yieldComponentToken,
-  };
-};
-
 const getYieldName = (name: string) => {
   return `${name} Yield Component`;
 };
@@ -81,7 +49,7 @@ const getYieldSymbol = (symbol: string) => {
   return `yc${symbol}`;
 };
 
-describe("YieldComponentToken", () => {
+describe.only("YieldComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVault;
@@ -92,16 +60,14 @@ describe("YieldComponentToken", () => {
     priceOracle = (await PriceOracleMockFactory.deploy()) as PriceOracleMock;
     await priceOracle.deployed();
 
-    const wallets = new MockProvider().getWallets();
-    const CTokenMockFactory = await ethers.getContractFactory("CTokenMock", wallets[0]);
+    const CTokenMockFactory = await ethers.getContractFactory("CTokenMock");
     erc20Token = (await CTokenMockFactory.deploy("A Token", "AAA", ERC20_DECIMALS)) as CTokenMock;
     await erc20Token.deployed();
-    console.log(await erc20Token.decimals());
 
-    const SplitVault = await ethers.getContractFactory("SplitVault");
-    splitVault = (await SplitVault.deploy()) as SplitVault;
+    const SplitVaultFactory = await ethers.getContractFactory("SplitVault");
+    splitVault = (await SplitVaultFactory.deploy()) as SplitVault;
     await splitVault.deployed();
-
+    
     deployedAddresses = {
       fullTokenAddress: erc20Token.address,
       oracleAddress: priceOracle.address,
@@ -118,18 +84,15 @@ describe("YieldComponentToken", () => {
     it("should use correct name and symbol", async () => {
       const name = "Compound DAI";
       const symbol = "DAI";
-      const { yieldComponentToken } = await deployAll(name, symbol, deployedAddresses, splitVault);
-
+      const yieldComponentToken = await getDeployedYieldComponentToken(name, symbol, deployedAddresses);
       expect(await yieldComponentToken.name()).to.eq(getYieldName(name));
       expect(await yieldComponentToken.symbol()).to.eq(getYieldSymbol(symbol));
     });
     it("start off with 0 supply", async () => {
       const name = "Compound DAI";
       const symbol = "DAI";
-      const { yieldComponentToken } = await deployAll(name, symbol, deployedAddresses, splitVault);
-
+      const yieldComponentToken = await getDeployedYieldComponentToken(name, symbol, deployedAddresses);
       await yieldComponentToken.deployed();
-
       expect(await yieldComponentToken.totalSupply()).to.eq(0);
     });
   });
@@ -138,7 +101,7 @@ describe("YieldComponentToken", () => {
       const signers = await ethers.getSigners();
       const nonOwner = signers[1];
       const address = await signers[1].getAddress();
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await expect(yieldComponentToken.connect(nonOwner).mint(address, "1000000000")).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
@@ -147,7 +110,7 @@ describe("YieldComponentToken", () => {
       const signers = await ethers.getSigners();
       const address = await signers[1].getAddress();
       const amount = BigNumber.from("10000000000000000");
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
       await yieldComponentToken.mint(address, amount);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(amount);
@@ -163,7 +126,7 @@ describe("YieldComponentToken", () => {
       const signers = await ethers.getSigners();
       const nonOwner = signers[1];
       const address = await signers[1].getAddress();
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await expect(yieldComponentToken.connect(nonOwner).burn(address, "1000000000")).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
@@ -172,7 +135,7 @@ describe("YieldComponentToken", () => {
       const signers = await ethers.getSigners();
       const address = await signers[1].getAddress();
       const amount = "10000000000000000";
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
       await yieldComponentToken.mint(address, amount);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(amount);
@@ -189,7 +152,7 @@ describe("YieldComponentToken", () => {
       const signers = await ethers.getSigners();
       const nonOwner = signers[1];
       const address = await nonOwner.getAddress();
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await expect(yieldComponentToken.connect(nonOwner).mintFromFull(address, "1000000000")).to.be.revertedWith(
         "Ownable: caller is not the owner",
       );
@@ -200,18 +163,18 @@ describe("YieldComponentToken", () => {
       // ERC20_DECIMALS decimals
       const amountOfFull = "2000000000";
       priceOracle.setPrice("12345678900000000000");
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
       await yieldComponentToken.mintFromFull(address, amountOfFull);
       expect(await yieldComponentToken.balanceOf(address)).to.eq("246913578000000000000");
     });
   });
-  describe.only("transfer", async () => {
+  describe("transfer", async () => {
     it("should revert if trying to send more than balance", async () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
       const amountToSend = "12340000";
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       expect(await yieldComponentToken.balanceOf(sender)).to.eq(0);
       await expect(yieldComponentToken.connect(senderSigner).transfer(owner, amountToSend)).to.be.revertedWith(
         "ERC20: transfer amount exceeds balance",
@@ -221,7 +184,7 @@ describe("YieldComponentToken", () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
       const amountToSend = "12340000";
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await yieldComponentToken.mint(sender, "10000000000000");
       expect(await yieldComponentToken.balanceOf(owner)).to.eq(0);
       await yieldComponentToken.connect(senderSigner).transfer(owner, amountToSend);
@@ -234,12 +197,14 @@ describe("YieldComponentToken", () => {
     it("should payout yield to msg.sender", async () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await priceOracle.setPrice("1100000000");
       // There is no price at first
       expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
       await yieldComponentToken.mint(sender, "12340000000000");
-      expect("payout").not.to.be.calledOnContract(splitVault);
+      await priceOracle.setPrice("1200000000");
+      await yieldComponentToken.connect(senderSigner).withdrawYield()
+      // expect("payout").not.to.be.calledOnContract(splitVault);
       // minting triggers a payout as well, updating price
       // expect(await yieldComponentToken.lastPrices(sender)).to.eq("1100000000");
       // expect(await erc20Token.balanceOf(sender)).to.eq(0);
@@ -258,7 +223,7 @@ describe("YieldComponentToken", () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
       const amountToSend = "12340000";
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await yieldComponentToken.mint(owner, "10000000000000");
       await expect(
         yieldComponentToken.connect(senderSigner).transferFrom(owner, sender, amountToSend),
@@ -268,7 +233,7 @@ describe("YieldComponentToken", () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
       const amountToSend = "12340000";
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await yieldComponentToken.mint(owner, "10000000000000");
       await yieldComponentToken.approve(sender, "1234");
       await expect(
@@ -279,7 +244,7 @@ describe("YieldComponentToken", () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
       const amountToSend = "12340000";
-      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await yieldComponentToken.mint(owner, "10000000000000");
       await yieldComponentToken.approve(sender, amountToSend);
       expect(await yieldComponentToken.balanceOf(sender)).to.eq(0);
@@ -293,7 +258,7 @@ describe("YieldComponentToken", () => {
   describe("calculatePayoutAmount", async () => {
     let yieldComponentToken: YieldComponentToken;
     before(async () => {
-      yieldComponentToken = (await deployAll("X Token", "XXX", deployedAddresses, splitVault)).yieldComponentToken;
+      yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
     });
     it("returns 0 if there is no price difference", () => {});
     type CalculatePayoutAmountTest = [string, string, string, string, string];
