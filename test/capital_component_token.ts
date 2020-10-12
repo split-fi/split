@@ -137,6 +137,7 @@ describe("CapitalComponentToken", () => {
       await capitalComponentToken.burn(address, amount);
       expect(await capitalComponentToken.balanceOf(address)).to.eq(0);
     });
+    // TODO(fragosti): make sure that original tokens are sent back through SplitVault.
   });
   describe("mintFromFull", async () => {
     afterEach(async () => {

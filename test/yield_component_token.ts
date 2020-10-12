@@ -204,7 +204,7 @@ describe("YieldComponentToken", () => {
       expect(await yieldComponentToken.balanceOf(address)).to.eq("246913578000000000000");
     });
   });
-  describe("transfer", async () => {
+  describe.only("transfer", async () => {
     it("should revert if trying to send more than balance", async () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
@@ -229,11 +229,29 @@ describe("YieldComponentToken", () => {
         yieldComponentToken.connect(senderSigner).transfer(owner, await yieldComponentToken.balanceOf(sender)),
       ).not.to.be.reverted;
     });
-    it("should withdraw the accrued yield to msg.sender and `recipient` accounts and update their lastPrice's", async () => {
-      // TODO(fabio): Write me!
+    it("should payout yield to msg.sender", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const { yieldComponentToken } = await deployAll("X Token", "XXX", deployedAddresses, splitVault);
+      await priceOracle.setPrice("1100000000");
+      // There is no price at first
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
+      await yieldComponentToken.mint(sender, "12340000000000");
+      expect("payout").not.to.be.calledOnContract(splitVault);
+      // minting triggers a payout as well, updating price
+      // expect(await yieldComponentToken.lastPrices(sender)).to.eq("1100000000");
+      // expect(await erc20Token.balanceOf(sender)).to.eq(0);
+      // await yieldComponentToken.connect(senderSigner).transfer(owner, "1000000");
+      // // no payout happens without a price increase
+      // expect(await erc20Token.balanceOf(sender)).to.eq(0);
+      // await priceOracle.setPrice("1200000000");
+      // await yieldComponentToken.connect(senderSigner).transfer(owner, "1000000");
+      // // price has increased, and so a transfer should trigger a real payout
+      // expect(await erc20Token.balanceOf(sender)).to.eq(0);
     });
+    it("should payout yield to both sender and receiver when both have balances", async () => {});
   });
-  describe.only("transferFrom", async () => {
+  describe("transferFrom", async () => {
     it("should not allow a transfer when an allowance has not been set", async () => {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
@@ -268,6 +286,22 @@ describe("YieldComponentToken", () => {
     });
     it("should withdraw the accrued yield to msg.sender and `recipient` accounts and update their lastPrice's", async () => {
       // TODO(fabio): Write me!
+    });
+  });
+  describe("calculatePayoutAmount", async () => {
+    let yieldComponentToken: YieldComponentToken;
+    before(async () => {
+      yieldComponentToken = (await deployAll("X Token", "XXX", deployedAddresses, splitVault)).yieldComponentToken;
+    });
+    it("returns 0 if there is no price difference", () => {});
+    type CalculatePayoutAmountTest = [string, string, string, string, string];
+    const calculatePayoutTests: CalculatePayoutAmountTest[] = [["", "", "", "", ""]];
+    calculatePayoutTests.forEach(async ([balance, currPrice, lastPrice, fullTokenDecimals, correctResult]) => {
+      it(`Is correct for balance = ${balance}, currPrice = ${currPrice}, lastPrice = ${lastPrice}, fullTokenDecimals = ${fullTokenDecimals}`, async () => {
+        expect(await yieldComponentToken.calculatePayoutAmount(balance, currPrice, lastPrice, fullTokenDecimals)).to.eq(
+          correctResult,
+        );
+      });
     });
   });
   describe("withdrawYield", async () => {
