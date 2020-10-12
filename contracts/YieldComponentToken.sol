@@ -20,6 +20,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
    *  Storage
    */
   address public fullToken;
+  uint8 private fullTokenDecimals;
   PriceOracle private priceOracle;
   SplitVault private splitVault;
 
@@ -38,6 +39,8 @@ contract YieldComponentToken is ERC20Base, Ownable {
     priceOracle = PriceOracle(priceOracleAddress);
     splitVault = SplitVault(splitVaultAddress);
     fullToken = _fullToken;
+    // Make sure the fullToken has implemented the decimals method before allowing init.
+    fullTokenDecimals = ERC20(fullToken).decimals();
   }
 
   /// @dev Mint new yield component tokens, computing the amount from an amount of full tokens
@@ -45,7 +48,6 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param amountOfFull amount of full tokens to use for the calculation
   function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
     uint256 currPrice = priceOracle.getPrice(fullToken);
-    uint8 fullTokenDecimals = ERC20(fullToken).decimals();
     uint256 yieldTokenAmount = PriceUtils.fullTokenValueInWads(currPrice, amountOfFull, fullTokenDecimals);
     _mint(account, yieldTokenAmount);
   }
@@ -184,7 +186,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
     if (balance == 0 || lastPrice == 0) {
       return 0;
     }
-    uint256 payoutAmount = calculatePayoutAmount(balance, currPrice, lastPrice, ERC20(fullToken).decimals());
+    uint256 payoutAmount = calculatePayoutAmount(balance, currPrice, lastPrice, fullTokenDecimals);
     return payoutAmount;
   }
 
@@ -192,13 +194,13 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param balance The balance of yield component tokens for this address.
   /// @param currPrice The current price of fullToken to use for the calculation. Must be more than `lastPrice`.
   /// @param lastPrice The last price of fullToken to use for the calculation. Must be less than `currPrice`.
-  /// @param fullTokenDecimals The decimal precision of the fullToken `balance`.
+  /// @param tokenDecimals The decimal precision of the fullToken `balance`.
   /// @return The payout amount denoted in the decimal precision of the fullToken
   function calculatePayoutAmount(
     uint256 balance,
     uint256 currPrice,
     uint256 lastPrice,
-    uint8 fullTokenDecimals
+    uint8 tokenDecimals
   ) public pure returns (uint256) {
     // Compare to old price
     uint256 priceDiff = currPrice.sub(lastPrice, "Price has decreased");
@@ -207,7 +209,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
     }
     uint256 increasePercentage = DSMath.wdiv(priceDiff, lastPrice);
     uint256 fullTokenPayoutWads = DSMath.wdiv(DSMath.wmul(increasePercentage, balance), currPrice);
-    uint256 payoutAmount = PriceUtils.fromWadToDecimals(fullTokenPayoutWads, fullTokenDecimals);
+    uint256 payoutAmount = PriceUtils.fromWadToDecimals(fullTokenPayoutWads, tokenDecimals);
     return payoutAmount;
   }
 }
