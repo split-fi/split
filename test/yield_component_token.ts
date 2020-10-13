@@ -213,8 +213,6 @@ describe("YieldComponentToken", () => {
       const firstPrice = "1100000000";
       const secondPrice = "1200000000";
       await priceOracle.setPrice(firstPrice);
-      // There is no price at first
-      expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
       await yieldComponentToken.mint(sender, "12340000000000");
       // no payout happens without a price increase
       expect(await splitVault.getPayoutCalls()).to.be.empty;
@@ -237,8 +235,6 @@ describe("YieldComponentToken", () => {
       const firstPrice = "1100000000";
       const secondPrice = "1200000000";
       await priceOracle.setPrice(firstPrice);
-      // There is no price at first
-      expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
       await yieldComponentToken.mint(sender, "12340000000000");
       // No payout yet since the price hasn't changed and no transfer.
       expect(await splitVault.getPayoutCalls()).to.be.empty;
@@ -280,9 +276,9 @@ describe("YieldComponentToken", () => {
       // both should know of updated price
       expect(await yieldComponentToken.lastPrices(sender)).to.eq(secondPrice);
       expect(await yieldComponentToken.lastPrices(receiver)).to.eq(secondPrice);
-    })
+    });
   });
-  describe("transferFrom", async () => {
+  describe.only("transferFrom", async () => {
     it("should not allow a transfer when an allowance has not been set", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
       const [_, sender, receiver] = await Promise.all([
@@ -327,8 +323,89 @@ describe("YieldComponentToken", () => {
       await yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend);
       expect(await yieldComponentToken.balanceOf(receiver)).to.eq(amountToSend);
     });
-    it("should withdraw the accrued yield to msg.sender and `recipient` accounts and update their lastPrice's", async () => {
-      // TODO(fabio): Write me!
+    it("should payout yield to sender", async () => {
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
+      const firstPrice = "1100000000";
+      const secondPrice = "1200000000";
+      await priceOracle.setPrice(firstPrice);
+      const mintAmount = "12340000000000";
+      const amountToSend = "1000000";
+      await yieldComponentToken.mint(sender, mintAmount);
+      await yieldComponentToken.connect(senderSigner).approve(receiver, mintAmount);
+      // no payout happens without a price increase
+      expect(await splitVault.getPayoutCalls()).to.be.empty;
+      await priceOracle.setPrice(secondPrice);
+      await yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend);
+      // // price has increased, and so a transfer should trigger a real payout
+      const payoutCalls = await splitVault.getPayoutCalls();
+      expect(payoutCalls).to.not.be.empty;
+      // Only send to sender, as they are the only one with a balance
+      expect(payoutCalls).to.have.lengthOf(1);
+    });
+    it("should payout yield to both sender and receiver when both have balances", async () => {
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
+      const firstPrice = "1100000000";
+      const secondPrice = "1200000000";
+      const mintAmount = "12340000000000";
+      const amountToSend = "1000000";
+      await priceOracle.setPrice(firstPrice);
+      await yieldComponentToken.mint(sender, mintAmount);
+      await yieldComponentToken.connect(senderSigner).approve(receiver, mintAmount);
+      // No payout yet since the price hasn't changed and no transfer.
+      expect(await splitVault.getPayoutCalls()).to.be.empty;
+      await yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend);
+      // no payout happens without a price increase
+      expect(await splitVault.getPayoutCalls()).to.be.empty;
+      await priceOracle.setPrice(secondPrice);
+      await yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend);
+      // // price has increased, and so a transfer should trigger a real payout
+      const payoutCalls = await splitVault.getPayoutCalls();
+      expect(payoutCalls).to.not.be.empty;
+      // Send to both sender and receiver
+      expect(payoutCalls).to.have.lengthOf(2);
+    });
+    it("should always update lastPrice for both parties", async () => {
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
+      const firstPrice = "1100000000";
+      const secondPrice = "1200000000";
+      const mintAmount = "12340000000000";
+      const amountToSend = "1000000";
+      await priceOracle.setPrice(firstPrice);
+      await yieldComponentToken.connect(senderSigner).approve(receiver, mintAmount);
+      // There is no price at first
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
+      await yieldComponentToken.mint(sender, mintAmount);
+      // minting triggers a payout as well, updating price
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(firstPrice);
+      // the receiver has never seen a price
+      expect(await yieldComponentToken.lastPrices(receiver)).to.eq(0);
+      await yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend);
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(firstPrice);
+      // the receiver no knows of a price
+      expect(await yieldComponentToken.lastPrices(receiver)).to.eq(firstPrice);
+      await priceOracle.setPrice(secondPrice);
+      await yieldComponentToken.connect(receiverSigner).transferFrom(sender, receiver, amountToSend);
+      // both should know of updated price
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(secondPrice);
+      expect(await yieldComponentToken.lastPrices(receiver)).to.eq(secondPrice);
     });
   });
   describe("calculatePayoutAmount", async () => {
