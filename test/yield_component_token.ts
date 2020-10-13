@@ -49,7 +49,7 @@ const getYieldSymbol = (symbol: string) => {
   return `yc${symbol}`;
 };
 
-describe.only("YieldComponentToken", () => {
+describe("YieldComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
@@ -169,7 +169,7 @@ describe.only("YieldComponentToken", () => {
       expect(await yieldComponentToken.balanceOf(address)).to.eq("246913578000000000000");
     });
   });
-  describe("transfer", async () => {
+  describe.only("transfer", async () => {
     it("should revert if trying to send more than balance", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
       const [_, sender, receiver] = await Promise.all([
@@ -210,22 +210,53 @@ describe.only("YieldComponentToken", () => {
         receiverSigner.getAddress(),
       ]);
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
-      await priceOracle.setPrice("1100000000");
+      const firstPrice = "1100000000";
+      const secondPrice = "1200000000";
+      await priceOracle.setPrice(firstPrice);
       // There is no price at first
       expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
       await yieldComponentToken.mint(sender, "12340000000000");
       // minting triggers a payout as well, updating price
-      // expect(await yieldComponentToken.lastPrices(sender)).to.eq("1100000000");
-      // expect(await erc20Token.balanceOf(sender)).to.eq(0);
-      // await yieldComponentToken.connect(senderSigner).transfer(owner, "1000000");
-      // // no payout happens without a price increase
-      // expect(await erc20Token.balanceOf(sender)).to.eq(0);
-      // await priceOracle.setPrice("1200000000");
-      // await yieldComponentToken.connect(senderSigner).transfer(owner, "1000000");
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(firstPrice);
+      // no payout happens without a price increase
+      expect(await splitVault.getPayoutCalls()).to.be.empty;
+      await priceOracle.setPrice(secondPrice);
+      await yieldComponentToken.connect(senderSigner).transfer(receiver, "1000000");
       // // price has increased, and so a transfer should trigger a real payout
-      // expect(await erc20Token.balanceOf(sender)).to.eq(0);
+      const payoutCalls = await splitVault.getPayoutCalls();
+      expect(payoutCalls).to.not.be.empty;
+      // Only send to sender, as they are the only one with a balance
+      expect(payoutCalls).to.have.lengthOf(1);
     });
-    it("should payout yield to both sender and receiver when both have balances", async () => {});
+    it("should payout yield to both sender and receiver when both have balances", async () => {
+      const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
+      const [_, sender, receiver] = await Promise.all([
+        ownerSigner.getAddress(),
+        senderSigner.getAddress(),
+        receiverSigner.getAddress(),
+      ]);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
+      const firstPrice = "1100000000";
+      const secondPrice = "1200000000";
+      await priceOracle.setPrice(firstPrice);
+      // There is no price at first
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
+      await yieldComponentToken.mint(sender, "12340000000000");
+      // minting triggers a payout as well, updating price
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(firstPrice);
+      // No payout yet since the price hasn't changed and no transfer.
+      expect(await splitVault.getPayoutCalls()).to.be.empty;
+      await yieldComponentToken.connect(senderSigner).transfer(receiver, "1000000");
+      // no payout happens without a price increase
+      expect(await splitVault.getPayoutCalls()).to.be.empty;
+      await priceOracle.setPrice(secondPrice);
+      await yieldComponentToken.connect(senderSigner).transfer(receiver, "1000000");
+      // // price has increased, and so a transfer should trigger a real payout
+      const payoutCalls = await splitVault.getPayoutCalls();
+      expect(payoutCalls).to.not.be.empty;
+      // Send to both sender and receiver
+      expect(payoutCalls).to.have.lengthOf(2);
+    });
   });
   describe("transferFrom", async () => {
     it("should not allow a transfer when an allowance has not been set", async () => {

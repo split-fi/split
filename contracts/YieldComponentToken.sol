@@ -157,10 +157,11 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @dev Internal yield payout function that computes the yield and transfers it to the owner
   /// @param owner Owner and recipient of the accrued yield
   function _payoutYield(address owner) private {
+    uint256 lastPrice = lastPrices[owner];
     uint256 currPrice = priceOracle.getPrice(fullToken);
     // Make sure the last price is always updated when paying out yield.
     lastPrices[owner] = currPrice;
-    uint256 payoutAmount = calculatePayoutAmount(owner, currPrice);
+    uint256 payoutAmount = calculatePayoutAmount(owner, currPrice, lastPrice);
     if (payoutAmount == 0) {
       return;
     }
@@ -172,16 +173,20 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param owner Owner and future recipient of the accrued yield
   /// @return The payout amount denoted in the decimal precision of the fullToken
   function calculatePayoutAmount(address owner) public view returns (uint256) {
+    uint256 lastPrice = lastPrices[owner];
     uint256 currPrice = priceOracle.getPrice(fullToken);
-    return calculatePayoutAmount(owner, currPrice);
+    return calculatePayoutAmount(owner, currPrice, lastPrice);
   }
 
   /// @dev Public method for calculating the outstanding yield for a yield token holder and a new fullToken price
   /// @param owner Owner and future recipient of the accrued yield
   /// @param currPrice The price of fullToken to use for the calculation. Must be more than internally stored lastPrice
   /// @return The payout amount denoted in the decimal precision of the fullToken
-  function calculatePayoutAmount(address owner, uint256 currPrice) public view returns (uint256) {
-    uint256 lastPrice = lastPrices[owner];
+  function calculatePayoutAmount(
+    address owner,
+    uint256 currPrice,
+    uint256 lastPrice
+  ) public view returns (uint256) {
     uint256 balance = balances[owner];
     if (balance == 0 || lastPrice == 0) {
       return 0;
