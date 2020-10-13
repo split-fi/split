@@ -90,7 +90,7 @@ describe("SplitVault", function () {
       const recipient = ACCOUNT_1;
       const amount = 10;
       await expect(splitVault.payout(amount, TOKEN_ADDRESS, recipient)).to.be.revertedWith(
-        "Payout can only be called by the corresponding yield token",
+        "Payout can only be called by the corresponding yield or capital token",
       );
     });
   });

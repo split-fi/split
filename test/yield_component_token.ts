@@ -49,7 +49,7 @@ const getYieldSymbol = (symbol: string) => {
   return `yc${symbol}`;
 };
 
-describe.only("YieldComponentToken", () => {
+describe("YieldComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
@@ -223,6 +223,7 @@ describe.only("YieldComponentToken", () => {
       expect(payoutCalls).to.not.be.empty;
       // Only send to sender, as they are the only one with a balance
       expect(payoutCalls).to.have.lengthOf(1);
+      expect(payoutCalls[0].recipient).to.eq(sender);
     });
     it("should payout yield to both sender and receiver when both have balances", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
@@ -248,6 +249,8 @@ describe.only("YieldComponentToken", () => {
       expect(payoutCalls).to.not.be.empty;
       // Send to both sender and receiver
       expect(payoutCalls).to.have.lengthOf(2);
+      expect(payoutCalls[0].recipient).to.eq(sender);
+      expect(payoutCalls[1].recipient).to.eq(receiver);
     });
     it("should always update lastPrice for both parties", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
@@ -347,6 +350,7 @@ describe.only("YieldComponentToken", () => {
       expect(payoutCalls).to.not.be.empty;
       // Only send to sender, as they are the only one with a balance
       expect(payoutCalls).to.have.lengthOf(1);
+      expect(payoutCalls[0].recipient).to.eq(sender);
     });
     it("should payout yield to both sender and receiver when both have balances", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
@@ -375,6 +379,8 @@ describe.only("YieldComponentToken", () => {
       expect(payoutCalls).to.not.be.empty;
       // Send to both sender and receiver
       expect(payoutCalls).to.have.lengthOf(2);
+      expect(payoutCalls[0].recipient).to.eq(sender);
+      expect(payoutCalls[1].recipient).to.eq(receiver);
     });
     it("should always update lastPrice for both parties", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
@@ -408,7 +414,7 @@ describe.only("YieldComponentToken", () => {
       expect(await yieldComponentToken.lastPrices(receiver)).to.eq(secondPrice);
     });
   });
-  describe.only("calculatePayoutAmount", async () => {
+  describe("calculatePayoutAmount", async () => {
     let yieldComponentToken: YieldComponentToken;
     before(async () => {
       yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
@@ -430,20 +436,63 @@ describe.only("YieldComponentToken", () => {
     ];
     calculatePayoutTests.forEach(async ([balance, currPrice, lastPrice, fullTokenDecimals, correctResult]) => {
       it(`Is correct for balance = ${balance}, currPrice = ${currPrice}, lastPrice = ${lastPrice}, fullTokenDecimals = ${fullTokenDecimals}`, async () => {
-        expect(await yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"](balance, currPrice, lastPrice, fullTokenDecimals)).to.eq(
-          correctResult,
-        );
+        expect(
+          await yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"](
+            balance,
+            currPrice,
+            lastPrice,
+            fullTokenDecimals,
+          ),
+        ).to.eq(correctResult);
       });
     });
     it("Does not allow for decreasing price", async () => {
-      await expect(yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"]("1000000000", "1000000", "100000000", "8")).to.revertedWith(
-        "Price has decreased",
-      )
-    })
+      await expect(
+        yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"](
+          "1000000000",
+          "1000000",
+          "100000000",
+          "8",
+        ),
+      ).to.revertedWith("Price has decreased");
+    });
   });
   describe("withdrawYield", async () => {
-    it("should withdraw the accrued yield to msg.sender and update lastPrice", async () => {
-      // TODO(fabio): Write me!
+    it("should withdraw the accrued yield to msg.sender", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
+      const firstPrice = "1100000000";
+      const secondPrice = "1200000000";
+      await priceOracle.setPrice(firstPrice);
+      await yieldComponentToken.mint(sender, "12340000000000");
+      // no payout happens without a price increase
+      expect(await splitVault.getPayoutCalls()).to.be.empty;
+      await priceOracle.setPrice(secondPrice);
+      await yieldComponentToken.connect(senderSigner).withdrawYield();
+      // // price has increased, and so a transfer should trigger a real payout
+      const payoutCalls = await splitVault.getPayoutCalls();
+      expect(payoutCalls).to.not.be.empty;
+      // Only send to sender, as they are the only one with a balance
+      expect(payoutCalls).to.have.lengthOf(1);
+      expect(payoutCalls[0].recipient).to.eq(sender);
+    });
+    it("should update lastPrice when yield is withdrawn", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
+      const firstPrice = "1100000000";
+      const secondPrice = "1200000000";
+      await priceOracle.setPrice(firstPrice);
+      // There is no price at first
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(0);
+      await yieldComponentToken.mint(sender, "12340000000000");
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(firstPrice);
+      await yieldComponentToken.connect(senderSigner).withdrawYield();
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(firstPrice);
+      await priceOracle.setPrice(secondPrice);
+      await yieldComponentToken.connect(senderSigner).withdrawYield();
+      expect(await yieldComponentToken.lastPrices(sender)).to.eq(secondPrice);
     });
   });
 });

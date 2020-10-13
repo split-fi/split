@@ -181,7 +181,11 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param owner Owner and future recipient of the accrued yield
   /// @param currPrice The price of fullToken to use for the calculation. Must be more than internally stored lastPrice
   /// @return The payout amount denoted in fullToken
-  function calculatePayoutAmount(address owner, uint256 currPrice, uint256 lastPrice) public view returns (uint256) {
+  function calculatePayoutAmount(
+    address owner,
+    uint256 currPrice,
+    uint256 lastPrice
+  ) public view returns (uint256) {
     uint256 balance = balances[owner];
     if (balance == 0 || lastPrice == 0) {
       return 0;
@@ -195,7 +199,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param currPrice The current price of fullToken to use for the calculation. Must be more than `lastPrice`.
   /// @param lastPrice The last price of fullToken to use for the calculation. Must be less than `currPrice`.
   /// @param tokenDecimals The decimal precision of the fullToken `balance`.
-  /// @return The payout amount denoted in fullToken 
+  /// @return The payout amount denoted in fullToken
   function calculatePayoutAmount(
     uint256 balance,
     uint256 currPrice,
