@@ -19,6 +19,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
    *  Storage
    */
   address public fullToken;
+  uint8 private fullTokenDecimals;
   PriceOracle private priceOracle;
   SplitVault private splitVault;
 
@@ -37,6 +38,8 @@ contract YieldComponentToken is ERC20Base, Ownable {
     priceOracle = PriceOracle(priceOracleAddress);
     splitVault = SplitVault(splitVaultAddress);
     fullToken = _fullToken;
+    // Make sure the fullToken has implemented the decimals method before allowing init.
+    fullTokenDecimals = ERC20(fullToken).decimals();
   }
 
   /// @dev Mint new yield component tokens, computing the amount from an amount of full tokens
@@ -44,7 +47,6 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param amountOfFull amount of full tokens to use for the calculation
   function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
     uint256 currPrice = priceOracle.getPrice(fullToken);
-    uint8 fullTokenDecimals = ERC20(fullToken).decimals();
     uint256 yieldTokenAmount = PriceUtils.fullTokenValueInWads(currPrice, amountOfFull, fullTokenDecimals);
     _mint(account, yieldTokenAmount);
   }
@@ -155,23 +157,63 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param owner Owner and recipient of the accrued yield
   function _payoutYield(address owner) private {
     uint256 lastPrice = lastPrices[owner];
-    uint256 balance = balances[owner];
     uint256 currPrice = priceOracle.getPrice(fullToken);
     // Make sure the last price is always updated when paying out yield.
     lastPrices[owner] = currPrice;
-    if (balance == 0 || lastPrice == 0) {
+    uint256 payoutAmount = calculatePayoutAmount(owner, currPrice, lastPrice);
+    if (payoutAmount == 0) {
       return;
     }
+    // Call the payout function on the SplitVault contract, just for the yield
+    splitVault.payout(payoutAmount, fullToken, owner);
+  }
+
+  /// @dev Simplest public method for calculating the outstanding yield for a yield token holder
+  /// @param owner Owner and future recipient of the accrued yield
+  /// @return The payout amount denoted in fullToken
+  function calculatePayoutAmount(address owner) public view returns (uint256) {
+    uint256 lastPrice = lastPrices[owner];
+    uint256 currPrice = priceOracle.getPrice(fullToken);
+    return calculatePayoutAmount(owner, currPrice, lastPrice);
+  }
+
+  /// @dev Public method for calculating the outstanding yield for a yield token holder and a new fullToken price
+  /// @param owner Owner and future recipient of the accrued yield
+  /// @param currPrice The price of fullToken to use for the calculation. Must be more than internally stored lastPrice
+  /// @return The payout amount denoted in fullToken
+  function calculatePayoutAmount(
+    address owner,
+    uint256 currPrice,
+    uint256 lastPrice
+  ) public view returns (uint256) {
+    uint256 balance = balances[owner];
+    if (balance == 0 || lastPrice == 0) {
+      return 0;
+    }
+    uint256 payoutAmount = calculatePayoutAmount(balance, currPrice, lastPrice, fullTokenDecimals);
+    return payoutAmount;
+  }
+
+  /// @dev Pure function for calculating the outstanding yield for a yield token holder and a new fullToken price
+  /// @param balance The balance of yield component tokens for this address.
+  /// @param currPrice The current price of fullToken to use for the calculation. Must be more than `lastPrice`.
+  /// @param lastPrice The last price of fullToken to use for the calculation. Must be less than `currPrice`.
+  /// @param tokenDecimals The decimal precision of the fullToken `balance`.
+  /// @return The payout amount denoted in fullToken
+  function calculatePayoutAmount(
+    uint256 balance,
+    uint256 currPrice,
+    uint256 lastPrice,
+    uint8 tokenDecimals
+  ) public pure returns (uint256) {
     // Compare to old price
-    // NOTE(fabio): We assume here that if the price changed, it is strictly increasing
     uint256 priceDiff = currPrice.sub(lastPrice, "Price has decreased");
     if (priceDiff == 0) {
-      return; // Noop if the price hasn't changed
+      return 0;
     }
     uint256 increasePercentage = DSMath.wdiv(priceDiff, lastPrice);
     uint256 fullTokenPayoutWads = DSMath.wdiv(DSMath.wmul(increasePercentage, balance), currPrice);
-    uint256 payoutAmount = PriceUtils.fromWadToDecimals(fullTokenPayoutWads, ERC20(fullToken).decimals());
-    // Call the payout function on the SplitVault contract, just for the yield
-    splitVault.payout(payoutAmount, fullToken, owner);
+    uint256 payoutAmount = PriceUtils.fromWadToDecimals(fullTokenPayoutWads, tokenDecimals);
+    return payoutAmount;
   }
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.6.8;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract SplitVault is Ownable {
   /*
@@ -79,9 +80,9 @@ contract SplitVault is Ownable {
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
       revert("Attempted to request a payout for an unsupported token");
     }
-    if (msg.sender != componentSet.yieldToken) {
-      revert("Payout can only be called by the corresponding yield token");
+    if (msg.sender != componentSet.yieldToken && msg.sender != componentSet.capitalToken) {
+      revert("Payout can only be called by the corresponding yield or capital token");
     }
-    // TODO(fabio): Transfer `amount` tokens from vault to recipient
+    IERC20(tokenAddress).transfer(recipient, amount);
   }
 }

@@ -13,6 +13,7 @@ contract CapitalComponentToken is ERC20, Ownable {
   using SafeMath for uint256;
 
   address public fullToken;
+  uint8 private fullTokenDecimals;
   PriceOracle private priceOracle;
 
   constructor(
@@ -23,6 +24,8 @@ contract CapitalComponentToken is ERC20, Ownable {
   ) public ERC20(name, symbol) {
     priceOracle = PriceOracle(priceOracleAddress);
     fullToken = _fullToken;
+    // Make sure the fullToken has implemented the decimals method before allowing init.
+    fullTokenDecimals = ERC20(fullToken).decimals();
   }
 
   /// @dev Mint new capital component tokens, but compute the amount from an amount of full tokens.
@@ -30,7 +33,6 @@ contract CapitalComponentToken is ERC20, Ownable {
   /// @param amountOfFull amount of full tokens to use for the calculation
   function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
     uint256 price = priceOracle.getPrice(fullToken);
-    uint8 fullTokenDecimals = ERC20(fullToken).decimals();
     uint256 componentTokenAmount = PriceUtils.fullTokenValueInWads(price, amountOfFull, fullTokenDecimals);
     _mint(account, componentTokenAmount);
   }
