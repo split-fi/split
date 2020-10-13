@@ -93,7 +93,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
     // Update the total supply
     _totalSupply = _totalSupply.sub(amount);
 
-    // A mint is effectively a transfer
+    // A burn is effectively a transfer
     emit Transfer(account, address(0), amount);
   }
 
