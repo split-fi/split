@@ -16,7 +16,7 @@ const DEFAULT_PRICE_FROM_ORACLE = BigNumber.from(WAD);
 
 const ERC20_DECIMALS = 8;
 
-interface ComponentTokenDependencyAddresses {
+interface YieldComponentTokenDependencyAddresses {
   fullTokenAddress: string;
   oracleAddress: string;
   splitVaultAddress: string;
@@ -25,7 +25,7 @@ interface ComponentTokenDependencyAddresses {
 const getDeployedYieldComponentToken = async (
   name: string,
   symbol: string,
-  addresses: ComponentTokenDependencyAddresses,
+  addresses: YieldComponentTokenDependencyAddresses,
 ) => {
   const YieldComponentTokenFactory = await ethers.getContractFactory("YieldComponentToken");
   const yieldComponentToken = (await YieldComponentTokenFactory.deploy(
@@ -53,7 +53,7 @@ describe("YieldComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
-  let deployedAddresses: ComponentTokenDependencyAddresses;
+  let deployedAddresses: YieldComponentTokenDependencyAddresses;
 
   before(async () => {
     const PriceOracleMockFactory = await ethers.getContractFactory("PriceOracleMock");
