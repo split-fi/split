@@ -192,15 +192,17 @@ describe("YieldComponentToken", () => {
         receiverSigner.getAddress(),
       ]);
       const amountToSend = "12340000";
+      const mintAmount = "10000000000000";
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await yieldComponentToken.mint(sender, "10000000000000");
       expect(await yieldComponentToken.balanceOf(receiver)).to.eq(0);
       await yieldComponentToken.connect(senderSigner).transfer(receiver, amountToSend);
       expect(await yieldComponentToken.balanceOf(receiver)).to.eq(amountToSend);
       // should allow to transfer entire balance.
-      await expect(
-        yieldComponentToken.connect(senderSigner).transfer(receiver, await yieldComponentToken.balanceOf(sender)),
-      ).not.to.be.reverted;
+      const entireBalance = await yieldComponentToken.balanceOf(sender);
+      await expect(yieldComponentToken.connect(senderSigner).transfer(receiver, entireBalance)).not.to.be.reverted;
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq(0);
+      expect(await yieldComponentToken.balanceOf(receiver)).to.eq(mintAmount);
     });
     it("should payout yield to msg.sender", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
