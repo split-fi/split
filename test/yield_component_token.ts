@@ -114,7 +114,6 @@ describe("YieldComponentToken", () => {
       expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
       await yieldComponentToken.mint(address, amount);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(amount);
-      // TODO(fabio): Assert that accrued yield was paid out and lastPrice updated
       const balance = await yieldComponentToken.balanceOf(address);
       const lastPrice = await yieldComponentToken.lastPrices(address);
       expect(balance).to.equal(amount);
@@ -141,7 +140,6 @@ describe("YieldComponentToken", () => {
       expect(await yieldComponentToken.balanceOf(address)).to.eq(amount);
       await yieldComponentToken.burn(address, amount);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
-      // TODO(fabio): Assert that accrued yield was paid out and lastPrice updated
     });
   });
   describe("mintFromFull", async () => {
