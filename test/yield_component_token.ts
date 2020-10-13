@@ -49,7 +49,7 @@ const getYieldSymbol = (symbol: string) => {
   return `yc${symbol}`;
 };
 
-describe("YieldComponentToken", () => {
+describe.only("YieldComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
@@ -169,7 +169,7 @@ describe("YieldComponentToken", () => {
       expect(await yieldComponentToken.balanceOf(address)).to.eq("246913578000000000000");
     });
   });
-  describe.only("transfer", async () => {
+  describe("transfer", async () => {
     it("should revert if trying to send more than balance", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
       const [_, sender, receiver] = await Promise.all([
@@ -278,7 +278,7 @@ describe("YieldComponentToken", () => {
       expect(await yieldComponentToken.lastPrices(receiver)).to.eq(secondPrice);
     });
   });
-  describe.only("transferFrom", async () => {
+  describe("transferFrom", async () => {
     it("should not allow a transfer when an allowance has not been set", async () => {
       const [ownerSigner, senderSigner, receiverSigner] = await ethers.getSigners();
       const [_, sender, receiver] = await Promise.all([
@@ -408,21 +408,38 @@ describe("YieldComponentToken", () => {
       expect(await yieldComponentToken.lastPrices(receiver)).to.eq(secondPrice);
     });
   });
-  describe("calculatePayoutAmount", async () => {
+  describe.only("calculatePayoutAmount", async () => {
     let yieldComponentToken: YieldComponentToken;
     before(async () => {
       yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
     });
-    it("returns 0 if there is no price difference", () => {});
     type CalculatePayoutAmountTest = [string, string, string, string, string];
-    const calculatePayoutTests: CalculatePayoutAmountTest[] = [["", "", "", "", ""]];
+    const calculatePayoutTests: CalculatePayoutAmountTest[] = [
+      [WAD, WAD, WAD, "8", "0"],
+      [WAD, "1100000000000000000", WAD, "8", "9090909"],
+      ["500000000000000000", "1200000000000000000", "1100000000000000000", "8", "3787878"],
+      [WAD, "11000000000", "10000000000", "8", "909090909090909"],
+      ["1000000000000", "1100000000000000000", WAD, "8", "9"],
+      // Can't handle E-7
+      ["100000000000", "1100000000000000000", WAD, "8", "0"],
+      ["100000000000000000000000000000000000", "1100000000000000000", WAD, "8", "909090909090909090909090"],
+      [WAD, "1234599990000000000", "1234567890000000000", "8", "2106"],
+      ["0", "1100000000000000000", WAD, "8", "0"],
+      [WAD, "1100000000000000000", WAD, "20", "9090909090909090900"],
+      [WAD, "1100000000000000000", WAD, "18", "90909090909090909"],
+    ];
     calculatePayoutTests.forEach(async ([balance, currPrice, lastPrice, fullTokenDecimals, correctResult]) => {
       it(`Is correct for balance = ${balance}, currPrice = ${currPrice}, lastPrice = ${lastPrice}, fullTokenDecimals = ${fullTokenDecimals}`, async () => {
-        expect(await yieldComponentToken.calculatePayoutAmount(balance, currPrice, lastPrice, fullTokenDecimals)).to.eq(
+        expect(await yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"](balance, currPrice, lastPrice, fullTokenDecimals)).to.eq(
           correctResult,
         );
       });
     });
+    it("Does not allow for decreasing price", async () => {
+      await expect(yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"]("1000000000", "1000000", "100000000", "8")).to.revertedWith(
+        "Price has decreased",
+      )
+    })
   });
   describe("withdrawYield", async () => {
     it("should withdraw the accrued yield to msg.sender and update lastPrice", async () => {

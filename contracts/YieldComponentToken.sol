@@ -5,7 +5,6 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@nomiclabs/buidler/console.sol";
 
 import "./interfaces/PriceOracle.sol";
 import "./SplitVault.sol";
@@ -171,7 +170,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
 
   /// @dev Simplest public method for calculating the outstanding yield for a yield token holder
   /// @param owner Owner and future recipient of the accrued yield
-  /// @return The payout amount denoted in the decimal precision of the fullToken
+  /// @return The payout amount denoted in fullToken
   function calculatePayoutAmount(address owner) public view returns (uint256) {
     uint256 lastPrice = lastPrices[owner];
     uint256 currPrice = priceOracle.getPrice(fullToken);
@@ -181,12 +180,8 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @dev Public method for calculating the outstanding yield for a yield token holder and a new fullToken price
   /// @param owner Owner and future recipient of the accrued yield
   /// @param currPrice The price of fullToken to use for the calculation. Must be more than internally stored lastPrice
-  /// @return The payout amount denoted in the decimal precision of the fullToken
-  function calculatePayoutAmount(
-    address owner,
-    uint256 currPrice,
-    uint256 lastPrice
-  ) public view returns (uint256) {
+  /// @return The payout amount denoted in fullToken
+  function calculatePayoutAmount(address owner, uint256 currPrice, uint256 lastPrice) public view returns (uint256) {
     uint256 balance = balances[owner];
     if (balance == 0 || lastPrice == 0) {
       return 0;
@@ -200,7 +195,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @param currPrice The current price of fullToken to use for the calculation. Must be more than `lastPrice`.
   /// @param lastPrice The last price of fullToken to use for the calculation. Must be less than `currPrice`.
   /// @param tokenDecimals The decimal precision of the fullToken `balance`.
-  /// @return The payout amount denoted in the decimal precision of the fullToken
+  /// @return The payout amount denoted in fullToken 
   function calculatePayoutAmount(
     uint256 balance,
     uint256 currPrice,
