@@ -36,7 +36,7 @@ const getDeployedCapitalComponentToken = async (
   return capitalComponentToken;
 };
 
-describe.only("CapitalComponentToken", () => {
+describe("CapitalComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
