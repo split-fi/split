@@ -57,7 +57,7 @@ describe("SplitVault", function () {
       oracleAddress: priceOracle.address,
     };
   });
-  describe("add function", function () {
+  describe("add", function () {
     it("should add componentSet when called by owner", async function () {
       const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
@@ -80,6 +80,34 @@ describe("SplitVault", function () {
       expect(await splitVault.getComponentSet(addresses.fullTokenAddress)).to.be.deep.equal([
         NULL_ADDRESS,
         NULL_ADDRESS,
+      ]);
+    });
+  });
+  describe("remove", function () {
+    it("should remove componentSet when called by owner", async function () {
+      const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
+      await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
+      await splitVault.remove(addresses.fullTokenAddress);
+      expect(await splitVault.getComponentSet(addresses.fullTokenAddress)).to.be.deep.equal([
+        NULL_ADDRESS,
+        NULL_ADDRESS,
+      ]);
+    });
+    it("should not remove componentSet when called by non-owner", async function () {
+      const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
+      await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
+      const signers = await ethers.getSigners();
+      const nonOwner = signers[1];
+
+      await expect(
+        splitVault
+          .connect(nonOwner)
+          .remove(addresses.fullTokenAddress),
+      ).to.be.revertedWith("Ownable: caller is not the owner");
+
+      expect(await splitVault.getComponentSet(addresses.fullTokenAddress)).to.be.deep.equal([
+        yieldComponentToken.address,
+        capitalComponentToken.address,
       ]);
     });
   });
