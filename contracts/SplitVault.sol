@@ -56,8 +56,8 @@ contract SplitVault is Ownable {
       revert("Attempted to split unsupported token");
     }
     IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
-    CapitalComponentToken(componentSet.capitalToken).burn(msg.sender, amount);
-    YieldComponentToken(componentSet.yieldToken).burn(msg.sender, amount);
+    CapitalComponentToken(componentSet.capitalToken).mintFromFull(msg.sender, amount);
+    YieldComponentToken(componentSet.yieldToken).mintFromFull(msg.sender, amount);
     emit Split(tokenAddress, amount);
   }
 

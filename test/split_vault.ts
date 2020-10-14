@@ -6,7 +6,7 @@ import { PriceOracleMock } from "../typechain/PriceOracleMock";
 import { CTokenMock } from "../typechain/CTokenMock";
 import { SplitVault } from "../typechain/SplitVault";
 
-import { ACCOUNT_1, NULL_ADDRESS } from "./constants";
+import { ACCOUNT_1, NULL_ADDRESS, WAD } from "./constants";
 import { ComponentTokenDependencyAddresses } from "./types";
 import { getDeployedCapitalComponentToken, getDeployedYieldComponentToken } from "./utils";
 
@@ -99,11 +99,9 @@ describe("SplitVault", function () {
       const signers = await ethers.getSigners();
       const nonOwner = signers[1];
 
-      await expect(
-        splitVault
-          .connect(nonOwner)
-          .remove(addresses.fullTokenAddress),
-      ).to.be.revertedWith("Ownable: caller is not the owner");
+      await expect(splitVault.connect(nonOwner).remove(addresses.fullTokenAddress)).to.be.revertedWith(
+        "Ownable: caller is not the owner",
+      );
 
       expect(await splitVault.getComponentSet(addresses.fullTokenAddress)).to.be.deep.equal([
         yieldComponentToken.address,
@@ -112,6 +110,11 @@ describe("SplitVault", function () {
     });
   });
   describe("split", function () {
+    afterEach(async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      await Promise.all([erc20Token.burnAll(owner), erc20Token.burnAll(sender)]);
+    });
     it("should revert if user attempts to split an unregistered token", async function () {
       const { splitVault } = await getDeployedContracts(addresses);
       const unregisteredTokenAddress = NULL_ADDRESS;
@@ -119,6 +122,46 @@ describe("SplitVault", function () {
       await expect(splitVault.split(amount, unregisteredTokenAddress)).to.be.revertedWith(
         "Attempted to split unsupported token",
       );
+    });
+    it("should revert if the SplitVault does not have approval to transfer the fullToken from msg.sender", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
+      const mintAmount = "1000000000000000000000";
+      erc20Token.mint(sender, "1000000000000000000000");
+      await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
+      await expect(splitVault.connect(senderSigner).split(WAD, addresses.fullTokenAddress)).to.be.revertedWith(
+        "ERC20: transfer amount exceeds allowance",
+      );
+    });
+    it("should withdraw fullToken from msg.sender when allowance is set", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
+      const mintAmount = "1000000000000000000000";
+      const splitAmount = "1000000000000";
+      erc20Token.mint(sender, mintAmount);
+      expect(await erc20Token.balanceOf(splitVault.address)).to.eq(0);
+      await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
+      erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
+      await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
+      expect(await erc20Token.balanceOf(sender)).to.eq("999999999000000000000");
+      expect(await erc20Token.balanceOf(splitVault.address)).to.eq(splitAmount);
+    });
+    it("should mint a corresponding amount of capital and yield component tokens to msg.sender", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
+      const mintAmount = "1000000000000000000000";
+      const splitAmount = "1000000000000";
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq(0);
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq(0);
+      erc20Token.mint(sender, mintAmount);
+      await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
+      erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
+      await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq("10000000000000000000000");
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq("10000000000000000000000");
     });
   });
   describe("combine", function () {
@@ -130,6 +173,7 @@ describe("SplitVault", function () {
         "Attempted to recombine unsupported token",
       );
     });
+    it("should burn the amount of component tokens specified and send msg.sender the corresponding fullTokens", async () => {});
   });
   describe("payout", function () {
     it("should revert if user attempts to call payout for an unregistered token", async function () {
