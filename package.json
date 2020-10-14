@@ -32,6 +32,7 @@
     "compile": "buidler compile",
     "deploy:vault": "buidler deploy_vault",
     "deploy:oracle": "buidler deploy_oracle",
+    "deploy:components": "buidler deploy_component_tokens",
     "test": "buidler test",
     "prettier:fix": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:check": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts}\""
