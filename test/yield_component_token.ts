@@ -127,7 +127,7 @@ describe("YieldComponentToken", () => {
       const address = await signers[1].getAddress();
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await expect(yieldComponentToken.connect(nonOwner).burn(address, "1000000000")).to.be.revertedWith(
-        "Ownable: caller is not the owner",
+        "Caller is not the SplitVault or Owner",
       );
     });
     it("should payout accrued yield and then burn tokens for any address when called by owner", async () => {
@@ -152,7 +152,7 @@ describe("YieldComponentToken", () => {
       const address = await nonOwner.getAddress();
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       await expect(yieldComponentToken.connect(nonOwner).mintFromFull(address, "1000000000")).to.be.revertedWith(
-        "Ownable: caller is not the owner",
+        "Caller is not the SplitVault or Owner",
       );
     });
     it("should mint yield component tokens corresponding to the underlying value of the fullToken in wads", async () => {

@@ -12,7 +12,7 @@ const CAPITAL_TOKEN_ADDRESS = "0x41B5844f4680a8C38fBb695b7F9CFd1F64474a72";
 
 use(solidity);
 
-describe("SplitVault", function () {
+describe.only("SplitVault", function () {
   describe("add function", function () {
     it("should add componentSet when called by owner", async function () {
       const SplitVault = await ethers.getContractFactory("SplitVault");
@@ -41,7 +41,7 @@ describe("SplitVault", function () {
       expect(await splitVault.getComponentSet(TOKEN_ADDRESS)).to.be.deep.equal([NULL_ADDRESS, NULL_ADDRESS]);
     });
   });
-  describe("split function", function () {
+  describe("split", function () {
     it("should revert if user attempts to split an unregistered token", async function () {
       const SplitVault = await ethers.getContractFactory("SplitVault");
       const splitVault = (await SplitVault.deploy()) as SplitVault;
@@ -54,7 +54,7 @@ describe("SplitVault", function () {
       );
     });
   });
-  describe("recombine function", function () {
+  describe("combine", function () {
     it("should revert if user attempts to recombine an unregistered token", async function () {
       const SplitVault = await ethers.getContractFactory("SplitVault");
       const splitVault = (await SplitVault.deploy()) as SplitVault;
@@ -62,12 +62,12 @@ describe("SplitVault", function () {
       await splitVault.deployed();
       const unregisteredTokenAddress = NULL_ADDRESS;
       const amount = 10;
-      await expect(splitVault.recombine(amount, unregisteredTokenAddress)).to.be.revertedWith(
+      await expect(splitVault.combine(amount, unregisteredTokenAddress)).to.be.revertedWith(
         "Attempted to recombine unsupported token",
       );
     });
   });
-  describe("payout function", function () {
+  describe("payout", function () {
     it("should revert if user attempts to call payout for an unregistered token", async function () {
       const SplitVault = await ethers.getContractFactory("SplitVault");
       const splitVault = (await SplitVault.deploy()) as SplitVault;

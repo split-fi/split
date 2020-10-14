@@ -5,6 +5,9 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+import "./CapitalComponentToken.sol";
+import "./YieldComponentToken.sol";
+
 contract SplitVault is Ownable {
   /*
    *  Storage
@@ -52,24 +55,29 @@ contract SplitVault is Ownable {
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
       revert("Attempted to split unsupported token");
     }
-    // TODO(fabio): Withdraw C-token from msg.sender to vault
-    // TODO(fabio): Mint YieldERC20 & CapitalERC20 tokens to msg.sender
+    // Take the token.
+    CapitalComponentToken(componentSet.capitalToken).burn(msg.sender, amount);
+    YieldComponentToken(componentSet.yieldToken).burn(msg.sender, amount);
+    emit Split(tokenAddress, amount);
   }
 
-  /// @dev Allows a holder of both Yield and Capital tokens to recombine them into the underlying Compound tokens
+  /// @dev Allows a holder of both Yield and Capital tokens to combine them into the underlying full tokens
   /// @param amount of tokens to recombine
   /// @param tokenAddress is the address of token to recombine
-  function recombine(uint256 amount, address tokenAddress) public {
+  function combine(uint256 amount, address tokenAddress) public {
     ComponentSet memory componentSet = tokensToComponents[tokenAddress];
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
       revert("Attempted to recombine unsupported token");
     }
-    // TODO(fabio): burn `amount` YieldERC20 & CapitalERC20 tokens
-    // TODO(fabio): Transfer `amount` tokens from vault to msg.sender
+    CapitalComponentToken(componentSet.capitalToken).burn(msg.sender, amount);
+    YieldComponentToken(componentSet.yieldToken).burn(msg.sender, amount);
+    // Payout is calculated and executed by the individual token contracts
+    emit Combine(tokenAddress, amount);
   }
 
-  /// @dev Allows the YieldERC20 token to request a payout to a specific YieldTokenHolder of their accrued tokens
+  /// @dev Allows component token implementation to send tokens in the vaul
   /// @param amount of tokens to payout
+  /// @param tokenAddress the tokens to send
   /// @param recipient address of payout recipient
   function payout(
     uint256 amount,
@@ -77,12 +85,18 @@ contract SplitVault is Ownable {
     address recipient
   ) public {
     ComponentSet memory componentSet = tokensToComponents[tokenAddress];
-    if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
-      revert("Attempted to request a payout for an unsupported token");
-    }
     if (msg.sender != componentSet.yieldToken && msg.sender != componentSet.capitalToken) {
       revert("Payout can only be called by the corresponding yield or capital token");
     }
+    if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
+      revert("Attempted to request a payout for an unsupported token");
+    }
     IERC20(tokenAddress).transfer(recipient, amount);
   }
+
+  /// @dev Emitted when component tokens are combined into a full token
+  event Combine(address indexed tokenAddress, uint256 amount);
+
+  /// @dev Emitted when full tokens are split into component tokens
+  event Split(address indexed tokenAddress, uint256 amount);
 }
