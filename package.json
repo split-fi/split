@@ -30,7 +30,8 @@
     "buidler": "buidler",
     "build": "yarn compile && buidler typechain",
     "compile": "buidler compile",
-    "deploy:local:vault": "buidler run scripts/deploy_vault.ts",
+    "deploy:vault": "buidler deploy_vault",
+    "deploy:oracle": "buidler deploy_oracle",
     "test": "buidler test",
     "prettier:fix": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:check": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts}\""
