@@ -8,3 +8,5 @@ artifacts
 
 #Typechain files
 typechain
+
+.env

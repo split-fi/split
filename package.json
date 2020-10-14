@@ -15,6 +15,7 @@
     "@types/node": "^14.11.5",
     "buidler-typechain": "^0.2.1",
     "chai": "^4.2.0",
+    "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
     "prettier": "^2.1.2",

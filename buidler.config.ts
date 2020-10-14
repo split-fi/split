@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { usePlugin, BuidlerConfig } from "@nomiclabs/buidler/config";
 
 import "./tasks";
@@ -5,7 +6,7 @@ import "./tasks";
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("buidler-typechain");
 
-const config: BuidlerConfig = {
+const config = {
   solc: {
     version: "0.6.8",
   },
@@ -13,6 +14,16 @@ const config: BuidlerConfig = {
     outDir: "typechain",
     target: "ethers-v5",
   },
+  networks: {},
 };
 
-export default config;
+const { ETH_RPC_URL_RINKEBY, PRIVATE_KEY_RINKEBY } = process.env;
+
+if (ETH_RPC_URL_RINKEBY && PRIVATE_KEY_RINKEBY) {
+  (config.networks as any).rinkeby = {
+    url: ETH_RPC_URL_RINKEBY,
+    accounts: [PRIVATE_KEY_RINKEBY],
+  };
+}
+
+export default config as BuidlerConfig;
