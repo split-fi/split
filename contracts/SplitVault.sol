@@ -55,7 +55,7 @@ contract SplitVault is Ownable {
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
       revert("Attempted to split unsupported token");
     }
-    // Take the token.
+    IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
     CapitalComponentToken(componentSet.capitalToken).burn(msg.sender, amount);
     YieldComponentToken(componentSet.yieldToken).burn(msg.sender, amount);
     emit Split(tokenAddress, amount);
@@ -85,11 +85,11 @@ contract SplitVault is Ownable {
     address recipient
   ) public {
     ComponentSet memory componentSet = tokensToComponents[tokenAddress];
-    if (msg.sender != componentSet.yieldToken && msg.sender != componentSet.capitalToken) {
-      revert("Payout can only be called by the corresponding yield or capital token");
-    }
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
       revert("Attempted to request a payout for an unsupported token");
+    }
+    if (msg.sender != componentSet.yieldToken && msg.sender != componentSet.capitalToken) {
+      revert("Payout can only be called by the corresponding yield or capital token");
     }
     IERC20(tokenAddress).transfer(recipient, amount);
   }

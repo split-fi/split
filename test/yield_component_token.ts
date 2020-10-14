@@ -9,6 +9,8 @@ import { CTokenMock } from "../typechain/CTokenMock";
 import { SplitVaultMock } from "../typechain/SplitVaultMock";
 
 import { WAD } from "./constants";
+import { ComponentTokenDependencyAddresses } from "./types";
+import { getDeployedYieldComponentToken, getYieldName, getYieldSymbol } from "./utils";
 
 use(solidity);
 
@@ -16,44 +18,11 @@ const DEFAULT_PRICE_FROM_ORACLE = BigNumber.from(WAD);
 
 const ERC20_DECIMALS = 8;
 
-interface YieldComponentTokenDependencyAddresses {
-  fullTokenAddress: string;
-  oracleAddress: string;
-  splitVaultAddress: string;
-}
-
-const getDeployedYieldComponentToken = async (
-  name: string,
-  symbol: string,
-  addresses: YieldComponentTokenDependencyAddresses,
-) => {
-  const YieldComponentTokenFactory = await ethers.getContractFactory("YieldComponentToken");
-  const yieldComponentToken = (await YieldComponentTokenFactory.deploy(
-    getYieldName(name),
-    getYieldSymbol(symbol),
-    addresses.fullTokenAddress,
-    addresses.oracleAddress,
-    addresses.splitVaultAddress,
-  )) as YieldComponentToken;
-
-  await yieldComponentToken.deployed();
-
-  return yieldComponentToken;
-};
-
-const getYieldName = (name: string) => {
-  return `${name} Yield Component`;
-};
-
-const getYieldSymbol = (symbol: string) => {
-  return `yc${symbol}`;
-};
-
 describe("YieldComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
-  let deployedAddresses: YieldComponentTokenDependencyAddresses;
+  let deployedAddresses: ComponentTokenDependencyAddresses;
 
   before(async () => {
     const PriceOracleMockFactory = await ethers.getContractFactory("PriceOracleMock");

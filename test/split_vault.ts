@@ -3,7 +3,9 @@ import { ethers } from "@nomiclabs/buidler";
 import { solidity } from "ethereum-waffle";
 
 import { SplitVault } from "../typechain/SplitVault";
+
 import { ACCOUNT_1, NULL_ADDRESS } from "./constants";
+import { ComponentTokenDependencyAddresses } from "./types";
 
 // TODO(fabio): Update these with actual values once tokens have been added to deployer
 const TOKEN_ADDRESS = "0x4a77faee9650b09849ff459ea1476eab01606c7a";
@@ -12,7 +14,7 @@ const CAPITAL_TOKEN_ADDRESS = "0x41B5844f4680a8C38fBb695b7F9CFd1F64474a72";
 
 use(solidity);
 
-describe.only("SplitVault", function () {
+describe("SplitVault", function () {
   describe("add function", function () {
     it("should add componentSet when called by owner", async function () {
       const SplitVault = await ethers.getContractFactory("SplitVault");
@@ -94,7 +96,7 @@ describe.only("SplitVault", function () {
       );
     });
   });
-  describe("getComponentSet function", function () {
+  describe("getComponentSet", function () {
     it("should return a zero-value component set for an unregistered token", async function () {
       const SplitVault = await ethers.getContractFactory("SplitVault");
       const splitVault = (await SplitVault.deploy()) as SplitVault;

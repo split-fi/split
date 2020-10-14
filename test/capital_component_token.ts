@@ -8,39 +8,18 @@ import { CTokenMock } from "../typechain/CTokenMock";
 import { SplitVaultMock } from "../typechain/SplitVaultMock";
 
 import { WAD } from "./constants";
+import { ComponentTokenDependencyAddresses } from "./types";
+import { getDeployedCapitalComponentToken } from "./utils";
 
 use(solidity);
 
 const ERC20_DECIMALS = 8;
 
-interface CapitalComponentTokenDependencyAddresses {
-  fullTokenAddress: string;
-  oracleAddress: string;
-  splitVaultAddress: string;
-}
-
-const getDeployedCapitalComponentToken = async (
-  name: string,
-  symbol: string,
-  addresses: CapitalComponentTokenDependencyAddresses,
-) => {
-  const CapitalComponentTokenFactory = await ethers.getContractFactory("CapitalComponentToken");
-  const capitalComponentToken = (await CapitalComponentTokenFactory.deploy(
-    name,
-    symbol,
-    addresses.fullTokenAddress,
-    addresses.oracleAddress,
-    addresses.splitVaultAddress,
-  )) as CapitalComponentToken;
-  await capitalComponentToken.deployed();
-  return capitalComponentToken;
-};
-
 describe("CapitalComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
-  let deployedAddresses: CapitalComponentTokenDependencyAddresses;
+  let deployedAddresses: ComponentTokenDependencyAddresses;
 
   before(async () => {
     const PriceOracleMockFactory = await ethers.getContractFactory("PriceOracleMock");
