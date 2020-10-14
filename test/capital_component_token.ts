@@ -8,39 +8,18 @@ import { CTokenMock } from "../typechain/CTokenMock";
 import { SplitVaultMock } from "../typechain/SplitVaultMock";
 
 import { WAD } from "./constants";
+import { ComponentTokenDependencyAddresses } from "./types";
+import { getDeployedCapitalComponentToken } from "./utils";
 
 use(solidity);
 
 const ERC20_DECIMALS = 8;
 
-interface CapitalComponentTokenDependencyAddresses {
-  fullTokenAddress: string;
-  oracleAddress: string;
-  splitVaultAddress: string;
-}
-
-const getDeployedCapitalComponentToken = async (
-  name: string,
-  symbol: string,
-  addresses: CapitalComponentTokenDependencyAddresses,
-) => {
-  const CapitalComponentTokenFactory = await ethers.getContractFactory("CapitalComponentToken");
-  const capitalComponentToken = (await CapitalComponentTokenFactory.deploy(
-    name,
-    symbol,
-    addresses.fullTokenAddress,
-    addresses.oracleAddress,
-    addresses.splitVaultAddress,
-  )) as CapitalComponentToken;
-  await capitalComponentToken.deployed();
-  return capitalComponentToken;
-};
-
 describe("CapitalComponentToken", () => {
   let erc20Token: CTokenMock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
-  let deployedAddresses: CapitalComponentTokenDependencyAddresses;
+  let deployedAddresses: ComponentTokenDependencyAddresses;
 
   before(async () => {
     const PriceOracleMockFactory = await ethers.getContractFactory("PriceOracleMock");
@@ -113,7 +92,7 @@ describe("CapitalComponentToken", () => {
       const address = await signers[1].getAddress();
       let capitalComponentToken = await getDeployedCapitalComponentToken("X Token", "XXX", deployedAddresses);
       await expect(capitalComponentToken.connect(nonOwner).burn(address, "1000000000")).to.be.revertedWith(
-        "Ownable: caller is not the owner",
+        "Caller is not the SplitVault or Owner",
       );
     });
     it("should burn tokens for any address when called by owner", async () => {
@@ -151,7 +130,7 @@ describe("CapitalComponentToken", () => {
       const address = await nonOwner.getAddress();
       let capitalComponentToken = await getDeployedCapitalComponentToken("X Token", "XXX", deployedAddresses);
       await expect(capitalComponentToken.connect(nonOwner).mintFromFull(address, "1000000000")).to.be.revertedWith(
-        "Ownable: caller is not the owner",
+        "Caller is not the SplitVault or Owner",
       );
     });
     it("should mint capital tokens corresponding to the underlying value of the fullToken in wads", async () => {

@@ -8,16 +8,16 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./interfaces/PriceOracle.sol";
 import "./SplitVault.sol";
+import "./VaultControlled.sol";
 import "./lib/PriceUtils.sol";
 import "./lib/DSMath.sol";
 
-contract CapitalComponentToken is ERC20, Ownable {
+contract CapitalComponentToken is ERC20, VaultControlled {
   using SafeMath for uint256;
 
   address public fullToken;
   uint8 private fullTokenDecimals;
   PriceOracle private priceOracle;
-  SplitVault private splitVault;
 
   constructor(
     string memory name,
@@ -25,7 +25,7 @@ contract CapitalComponentToken is ERC20, Ownable {
     address _fullToken,
     address priceOracleAddress,
     address splitVaultAddress
-  ) public ERC20(name, symbol) {
+  ) public ERC20(name, symbol) VaultControlled(splitVaultAddress) {
     priceOracle = PriceOracle(priceOracleAddress);
     splitVault = SplitVault(splitVaultAddress);
     fullToken = _fullToken;
@@ -36,7 +36,7 @@ contract CapitalComponentToken is ERC20, Ownable {
   /// @dev Mint new capital component tokens, but compute the amount from an amount of full tokens.
   /// @param account address of account to mint tokens to
   /// @param amountOfFull amount of full tokens to use for the calculation
-  function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
+  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner {
     uint256 price = priceOracle.getPrice(fullToken);
     uint256 componentTokenAmount = PriceUtils.fullTokenValueInWads(price, amountOfFull, fullTokenDecimals);
     _mint(account, componentTokenAmount);
@@ -52,7 +52,7 @@ contract CapitalComponentToken is ERC20, Ownable {
   /// @dev Burn tokens if the contract owner
   /// @param account address of account to burn tokens from
   /// @param amount amount of tokens to burn
-  function burn(address account, uint256 amount) public onlyOwner {
+  function burn(address account, uint256 amount) public onlyVaultOrOwner {
     _burn(account, amount);
     uint256 payoutAmount = calculatePayoutAmount(amount);
     // Call the payout function on the SplitVault contract

@@ -8,11 +8,12 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 
 import "./interfaces/PriceOracle.sol";
 import "./SplitVault.sol";
+import "./VaultControlled.sol";
 import "./lib/PriceUtils.sol";
 import "./lib/ERC20Base.sol";
 import "./lib/DSMath.sol";
 
-contract YieldComponentToken is ERC20Base, Ownable {
+contract YieldComponentToken is ERC20Base, VaultControlled {
   using SafeMath for uint256;
 
   /*
@@ -21,7 +22,6 @@ contract YieldComponentToken is ERC20Base, Ownable {
   address public fullToken;
   uint8 private fullTokenDecimals;
   PriceOracle private priceOracle;
-  SplitVault private splitVault;
 
   /// @dev The yield component token balances
   mapping(address => uint256) public balances;
@@ -34,9 +34,8 @@ contract YieldComponentToken is ERC20Base, Ownable {
     address _fullToken,
     address priceOracleAddress,
     address splitVaultAddress
-  ) public ERC20Base(name, symbol) {
+  ) public ERC20Base(name, symbol) VaultControlled(splitVaultAddress) {
     priceOracle = PriceOracle(priceOracleAddress);
-    splitVault = SplitVault(splitVaultAddress);
     fullToken = _fullToken;
     // Make sure the fullToken has implemented the decimals method before allowing init.
     fullTokenDecimals = ERC20(fullToken).decimals();
@@ -45,7 +44,7 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @dev Mint new yield component tokens, computing the amount from an amount of full tokens
   /// @param account address of account to mint tokens to
   /// @param amountOfFull amount of full tokens to use for the calculation
-  function mintFromFull(address account, uint256 amountOfFull) public onlyOwner {
+  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner {
     uint256 currPrice = priceOracle.getPrice(fullToken);
     uint256 yieldTokenAmount = PriceUtils.fullTokenValueInWads(currPrice, amountOfFull, fullTokenDecimals);
     _mint(account, yieldTokenAmount);
@@ -81,14 +80,14 @@ contract YieldComponentToken is ERC20Base, Ownable {
   /// @dev Burn tokens if the contract owner
   /// @param account address of account to burn tokens from
   /// @param amount amount of tokens to burn
-  function burn(address account, uint256 amount) public onlyOwner {
+  function burn(address account, uint256 amount) public onlyVaultOrOwner {
     require(account != address(0), "ERC20: burn from the zero address");
 
     // First payout any accrued yield
     _payoutYield(account);
 
     // Then update balances.
-    balances[account] = balances[account].sub(amount);
+    balances[account] = balances[account].sub(amount, "ERC20: burn amount exceeds balance");
 
     // Update the total supply
     _totalSupply = _totalSupply.sub(amount);
