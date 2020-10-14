@@ -165,6 +165,11 @@ describe("SplitVault", function () {
     });
   });
   describe("combine", function () {
+    afterEach(async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [owner, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      await Promise.all([erc20Token.burnAll(owner), erc20Token.burnAll(sender)]);
+    });
     it("should revert if user attempts to recombine an unregistered token", async function () {
       const { splitVault } = await getDeployedContracts(addresses);
       const unregisteredTokenAddress = NULL_ADDRESS;
@@ -173,7 +178,46 @@ describe("SplitVault", function () {
         "Attempted to recombine unsupported token",
       );
     });
-    it("should burn the amount of component tokens specified and send msg.sender the corresponding fullTokens", async () => {});
+    it("should burn the amount of component tokens specified and send msg.sender the corresponding fullTokens", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
+      const mintAmount = "100000000";
+      const splitAmount = "100000000";
+      const combineAmount = WAD;
+      erc20Token.mint(sender, mintAmount);
+      await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
+      erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
+      await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
+      expect(await erc20Token.balanceOf(sender)).to.eq("0");
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq(WAD);
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq(WAD);
+      await splitVault.connect(senderSigner).combine(combineAmount, addresses.fullTokenAddress);
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq("0");
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq("0");
+      expect(await erc20Token.balanceOf(sender)).to.eq(splitAmount);
+    });
+    it("should result in complete fullToken redemption even in the case of a price change", async () => {
+      const [ownerSigner, senderSigner] = await ethers.getSigners();
+      const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
+      const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
+      const mintAmount = "100000000";
+      const splitAmount = "100000000";
+      const combineAmount = WAD;
+      erc20Token.mint(sender, mintAmount);
+      await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
+      erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
+      await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
+      expect(await erc20Token.balanceOf(sender)).to.eq("0");
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq(WAD);
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq(WAD);
+      // 20x increase in price
+      await priceOracle.setPrice("20000000000000000000");
+      await splitVault.connect(senderSigner).combine(combineAmount, addresses.fullTokenAddress);
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq("0");
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq("0");
+      expect(await erc20Token.balanceOf(sender)).to.eq(splitAmount);
+    });
   });
   describe("payout", function () {
     it("should revert if user attempts to call payout for an unregistered token", async function () {
