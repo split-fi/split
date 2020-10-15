@@ -1,19 +1,13 @@
-import { task, usePlugin, BuidlerConfig } from "@nomiclabs/buidler/config";
+require("dotenv").config();
+import { usePlugin, BuidlerConfig } from "@nomiclabs/buidler/config";
+
+import "./tasks";
 
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("buidler-typechain");
+usePlugin("@nomiclabs/buidler-etherscan");
 
-// This is a sample Buidler task. To learn how to create your own go to
-// https://buidler.dev/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
-  const accounts = await bre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(await account.getAddress());
-  }
-});
-
-const config: BuidlerConfig = {
+const config = {
   solc: {
     version: "0.6.8",
   },
@@ -21,6 +15,21 @@ const config: BuidlerConfig = {
     outDir: "typechain",
     target: "ethers-v5",
   },
+  networks: {},
+  etherscan: {},
 };
 
-export default config;
+const { ETH_RPC_URL_RINKEBY, PRIVATE_KEY_RINKEBY, ETHERSCAN_API_KEY } = process.env;
+
+if (ETH_RPC_URL_RINKEBY && PRIVATE_KEY_RINKEBY) {
+  (config.networks as any).rinkeby = {
+    url: ETH_RPC_URL_RINKEBY,
+    accounts: [PRIVATE_KEY_RINKEBY],
+  };
+}
+
+if (ETHERSCAN_API_KEY) {
+  (config.etherscan as any).apiKey = ETHERSCAN_API_KEY;
+}
+
+export default config as BuidlerConfig;

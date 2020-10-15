@@ -7,6 +7,7 @@
   "devDependencies": {
     "@nomiclabs/buidler": "^1.4.7",
     "@nomiclabs/buidler-ethers": "^2.0.0",
+    "@nomiclabs/buidler-etherscan": "^2.1.0",
     "@nomiclabs/buidler-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^3.2.0",
     "@typechain/ethers-v5": "^1.0.0",
@@ -15,6 +16,7 @@
     "@types/node": "^14.11.5",
     "buidler-typechain": "^0.2.1",
     "chai": "^4.2.0",
+    "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
     "prettier": "^2.1.2",
@@ -27,8 +29,13 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "buidler:contracts": "buidler",
-    "build:contracts": "yarn compile:contracts && buidler typechain",
+    "clean": "buidler clean",
+    "deploy:vault": "buidler deploy_vault",
+    "deploy:oracle": "buidler deploy_oracle",
+    "deploy:components": "buidler deploy_component_tokens",
+    "add:component_set": "buidler add_component_set",
+    "verify:contract": "buidler verify",
+    "build:contracts": "buidler compile && buidler typechain",
     "compile:contracts": "buidler compile",
     "test:contracts": "buidler test",
     "prettier:fix": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",

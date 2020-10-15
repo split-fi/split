@@ -9,5 +9,6 @@ artifacts
 #Typechain files
 typechain
 
+.env
 #React + Next files
 **/.next
