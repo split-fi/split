@@ -55,12 +55,13 @@ contract SplitVault is Ownable {
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
       revert("Attempted to split unsupported token");
     }
-    IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount);
+    // Don't mint tokens if the transferFrom was not successful
+    require(IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount), "Failed to transfer tokens to SplitVault.");
     CapitalComponentToken(componentSet.capitalToken).mintFromFull(msg.sender, amount);
     YieldComponentToken(componentSet.yieldToken).mintFromFull(msg.sender, amount);
     emit Split(tokenAddress, amount);
   }
-
+  
   /// @dev Allows a holder of both Yield and Capital tokens to combine them into the underlying full tokens
   /// @param amount of tokens to recombine
   /// @param tokenAddress is the address of token to recombine
@@ -91,7 +92,8 @@ contract SplitVault is Ownable {
     if (msg.sender != componentSet.yieldToken && msg.sender != componentSet.capitalToken) {
       revert("Payout can only be called by the corresponding yield or capital token");
     }
-    IERC20(tokenAddress).transfer(recipient, amount);
+    // Revert if the transfer was not successful
+    require(IERC20(tokenAddress).transfer(recipient, amount), "Failed to transfer tokens from SplitVault.");
   }
 
   /// @dev Emitted when component tokens are combined into a full token
