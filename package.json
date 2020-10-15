@@ -7,6 +7,7 @@
   "devDependencies": {
     "@nomiclabs/buidler": "^1.4.7",
     "@nomiclabs/buidler-ethers": "^2.0.0",
+    "@nomiclabs/buidler-etherscan": "^2.1.0",
     "@nomiclabs/buidler-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^3.2.0",
     "@typechain/ethers-v5": "^1.0.0",
@@ -35,6 +36,7 @@
     "deploy:oracle": "buidler deploy_oracle",
     "deploy:components": "buidler deploy_component_tokens",
     "add:component_set": "buidler add_component_set",
+    "verify": "buidler verify",
     "test": "buidler test",
     "prettier:fix": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:check": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts}\""

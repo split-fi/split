@@ -3,22 +3,22 @@ import { Deployments } from "./types";
 export const deployments: Deployments = {
   rinkeby: {
     splitVaultAddress: "0x8e31d1F69Cd5185527517F6fAc8A43edd24C93D7",
-    priceOracleAddress: "0x7c2C195CD6D34B8F845992d380aADB2730bB9C6F",
+    priceOracleAddress: "0x9D8693092361ECCCdD30Ea2875a6054DF80D2472",
     componentSets: {
+      // cBAT
       "0xebf1a11532b93a529b5bc942b4baa98647913002": {
-        // cBAT
-        capitalComponentTokenAddress: "0x09d75570c572d9D0193CAc4D4F4213a1D3c8A5bd",
-        yieldComponentTokenAddress: "0x704bD80bDdAB309fBA02736bD898Bc6a69588C63",
+        capitalComponentTokenAddress: "0x9D89723C7FB32a881440FD29FC4341d7aF5272D0",
+        yieldComponentTokenAddress: "0x47dcc0330F6b6a5A4aD9b0Df656e61F4D1183F48",
       },
+      // cZRX
       "0x52201ff1720134bbbbb2f6bc97bf3715490ec19b": {
-        // cZRX
-        capitalComponentTokenAddress: "0x3d9Ba05f737b9e84e90a163216E586FBBD5e48Ff",
-        yieldComponentTokenAddress: "0xF835c2995680811e0681D38dbDbaf1937Da3bD6A",
+        capitalComponentTokenAddress: "0x3E4CB6cD32187264e7cE73Af51d559e0a460adAd",
+        yieldComponentTokenAddress: "0xc32F8676aE19f431dd4A3662F7e3820f6C23dBF8",
       },
-      '0xd6801a1dffcd0a410336ef88def4320d6df1883e': {
-        // cETH
-        capitalComponentTokenAddress: "0x833eb3945F25BE47Fd7E6FD13305d9F40238C467",
-        yieldComponentTokenAddress: "0xB4F9D6015D7466Ae1FCc9729dFb3E04A1FEbe199",
+      // cETH
+      "0xd6801a1dffcd0a410336ef88def4320d6df1883e": {
+        capitalComponentTokenAddress: "0x0D3ca0684A04C0dc9761eEEFEa7494c9a1492B09",
+        yieldComponentTokenAddress: "0x3176B226A9c657856624e5A0E9C638F9ce13C778",
       },
     },
   },
