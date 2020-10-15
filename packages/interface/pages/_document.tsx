@@ -1,11 +1,12 @@
+import React from 'react';
 import Document, {
     DocumentContext,
     Html,
     Head,
     Main,
     NextScript,
-  } from 'next/document';
-  import { ServerStyleSheet } from 'styled-components';
+} from 'next/document';
+import { ServerStyleSheet } from 'styled-components';
   
   // Document is only rendered in the server
   export default class MatchaDocument extends Document {
