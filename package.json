@@ -29,7 +29,7 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "buidler": "buidler",
+    "clean": "buidler clean",
     "deploy:vault": "buidler deploy_vault",
     "deploy:oracle": "buidler deploy_oracle",
     "deploy:components": "buidler deploy_component_tokens",

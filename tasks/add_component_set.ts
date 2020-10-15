@@ -1,6 +1,5 @@
 import { task } from "@nomiclabs/buidler/config";
 
-import { SplitVaultFactory } from "../typechain/SplitVaultFactory";
 import { deployments } from "../deployments";
 
 interface Args {
@@ -37,7 +36,7 @@ task("add_component_set", "adds a component set to the SplitVault")
     console.log("YieldComponentToken address used: ", yieldComponentTokenAdress);
     console.log("CapitalComponentToken address used: ", capitalComponenTokenAddress);
 
-    const SplitVaultFactory = (await bre.ethers.getContractFactory("SplitVault")) as SplitVaultFactory;
+    const SplitVaultFactory = (await bre.ethers.getContractFactory("SplitVault"));
     const splitVault = SplitVaultFactory.attach(splitVaultAddress);
 
     const txn = await splitVault.add(cTokenAddress, yieldComponentTokenAdress, capitalComponenTokenAddress);

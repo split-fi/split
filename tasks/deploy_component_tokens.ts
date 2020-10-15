@@ -1,6 +1,5 @@
 import { task } from "@nomiclabs/buidler/config";
 
-import { Erc20Factory } from "../typechain/Erc20Factory";
 import { deployments } from "../deployments";
 
 interface Args {
@@ -35,7 +34,7 @@ task("deploy_component_tokens", "deploys a pair of component tokens for a cToken
     console.log("Oracle address used: ", priceOracleAddress);
     console.log("SplitVault address used: ", splitVaultAddress);
 
-    const Erc20Factory = (await bre.ethers.getContractFactory("ERC20")) as Erc20Factory;
+    const Erc20Factory = (await bre.ethers.getContractFactory("ERC20"));
     const erc20 = Erc20Factory.attach(cTokenAddress);
     let cTokenName = name;
     let cTokenSymbol = symbol;
