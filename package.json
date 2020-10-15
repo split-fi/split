@@ -27,11 +27,15 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "buidler": "buidler",
-    "build": "yarn compile && buidler typechain",
-    "compile": "buidler compile",
-    "test": "buidler test",
+    "buidler:contracts": "buidler",
+    "build:contracts": "yarn compile:contracts && buidler typechain",
+    "compile:contracts": "buidler compile",
+    "test:contracts": "buidler test",
     "prettier:fix": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:check": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts}\""
-  }
+  },
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
 }

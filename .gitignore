@@ -8,3 +8,6 @@ artifacts
 
 #Typechain files
 typechain
+
+#React + Next files
+**/.next
