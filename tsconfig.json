@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "es5",
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
     "outDir": "dist"
   },
-  "include": ["./scripts", "./test", "./deployments"],
+  "include": ["./scripts", "./test", "./packages/**/*.tsx", "./packages/**/*.ts", "./deployments"],
   "files": [
     "./buidler.config.ts",
     "./node_modules/@nomiclabs/buidler-ethers/src/type-extensions.d.ts",
