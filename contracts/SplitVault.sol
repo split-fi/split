@@ -56,12 +56,15 @@ contract SplitVault is Ownable {
       revert("Attempted to split unsupported token");
     }
     // Don't mint tokens if the transferFrom was not successful
-    require(IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount), "Failed to transfer tokens to SplitVault.");
+    require(
+      IERC20(tokenAddress).transferFrom(msg.sender, address(this), amount),
+      "Failed to transfer tokens to SplitVault."
+    );
     CapitalComponentToken(componentSet.capitalToken).mintFromFull(msg.sender, amount);
     YieldComponentToken(componentSet.yieldToken).mintFromFull(msg.sender, amount);
     emit Split(tokenAddress, amount);
   }
-  
+
   /// @dev Allows a holder of both Yield and Capital tokens to combine them into the underlying full tokens
   /// @param amount of tokens to recombine
   /// @param tokenAddress is the address of token to recombine

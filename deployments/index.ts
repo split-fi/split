@@ -2,7 +2,7 @@ import { Deployments } from "./types";
 
 export const deployments: Deployments = {
   rinkeby: {
-    splitVaultAddress: "0x8e31d1F69Cd5185527517F6fAc8A43edd24C93D7",
+    splitVaultAddress: "0x17B9f2f7DE226eC18E77FEDB2c741d1B0D851bdA",
     priceOracleAddress: "0x9D8693092361ECCCdD30Ea2875a6054DF80D2472",
     componentSets: {
       // cBAT
@@ -17,8 +17,8 @@ export const deployments: Deployments = {
       },
       // cETH
       "0xd6801a1dffcd0a410336ef88def4320d6df1883e": {
-        capitalComponentTokenAddress: "0x0D3ca0684A04C0dc9761eEEFEa7494c9a1492B09",
-        yieldComponentTokenAddress: "0x3176B226A9c657856624e5A0E9C638F9ce13C778",
+        capitalComponentTokenAddress: "0xa75F3F8080b5957435163C5e9667A438e340F79e",
+        yieldComponentTokenAddress: "0x643290B1Ae0986b18959487739fAFf1c419c87B2",
       },
     },
   },
