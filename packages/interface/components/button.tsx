@@ -7,6 +7,7 @@ export const PrimaryButton = styled.button`
     font-weight: 700;
     padding: 12px 32px;
     color: white;
+    letter-spacing: 0.1rem;
     background-color: rgba(0,0,0,0);
     &:focus {
         outline: none;

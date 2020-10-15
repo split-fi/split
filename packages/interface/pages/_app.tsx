@@ -1,7 +1,7 @@
 import React from 'react';
 import App from 'next/app';
 import styled from 'styled-components';
-import { ThemedGlobalStyle } from '../../theme';
+import { ThemedGlobalStyle } from '../theme';
 
 const AppWrapper = styled.div`
 
