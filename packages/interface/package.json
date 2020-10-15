@@ -10,6 +10,12 @@
   "author": "me@bydavidsun.com",
   "license": "ISC",
   "dependencies": {
+    "@ethersproject/providers": "^5.0.12",
+    "@web3-react/core": "^6.1.1",
+    "@web3-react/fortmatic-connector": "^6.1.6",
+    "@web3-react/portis-connector": "^6.1.6",
+    "@web3-react/walletconnect-connector": "^6.1.6",
+    "@web3-react/walletlink-connector": "^6.1.6",
     "next": "^9.5.5",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
