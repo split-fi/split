@@ -1,12 +1,7 @@
-
-import {
-  createGlobalStyle,
-} from 'styled-components'
+import { createGlobalStyle } from "styled-components";
 
 // TODO(dave4506) at some point lift styles into theme object
-export const LIGHT_THEME = {
-
-}
+export const LIGHT_THEME = {};
 
 export const ThemedGlobalStyle = createGlobalStyle`
     @font-face {
@@ -28,4 +23,4 @@ export const ThemedGlobalStyle = createGlobalStyle`
         min-height: 100vh;
         margin: 0;
     }
-`
+`;

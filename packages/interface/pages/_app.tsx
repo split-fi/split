@@ -1,18 +1,19 @@
-import React from 'react';
-import App from 'next/app';
-import styled from 'styled-components';
-import { Web3ReactProvider } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
-import { ThemedGlobalStyle } from '../theme';
+import React from "react";
+import App from "next/app";
+import styled from "styled-components";
+import { Web3ReactProvider } from "@web3-react/core";
+import { Web3Provider } from "@ethersproject/providers";
+import { ThemedGlobalStyle } from "../theme";
+import { AppModalProvider } from "../contexts/modal";
+import { Web3ConnectionProvider } from "../contexts/web3-connection";
+import { Modals } from "../components/modals";
 
-const AppWrapper = styled.div`
-
-`;
+const AppWrapper = styled.div``;
 
 const getLibrary = (provider: any) => {
-    const library = new Web3Provider(provider);
-    library.pollingInterval = 15000;
-    return library;
+  const library = new Web3Provider(provider);
+  library.pollingInterval = 15000;
+  return library;
 };
 
 export default class SplitApp extends App {
@@ -23,13 +24,16 @@ export default class SplitApp extends App {
     const modifiedPageProps = { ...pageProps, err };
     return (
       <>
-        <ThemedGlobalStyle/>
+        <ThemedGlobalStyle />
         <AppWrapper>
+          <AppModalProvider>
             <Web3ReactProvider getLibrary={getLibrary}>
-                <Component
-                {...modifiedPageProps}
-                />
+              <Web3ConnectionProvider>
+                <Modals />
+                <Component {...modifiedPageProps} />
+              </Web3ConnectionProvider>
             </Web3ReactProvider>
+          </AppModalProvider>
         </AppWrapper>
       </>
     );
