@@ -162,12 +162,9 @@ describe("CapitalComponentToken", () => {
     ];
     calculatePayoutTests.forEach(async ([balance, currPrice, correctResult]) => {
       it(`Is correct for balance = ${balance}, currPrice = ${currPrice}`, async () => {
-        expect(
-          await capitalComponentToken["calculatePayoutAmount(uint256,uint256)"](
-            balance,
-            currPrice,
-          ),
-        ).to.eq(correctResult);
+        expect(await capitalComponentToken["calculatePayoutAmount(uint256,uint256)"](balance, currPrice)).to.eq(
+          correctResult,
+        );
       });
     });
   });

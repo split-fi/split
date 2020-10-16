@@ -67,10 +67,7 @@ contract CapitalComponentToken is ERC20, VaultControlled {
   /// @param capitalTokenAmount Amount of capital token to calculate the payout from
   /// @param currPrice The current price of the fullToken with respect to the underlying
   /// @return The payout amount denoted in fullToken
-  function calculatePayoutAmount(
-    uint256 capitalTokenAmount,
-    uint256 currPrice
-  ) public pure returns (uint256) {
+  function calculatePayoutAmount(uint256 capitalTokenAmount, uint256 currPrice) public pure returns (uint256) {
     uint256 payoutAmount = DSMath.wdiv(capitalTokenAmount, currPrice);
     return payoutAmount;
   }
