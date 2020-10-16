@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/PriceOracle.sol";
 import "./SplitVault.sol";
 import "./VaultControlled.sol";
-import "./lib/PriceUtils.sol";
 import "./lib/ERC20Base.sol";
 import "./lib/DSMath.sol";
 
