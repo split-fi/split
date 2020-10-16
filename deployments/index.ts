@@ -17,8 +17,8 @@ export const deployments: Deployments = {
       },
       // cETH
       "0xd6801a1dffcd0a410336ef88def4320d6df1883e": {
-        capitalComponentTokenAddress: "0xa75F3F8080b5957435163C5e9667A438e340F79e",
-        yieldComponentTokenAddress: "0x643290B1Ae0986b18959487739fAFf1c419c87B2",
+        capitalComponentTokenAddress: "0x75271A98EE3AA43482dF3c92ea4e4cEFFab53D8f",
+        yieldComponentTokenAddress: "0xa3C203CB85DcaD41C6eaa2572DC131Dc24db1bCa",
       },
     },
   },

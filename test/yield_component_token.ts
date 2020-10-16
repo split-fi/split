@@ -127,13 +127,12 @@ describe("YieldComponentToken", () => {
     it("should mint yield component tokens corresponding to the underlying value of the fullToken in wads", async () => {
       const signers = await ethers.getSigners();
       const address = await signers[1].getAddress();
-      // ERC20_DECIMALS decimals
       const amountOfFull = "2000000000";
       priceOracle.setPrice("12345678900000000000");
       const yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
       expect(await yieldComponentToken.balanceOf(address)).to.eq(0);
       await yieldComponentToken.mintFromFull(address, amountOfFull);
-      expect(await yieldComponentToken.balanceOf(address)).to.eq("246913578000000000000");
+      expect(await yieldComponentToken.balanceOf(address)).to.eq("24691357800");
     });
   });
   describe("transfer", async () => {
@@ -388,41 +387,30 @@ describe("YieldComponentToken", () => {
     before(async () => {
       yieldComponentToken = await getDeployedYieldComponentToken("X Token", "XXX", deployedAddresses);
     });
-    type CalculatePayoutAmountTest = [string, string, string, string, string];
+    type CalculatePayoutAmountTest = [string, string, string, string];
     const calculatePayoutTests: CalculatePayoutAmountTest[] = [
-      [WAD, WAD, WAD, "8", "0"],
-      [WAD, "1100000000000000000", WAD, "8", "9090909"],
-      ["500000000000000000", "1200000000000000000", "1100000000000000000", "8", "3787878"],
-      [WAD, "11000000000", "10000000000", "8", "909090909090909"],
-      ["1000000000000", "1100000000000000000", WAD, "8", "9"],
-      // Can't handle E-7
-      ["100000000000", "1100000000000000000", WAD, "8", "0"],
-      ["100000000000000000000000000000000000", "1100000000000000000", WAD, "8", "909090909090909090909090"],
-      [WAD, "1234599990000000000", "1234567890000000000", "8", "2106"],
-      ["0", "1100000000000000000", WAD, "8", "0"],
-      [WAD, "1100000000000000000", WAD, "20", "9090909090909090900"],
-      [WAD, "1100000000000000000", WAD, "18", "90909090909090909"],
+      [WAD, WAD, WAD, "0"],
+      [WAD, "1100000000000000000", WAD, "90909090909090909"],
+      ["500000000000000000", "1200000000000000000", "1100000000000000000", "37878787878787879"],
+      [WAD, "11000000000", "10000000000", "9090909090909090909090909"],
+      ["1000000000000", "1100000000000000000", WAD, "90909090909"],
+      ["100000000000", "1100000000000000000", WAD, "9090909091"],
+      ["100000000000000000000000000000000000", "1100000000000000000", WAD, "9090909090909090909090909090909091"],
+      [WAD, "1234599990000000000", "1234567890000000000", "21060262795409"],
+      ["0", "1100000000000000000", WAD, "0"],
+      [WAD, "1100000000000000000", WAD, "90909090909090909"],
+      [WAD, "1100000000000000000", WAD, "90909090909090909"],
     ];
-    calculatePayoutTests.forEach(async ([balance, currPrice, lastPrice, fullTokenDecimals, correctResult]) => {
-      it(`Is correct for balance = ${balance}, currPrice = ${currPrice}, lastPrice = ${lastPrice}, fullTokenDecimals = ${fullTokenDecimals}`, async () => {
+    calculatePayoutTests.forEach(async ([balance, currPrice, lastPrice, correctResult]) => {
+      it(`Is correct for balance = ${balance}, currPrice = ${currPrice}, lastPrice = ${lastPrice}`, async () => {
         expect(
-          await yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"](
-            balance,
-            currPrice,
-            lastPrice,
-            fullTokenDecimals,
-          ),
+          await yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256)"](balance, currPrice, lastPrice),
         ).to.eq(correctResult);
       });
     });
     it("Does not allow for decreasing price", async () => {
       await expect(
-        yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256,uint8)"](
-          "1000000000",
-          "1000000",
-          "100000000",
-          "8",
-        ),
+        yieldComponentToken["calculatePayoutAmount(uint256,uint256,uint256)"]("1000000000", "1000000", "100000000"),
       ).to.revertedWith("Price has decreased");
     });
   });

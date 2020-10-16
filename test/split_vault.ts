@@ -160,8 +160,8 @@ describe("SplitVault", function () {
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
       await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
-      expect(await yieldComponentToken.balanceOf(sender)).to.eq("10000000000000000000000");
-      expect(await capitalComponentToken.balanceOf(sender)).to.eq("10000000000000000000000");
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq("1000000000000");
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq("1000000000000");
     });
   });
   describe("combine", function () {
@@ -184,14 +184,14 @@ describe("SplitVault", function () {
       const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
       const mintAmount = "100000000";
       const splitAmount = "100000000";
-      const combineAmount = WAD;
+      const combineAmount = "100000000";
       erc20Token.mint(sender, mintAmount);
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
       await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
       expect(await erc20Token.balanceOf(sender)).to.eq("0");
-      expect(await yieldComponentToken.balanceOf(sender)).to.eq(WAD);
-      expect(await capitalComponentToken.balanceOf(sender)).to.eq(WAD);
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq("100000000");
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq("100000000");
       await splitVault.connect(senderSigner).combine(combineAmount, addresses.fullTokenAddress);
       expect(await yieldComponentToken.balanceOf(sender)).to.eq("0");
       expect(await capitalComponentToken.balanceOf(sender)).to.eq("0");
@@ -203,14 +203,14 @@ describe("SplitVault", function () {
       const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
       const mintAmount = "100000000";
       const splitAmount = "100000000";
-      const combineAmount = WAD;
+      const combineAmount = "100000000";
       erc20Token.mint(sender, mintAmount);
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
       await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
       expect(await erc20Token.balanceOf(sender)).to.eq("0");
-      expect(await yieldComponentToken.balanceOf(sender)).to.eq(WAD);
-      expect(await capitalComponentToken.balanceOf(sender)).to.eq(WAD);
+      expect(await yieldComponentToken.balanceOf(sender)).to.eq("100000000");
+      expect(await capitalComponentToken.balanceOf(sender)).to.eq("100000000");
       // 20x increase in price
       await priceOracle.setPrice("20000000000000000000");
       await splitVault.connect(senderSigner).combine(combineAmount, addresses.fullTokenAddress);
