@@ -113,7 +113,8 @@ export default function WalletModal() {
   const [pendingError, setPendingError] = useState<boolean>();
 
   const walletModalOpen = useModalState(AppModal.WALLET);
-  const { openModal, closeModal } = useModalStateActions(AppModal.WALLET);
+
+  const { closeModal } = useModalStateActions(AppModal.WALLET);
 
   const previousAccount = usePrevious(account);
 
@@ -293,7 +294,6 @@ export default function WalletModal() {
         />
       );
     }
-    console.log("isMounted", isMounted());
     return (
       <UpperSection>
         <CloseIcon onClick={closeModal}>x</CloseIcon>

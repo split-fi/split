@@ -7,7 +7,11 @@ import { FortmaticIcon } from "../components/icons/fortmatic";
 import { fortmatic, injected, walletconnect } from "../connectors";
 
 export const PATHS = {
+  ROOT: "/",
   APP: "app",
+  APP_SPLIT: "app/split",
+  APP_MANAGE: "app/manage",
+  APP_RECOMBINE: "app/recombine",
 };
 
 export interface WalletInfo {

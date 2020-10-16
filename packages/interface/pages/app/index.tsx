@@ -1,20 +1,14 @@
-import React from "react";
-import { Footer } from "../../components/footer";
-import { FooterFixedWrapper } from "../../components/footer/common";
-import { HeaderFixedWrapper } from "../../components/header/common";
-import { Header } from "../../components/header";
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { PATHS } from "../../constants";
 
 const AppPage: React.FC = () => {
-  return (
-    <>
-      <HeaderFixedWrapper>
-        <Header />
-      </HeaderFixedWrapper>
-      <FooterFixedWrapper>
-        <Footer />
-      </FooterFixedWrapper>
-    </>
-  );
+  const router = useRouter();
+  // TODO(dave4506) lift this logic into a proper routing logic with next.js + the constants
+  useEffect(() => {
+    router.push(PATHS.APP_SPLIT);
+  }, [router]);
+  return <></>;
 };
 
 export default React.memo(AppPage);

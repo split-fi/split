@@ -12,14 +12,11 @@ const AnimatedDialogOverlay = animated(DialogOverlay);
 const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
   &[data-reach-dialog-overlay] {
     z-index: 2;
-    background-color: transparent;
     overflow: hidden;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    background-color: ${({ theme }) => theme.modalBG};
+    background-color: rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -35,8 +32,8 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
 
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
-    background-color: ${({ theme }) => theme.bg1};
-    box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, "#000000")};
     padding: 0px;
     width: 50vw;
     overflow-y: ${({ mobile }) => (mobile ? "scroll" : "hidden")};
@@ -56,23 +53,19 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
         min-height: ${minHeight}vh;
       `}
     display: flex;
-    border-radius: 20px;
-    ${({ theme }) => theme.mediaWidth.upToMedium`
+    @media (max-width: 960px) {
       width: 65vw;
       margin: 0;
-    `}
-    ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
-      width:  85vw;
-      ${
-        mobile &&
-        css`
-          width: 100vw;
-          border-radius: 20px;
-          border-bottom-left-radius: 0;
-          border-bottom-right-radius: 0;
-        `
-      }
-    `}
+    }
+    @media (max-width: 720px) {
+      width: 85vw;
+      margin: 0;
+      // TODO patch for mobile
+      width: 100vw;
+      border-radius: 20px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
   }
 `;
 

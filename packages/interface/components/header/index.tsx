@@ -10,6 +10,8 @@ import {
   HeaderRightContentWrapper,
 } from "./common";
 import Web3Status from "../web3-status";
+import { PATHS } from "../../constants";
+import { NoStyledAnchor } from "../anchor";
 
 const StyledSplitIcon = styled(SplitIcon)`
   width: 36px;
@@ -49,11 +51,16 @@ export const Header: React.FC<HeaderProps> = ({ showTabs }) => {
   const routerProvidedParams = Array.isArray(query.actionParams) ? query.actionParams : [null];
 
   const [actionId] = routerProvidedParams as [string | null | undefined];
+  const onSplitIconClick = () => {
+    router.push(PATHS.ROOT);
+  };
 
   return (
     <HeaderContentWrapper>
       <HeaderLeftContentWrapper>
-        <StyledSplitIcon />
+        <NoStyledAnchor onClick={onSplitIconClick}>
+          <StyledSplitIcon />
+        </NoStyledAnchor>
       </HeaderLeftContentWrapper>
       {showTabs ? (
         <HeaderCenterContentWrapper>

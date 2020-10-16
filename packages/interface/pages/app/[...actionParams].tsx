@@ -4,6 +4,7 @@ import { Footer } from "../../components/footer";
 import { FooterFixedWrapper } from "../../components/footer/common";
 import { HeaderFixedWrapper } from "../../components/header/common";
 import { Header } from "../../components/header";
+import { PATHS } from "../../constants";
 
 const AppActionsPage: React.FC = () => {
   const router = useRouter();
@@ -16,7 +17,6 @@ const AppActionsPage: React.FC = () => {
 
   // TODO(dave4506) lift this logic into a proper routing logic with next.js + the constants
   useEffect(() => {
-    console.log("actionId", actionId);
     if (!actionId) {
       return;
     }
@@ -25,7 +25,7 @@ const AppActionsPage: React.FC = () => {
       return;
     }
 
-    router.push("/app");
+    router.push(PATHS.APP_SPLIT);
   }, [router, actionId]);
 
   return (
