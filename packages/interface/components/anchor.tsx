@@ -8,3 +8,9 @@ export const PrimaryAnchor = styled.a`
     outline: none;
   }
 `;
+
+export const NoStyledAnchor = styled.a`
+  &:focus {
+    outline: none;
+  }
+`;

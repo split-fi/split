@@ -28,7 +28,7 @@ const AppModalProvider: React.FC = ({ children }) => {
     if (!modalKey) {
       return;
     }
-    if (!modalStates[modalKey]) {
+    if (modalStates[modalKey] === undefined) {
       return;
     }
     const newModalStates = {

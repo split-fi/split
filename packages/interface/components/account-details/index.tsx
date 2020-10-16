@@ -19,9 +19,6 @@ const HeaderRow = styled.div`
   padding: 1rem 1rem;
   font-weight: 500;
   color: ${props => (props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit")};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
 `;
 
 const UpperSection = styled.div`
@@ -70,7 +67,6 @@ const AccountGroupingRow = styled.div`
 const AccountSection = styled.div`
   background-color: ${({ theme }) => theme.bg1};
   padding: 0rem 1rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0rem 1rem 1.5rem 1rem;`};
 `;
 
 const YourAccount = styled.div`
@@ -161,9 +157,6 @@ const IconWrapper = styled.div<{ size?: number }>`
     height: ${({ size }) => (size ? size + "px" : "32px")};
     width: ${({ size }) => (size ? size + "px" : "32px")};
   }
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    align-items: flex-end;
-  `};
 `;
 
 const TransactionListWrapper = styled.div`
@@ -363,7 +356,7 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <P color={theme.text1}>Your transactions will appear here...</P>
+          <P>Your transactions will appear here...</P>
         </LowerSection>
       )}
     </>
