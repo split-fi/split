@@ -142,7 +142,7 @@ describe("CapitalComponentToken", () => {
       let capitalComponentToken = await getDeployedCapitalComponentToken("X Token", "XXX", deployedAddresses);
       expect(await capitalComponentToken.balanceOf(address)).to.eq(0);
       await capitalComponentToken.mintFromFull(address, amountOfFull);
-      expect(await capitalComponentToken.balanceOf(address)).to.eq("246913578000000000000");
+      expect(await capitalComponentToken.balanceOf(address)).to.eq("24691357800");
     });
   });
   describe("calculatePayoutAmount", async () => {
@@ -150,22 +150,22 @@ describe("CapitalComponentToken", () => {
     before(async () => {
       capitalComponentToken = await getDeployedCapitalComponentToken("X Token", "XXX", deployedAddresses);
     });
-    type CalculatePayoutAmountTest = [string, string, string, string];
+    type CalculatePayoutAmountTest = [string, string, string];
     const calculatePayoutTests: CalculatePayoutAmountTest[] = [
-      [WAD, WAD, "8", "100000000"],
-      ["0", WAD, "8", "0"],
-      [WAD, "10000000000000", "8", "10000000000000"],
-      [WAD, WAD, "18", WAD],
-      [WAD, WAD, "20", "100000000000000000000"],
-      [WAD, "123400000000", "8", "810372771474878"],
+      ["9004454984045769687", "251227716966472905084937301", "35841805565"],
+      [WAD, WAD, "1000000000000000000"],
+      ["0", WAD, "0"],
+      [WAD, "10000000000000", "100000000000000000000000"],
+      [WAD, WAD, WAD],
+      [WAD, WAD, "1000000000000000000"],
+      [WAD, "123400000000", "8103727714748784440842788"],
     ];
-    calculatePayoutTests.forEach(async ([balance, currPrice, fullTokenDecimals, correctResult]) => {
-      it(`Is correct for balance = ${balance}, currPrice = ${currPrice}, fullTokenDecimals = ${fullTokenDecimals}`, async () => {
+    calculatePayoutTests.forEach(async ([balance, currPrice, correctResult]) => {
+      it(`Is correct for balance = ${balance}, currPrice = ${currPrice}`, async () => {
         expect(
-          await capitalComponentToken["calculatePayoutAmount(uint256,uint256,uint8)"](
+          await capitalComponentToken["calculatePayoutAmount(uint256,uint256)"](
             balance,
             currPrice,
-            fullTokenDecimals,
           ),
         ).to.eq(correctResult);
       });

@@ -9,14 +9,12 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "./interfaces/PriceOracle.sol";
 import "./SplitVault.sol";
 import "./VaultControlled.sol";
-import "./lib/PriceUtils.sol";
 import "./lib/DSMath.sol";
 
 contract CapitalComponentToken is ERC20, VaultControlled {
   using SafeMath for uint256;
 
   address public fullToken;
-  uint8 private fullTokenDecimals;
   PriceOracle private priceOracle;
 
   constructor(
@@ -29,8 +27,6 @@ contract CapitalComponentToken is ERC20, VaultControlled {
     priceOracle = PriceOracle(priceOracleAddress);
     splitVault = SplitVault(splitVaultAddress);
     fullToken = _fullToken;
-    // Make sure the fullToken has implemented the decimals method before allowing init.
-    fullTokenDecimals = ERC20(fullToken).decimals();
   }
 
   /// @dev Mint new capital component tokens, but compute the amount from an amount of full tokens.
@@ -38,7 +34,7 @@ contract CapitalComponentToken is ERC20, VaultControlled {
   /// @param amountOfFull amount of full tokens to use for the calculation
   function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner {
     uint256 price = priceOracle.getPrice(fullToken);
-    uint256 componentTokenAmount = PriceUtils.fullTokenValueInWads(price, amountOfFull, fullTokenDecimals);
+    uint256 componentTokenAmount = DSMath.wmul(amountOfFull, price);
     _mint(account, componentTokenAmount);
   }
 
@@ -64,21 +60,18 @@ contract CapitalComponentToken is ERC20, VaultControlled {
   /// @return The payout amount denoted in fullToken
   function calculatePayoutAmount(uint256 capitalTokenAmount) public view returns (uint256) {
     uint256 currPrice = priceOracle.getPrice(fullToken);
-    return calculatePayoutAmount(capitalTokenAmount, currPrice, fullTokenDecimals);
+    return calculatePayoutAmount(capitalTokenAmount, currPrice);
   }
 
   /// @dev Pure function for calculating the amount of fullToken due for a given amount of capital token
   /// @param capitalTokenAmount Amount of capital token to calculate the payout from
   /// @param currPrice The current price of the fullToken with respect to the underlying
-  /// @param tokenDecimals The decimal precision of the fullTokenn
   /// @return The payout amount denoted in fullToken
   function calculatePayoutAmount(
     uint256 capitalTokenAmount,
-    uint256 currPrice,
-    uint8 tokenDecimals
+    uint256 currPrice
   ) public pure returns (uint256) {
-    uint256 fullTokenPayoutWads = DSMath.wdiv(capitalTokenAmount, currPrice);
-    uint256 payoutAmount = PriceUtils.fromWadToDecimals(fullTokenPayoutWads, tokenDecimals);
+    uint256 payoutAmount = DSMath.wdiv(capitalTokenAmount, currPrice);
     return payoutAmount;
   }
 }
