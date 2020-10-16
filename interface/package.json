@@ -1,11 +1,12 @@
 {
-  "name": "interface",
+  "name": "split-interface",
   "version": "1.0.0",
   "description": "UI interface to interact with Split Protocol",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "echo 'No tests for interface.'"
   },
   "author": "me@bydavidsun.com",
   "license": "ISC",

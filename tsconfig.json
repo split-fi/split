@@ -1,19 +1,13 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    "target": "es5",
-    "module": "commonjs",
+    "noImplicitReturns": true,
+    "pretty": true,
+    "skipLibCheck": true,
     "strict": true,
-    "esModuleInterop": true,
-    "outDir": "dist"
+    // These settings are required for TypeScript project references
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
   },
-  "include": ["./scripts", "./test", "./deployments", "./tasks", "./packages/**/*.tsx", "./packages/**/*.ts"],
-  "exclude": ["node_modules"],
-  "files": [
-    "./buidler.config.ts",
-    "./node_modules/@nomiclabs/buidler-ethers/src/type-extensions.d.ts",
-    "./node_modules/@nomiclabs/buidler-waffle/src/type-extensions.d.ts",
-    "./node_modules/buidler-typechain/src/type-extensions.d.ts",
-    "node_modules/@nomiclabs/buidler-etherscan/src/type-extensions.d.ts"
-  ]
+  "references": [{ "path:": "./buidler" }, { "path": "./interface" }]
 }

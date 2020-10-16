@@ -1,0 +1,38 @@
+{
+  "name": "split-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "francesco@fragosti.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomiclabs/buidler": "^1.4.7",
+    "@nomiclabs/buidler-ethers": "^2.0.0",
+    "@nomiclabs/buidler-etherscan": "^2.1.0",
+    "@nomiclabs/buidler-waffle": "^2.0.0",
+    "@openzeppelin/contracts": "^3.2.0",
+    "@typechain/ethers-v5": "^1.0.0",
+    "@types/chai": "^4.2.13",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.11.5",
+    "buidler-typechain": "^0.2.1",
+    "chai": "^4.2.0",
+    "dotenv": "^8.2.0",
+    "ethereum-waffle": "^3.0.0",
+    "ethers": "^5.0.0",
+    "ts-generator": "^0.0.8",
+    "ts-node": "^9.0.0",
+    "typechain": "^2.0.1",
+    "typescript": "^4.0.3"
+  },
+  "scripts": {
+    "clean": "buidler clean",
+    "deploy:vault": "buidler deploy_vault",
+    "deploy:oracle": "buidler deploy_oracle",
+    "deploy:components": "buidler deploy_component_tokens",
+    "add:component_set": "buidler add_component_set",
+    "verify:contract": "buidler verify",
+    "build": "buidler compile && buidler typechain",
+    "compile": "buidler compile",
+    "test": "buidler test"
+  }
+}

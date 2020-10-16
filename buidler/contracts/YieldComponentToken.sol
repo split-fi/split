@@ -69,7 +69,7 @@ contract YieldComponentToken is ERC20Base, VaultControlled {
   }
 
   /// @dev Returns the amount of tokens owned by `account`.
-  function balanceOf(address account) public override view returns (uint256) {
+  function balanceOf(address account) public view override returns (uint256) {
     return balances[account];
   }
 
