@@ -38,8 +38,8 @@
     "build:contracts": "buidler compile && buidler typechain",
     "compile:contracts": "buidler compile",
     "test:contracts": "buidler test",
-    "prettier:fix": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",
-    "prettier:check": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts}\""
+    "prettier:fix": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts,tsx}\"",
+    "prettier:check": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts,tsx}\""
   },
   "private": true,
   "workspaces": [

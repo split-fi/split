@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const P = styled.p`
-    font-size: 16px;
-    color: white;
-    padding: 0;
+  font-size: 16px;
+  color: white;
+  padding: 0;
 `;
