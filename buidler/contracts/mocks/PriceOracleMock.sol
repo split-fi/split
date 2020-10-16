@@ -9,7 +9,7 @@ contract PriceOracleMock is PriceOracle {
 
   uint256 private price = 10**18;
 
-  function getPrice(address token) external override view returns (uint256) {
+  function getPrice(address token) external view override returns (uint256) {
     // make compiler happy.
     token;
     return price;
