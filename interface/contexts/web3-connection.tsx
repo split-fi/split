@@ -14,9 +14,7 @@ const Web3ConnectionContext = React.createContext<Web3ConnectionContext>({
 const Web3ConnectionProvider: React.FC = ({ children }) => {
   const { active, error } = useWeb3React();
 
-  const [triedEagerConnect, setTriedEagerConnect] = useState<
-    boolean
-  >(false);
+  const [triedEagerConnect, setTriedEagerConnect] = useState<boolean>(false);
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect();
@@ -27,8 +25,6 @@ const Web3ConnectionProvider: React.FC = ({ children }) => {
     }
   }, [triedEager]);
 
-  console.log("context", active, triedEager, triedEagerConnect);
-
   // when there's no account connected, react to logins (broadly speaking) on the injected provider, if it exists
   useInactiveListener(!triedEager);
 
@@ -37,6 +33,6 @@ const Web3ConnectionProvider: React.FC = ({ children }) => {
 
 const useWeb3Connection = () => {
   return React.useContext(Web3ConnectionContext);
-}
+};
 
 export { Web3ConnectionProvider, useWeb3Connection };

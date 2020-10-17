@@ -34,3 +34,15 @@ export const P = styled.p`
 export const PDark = styled(P)`
   color: black;
 `;
+
+export const H3Dark = styled(H3)`
+  color: black;
+`;
+
+export const Faded = styled.span`
+  color: rgba(255, 255, 255, 0.5);
+`;
+
+export const FadedDark = styled.span`
+  color: rgba(0, 0, 0, 0.5);
+`;

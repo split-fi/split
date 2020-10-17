@@ -11,7 +11,7 @@ import { WalletConnectIcon } from "../icons/wallet-connect";
 import { FortmaticIcon } from "../icons/fortmatic";
 import { SecondaryDarkButton } from "../button";
 import { ArrowRightIcon } from "../icons/arrow-right";
-import { H1, H3, P, PDark } from "../typography";
+import { H1, H3, P, PDark, Faded, FadedDark } from "../typography";
 import { useWeb3React } from "@web3-react/core";
 import { X } from "react-feather";
 
@@ -74,21 +74,10 @@ const AccountGroupingRow = styled.div`
 `;
 
 const AccountSection = styled.div`
-  background-color: ${({ theme }) => theme.bg1};
   padding: 0rem 1rem;
 `;
 
-const YourAccount = styled.div`
-  h5 {
-    margin: 0 0 1rem 0;
-    font-weight: 400;
-  }
-
-  h4 {
-    margin: 0;
-    font-weight: 500;
-  }
-`;
+const YourAccount = styled.div``;
 
 const LowerSection = styled.div`
   padding: 24px 16px;
@@ -121,6 +110,12 @@ const AccountControl = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+`;
+
+const AccountActionsWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
 `;
 
 // const AddressLink = styled(ExternalLink)<{ hasENS: boolean; isENS: boolean }>`
@@ -280,7 +275,7 @@ export default function AccountDetails({
                 {formatConnectorName()}
               </AccountGroupingRow>
               <AccountGroupingRow>
-                <div>
+                <AccountActionsWrapper>
                   {connector !== injected && connector !== walletlink && (
                     <SecondaryDarkButton
                       onClick={() => {
@@ -297,7 +292,7 @@ export default function AccountDetails({
                   >
                     Change
                   </SecondaryDarkButton>
-                </div>
+                </AccountActionsWrapper>
               </AccountGroupingRow>
               {/* <AccountGroupingRow>
                 {ENSName ? (
@@ -361,7 +356,9 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <PDark>Your transactions will appear here...</PDark>
+          <PDark>
+            <FadedDark>Your transactions will appear here...</FadedDark>
+          </PDark>
         </LowerSection>
       )}
     </>

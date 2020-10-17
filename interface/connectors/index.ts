@@ -8,7 +8,7 @@ import { FortmaticConnector } from "./Fortmatic";
 import { NetworkConnector } from "./NetworkConnector";
 
 const NETWORK_URL = process.env.NEXT_PUBLIC_NETWORK_URL;
-const FORMATIC_KEY = process.env.NEXT_APP_FORTMATIC_KEY;
+const FORMATIC_KEY = process.env.NEXT_PUBLIC_FORTMATIC_KEY;
 const PORTIS_ID = process.env.NEXT_APP_PORTIS_ID;
 
 export const NETWORK_CHAIN_ID: number = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID ?? "1");
@@ -53,7 +53,7 @@ export const portis = new PortisConnector({
 // mainnet only
 export const walletlink = new WalletLinkConnector({
   url: NETWORK_URL,
-  appName: "Uniswap",
+  appName: "Split",
   appLogoUrl:
     "https://mpng.pngfly.com/20181202/bex/kisspng-emoji-domain-unicorn-pin-badges-sticker-unicorn-tumblr-emoji-unicorn-iphoneemoji-5c046729264a77.5671679315437924251569.jpg",
 });

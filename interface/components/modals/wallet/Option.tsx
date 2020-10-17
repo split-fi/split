@@ -1,18 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 import { PrimaryAnchor } from "../../anchor";
+import { SecondaryDarkButton } from "../../button";
+import { FadedDark } from "../../typography";
 
-const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
-  padding: 1rem;
-  outline: none;
-  border: 1px solid;
-  border-radius: 12px;
+const InfoCard = styled(SecondaryDarkButton)`
+  position: relative;
   width: 100% !important;
-  &:focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
-  }
-  border-color: ${({ theme, active }) => (active ? "transparent" : theme.bg3)};
 `;
 
 const OptionCard = styled(InfoCard as any)`
@@ -73,17 +67,6 @@ const SubHeader = styled.div`
   font-size: 12px;
 `;
 
-const IconWrapper = styled.div<{ size?: number | null }>`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  & > img,
-  span {
-    height: ${({ size }) => (size ? size + "px" : "24px")};
-    width: ${({ size }) => (size ? size + "px" : "24px")};
-  }
-`;
-
 export default function Option({
   link = null,
   clickable = true,
@@ -109,22 +92,8 @@ export default function Option({
 }) {
   const content = (
     <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active}>
-      <OptionCardLeft>
-        <HeaderText color={color}>
-          {active ? (
-            <CircleWrapper>
-              <GreenCircle>
-                <div />
-              </GreenCircle>
-            </CircleWrapper>
-          ) : (
-            ""
-          )}
-          {header}
-        </HeaderText>
-        {subheader && <SubHeader>{subheader}</SubHeader>}
-      </OptionCardLeft>
-      <IconWrapper size={size}>{icon}</IconWrapper>
+      {header}
+      {active ? <FadedDark>current</FadedDark> : <></>}
     </OptionCardClickable>
   );
   if (link) {

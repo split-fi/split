@@ -28,24 +28,21 @@ export function useEagerConnect() {
 
     const attemptActivate = async () => {
       const isAuthorized = await injected.isAuthorized();
-      console.log("isAuthorized", isAuthorized);
       if (isAuthorized) {
-        console.log("activating...");
         await activate(injected, undefined, true);
-        console.log("activated???");
         setTried(true);
       } else {
-        // if (isMobile && window.ethereum) {
-        //   activate(injected, undefined, true).catch(() => {
-        //     setTried(true);
-        //   });
-        // } else {
-        //   setTried(true);
-        // }
+        if (isMobile && window.ethereum) {
+          activate(injected, undefined, true).catch(() => {
+            setTried(true);
+          });
+        } else {
+          setTried(true);
+        }
       }
     };
     attemptActivate();
-  }, [activate, isMounted]); // intentionally only running on mount (make sure it's only mounted once :))
+  }, [activate, isMounted, tried]); // intentionally only running on mount (make sure it's only mounted once :))
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
@@ -65,7 +62,7 @@ export function useInactiveListener(suppress = false) {
   const { active, error, activate } = useWeb3React(); // specifically using useWeb3React because of what this hook does
 
   useEffect(() => {
-    const { ethereum } = window;
+    const ethereum = window.ethereum;
 
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = () => {

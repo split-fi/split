@@ -6,12 +6,14 @@ export const PrimaryButton = styled.button`
   font-weight: 700;
   padding: 12px 32px;
   color: white;
-  letter-spacing: 0.1rem;
+  letter-spacing: 0.05rem;
+  font-size: 14px;
   background-color: rgba(0, 0, 0, 0);
   &:focus {
     outline: none;
   }
-  &:hover {
+  &:hover,
+  &:hover > * {
     background-color: #ffffff;
     color: #0e2991;
   }
@@ -20,11 +22,12 @@ export const PrimaryButton = styled.button`
 export const SecondaryDarkButton = styled.button`
   text-transform: uppercase;
   border: 2px rgba(0, 0, 0, 0.05) solid;
-  font-weight: 700;
+  font-weight: 900;
   padding: 12px 32px;
   color: black;
-  letter-spacing: 0.1rem;
+  letter-spacing: 0.05rem;
   background-color: rgba(0, 0, 0, 0);
+  font-size: 14px;
   &:focus {
     outline: none;
   }

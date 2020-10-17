@@ -14,6 +14,7 @@ import { PrimaryButton } from "./button";
 import { useModalStateActions } from "../contexts/modal";
 import { AppModal } from "../types/app";
 import { useWeb3Connection } from "../contexts/web3-connection";
+import { Faded } from "./typography";
 
 // import Identicon from '../Identicon'
 // import Loader from '../Loader'
@@ -30,8 +31,13 @@ const IconWrapper = styled.div<{ size?: number }>`
   }
 `;
 
+const StyledFaded = styled(Faded)`
+  font-size: 14px;
+`;
+
 const Web3StatusGeneric = styled(PrimaryButton)`
   cursor: pointer;
+  width: 220px;
 `;
 
 const Web3StatusError = styled(Web3StatusGeneric)`
@@ -44,18 +50,20 @@ const Web3StatusError = styled(Web3StatusGeneric)`
   }
 `;
 
-const Web3StatusConnect = styled(Web3StatusGeneric)``;
-
-const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
-  background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg2)};
-  border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg3)};
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
+const Web3StatusConnect = styled(Web3StatusGeneric)`
   font-weight: 500;
+`;
+
+const Web3StatusConnected = styled(Web3StatusGeneric)`
   :hover,
   :focus {
     :focus {
     }
   }
+  display: flex;
+  padding-left: 12px;
+  padding-right: 12px;
+  justify-content: space-between;
 `;
 
 const Text = styled.p`
@@ -118,7 +126,7 @@ function Web3StatusInner() {
 
   if (account) {
     return (
-      <Web3StatusConnected id="web3-status-connected" onClick={openModal} pending={false}>
+      <Web3StatusConnected id="web3-status-connected" onClick={openModal}>
         {/* {hasPendingTransactions ? (
           <RowBetween>
             <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
@@ -129,13 +137,13 @@ function Web3StatusInner() {
           </>
         )} */}
         <>{shortenAddress(account)}</>
-        {connector && <StatusIcon connector={connector} />}
+        <StyledFaded>0.05 ETH</StyledFaded>
+        {/* {connector && <StatusIcon connector={connector} />} */}
       </Web3StatusConnected>
     );
   } else if (error) {
     return (
       <Web3StatusError onClick={openModal}>
-        {/* <NetworkIcon /> */}
         <Text>{error instanceof UnsupportedChainIdError ? "Wrong Network" : "Error"}</Text>
       </Web3StatusError>
     );
@@ -146,7 +154,7 @@ function Web3StatusInner() {
       </Web3StatusConnect>
     );
   } else {
-    return <></>
+    return <></>;
   }
 }
 
