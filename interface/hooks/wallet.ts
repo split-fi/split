@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { injected } from "../connectors";
 import { useMountedState } from "react-use";
+import { useMounted } from "./useMounted";
 
 export const NetworkContextName = "NETWORK";
 
@@ -18,10 +19,10 @@ export const NetworkContextName = "NETWORK";
 export function useEagerConnect() {
   const { activate, active } = useWeb3React(); // specifically using useWeb3ReactCore because of what this hook does
   const [tried, setTried] = useState(false);
-  const isMounted = useMountedState();
+  const isMounted = useMounted();
 
   useEffect(() => {
-    if (!isMounted()) {
+    if (!isMounted) {
       return;
     }
 
@@ -34,13 +35,13 @@ export function useEagerConnect() {
         console.log("activated???");
         setTried(true);
       } else {
-        if (isMobile && window.ethereum) {
-          activate(injected, undefined, true).catch(() => {
-            setTried(true);
-          });
-        } else {
-          setTried(true);
-        }
+        // if (isMobile && window.ethereum) {
+        //   activate(injected, undefined, true).catch(() => {
+        //     setTried(true);
+        //   });
+        // } else {
+        //   setTried(true);
+        // }
       }
     };
     attemptActivate();
@@ -48,10 +49,10 @@ export function useEagerConnect() {
 
   // if the connection worked, wait until we get confirmation of that to flip the flag
   useEffect(() => {
-    if (active) {
+    if (!tried && active) {
       setTried(true);
     }
-  }, [active]);
+  }, [tried, active]);
 
   return tried;
 }

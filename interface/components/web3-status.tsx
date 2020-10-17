@@ -13,6 +13,7 @@ import { shortenAddress } from "../utils/address";
 import { PrimaryButton } from "./button";
 import { useModalStateActions } from "../contexts/modal";
 import { AppModal } from "../types/app";
+import { useWeb3Connection } from "../contexts/web3-connection";
 
 // import Identicon from '../Identicon'
 // import Loader from '../Loader'
@@ -98,6 +99,7 @@ function StatusIcon({ connector }: { connector: AbstractConnector }) {
 }
 
 function Web3StatusInner() {
+  const { triedEagerConnect } = useWeb3Connection();
   const { account, connector, error } = useWeb3React();
 
   // const { ENSName } = useENSName(account ?? undefined)
@@ -114,7 +116,6 @@ function Web3StatusInner() {
   // const hasPendingTransactions = !!pending.length
   const { openModal } = useModalStateActions(AppModal.WALLET);
 
-  console.log("connector", connector);
   if (account) {
     return (
       <Web3StatusConnected id="web3-status-connected" onClick={openModal} pending={false}>
@@ -138,17 +139,19 @@ function Web3StatusInner() {
         <Text>{error instanceof UnsupportedChainIdError ? "Wrong Network" : "Error"}</Text>
       </Web3StatusError>
     );
-  } else {
+  } else if (triedEagerConnect) {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={openModal}>
         Connect Wallet
       </Web3StatusConnect>
     );
+  } else {
+    return <></>
   }
 }
 
 export default function Web3Status() {
-  const { active, account } = useWeb3React();
+  // const { active, account } = useWeb3React();
   // const contextNetwork = useWeb3React()
 
   // const { ENSName } = useENSName(account ?? undefined)
@@ -161,13 +164,7 @@ export default function Web3Status() {
   // }, [allTransactions])
 
   // const pending = sortedRecentTransactions.filter(tx => !tx.receipt).map(tx => tx.hash)
-  // const confirmed = sortedRecentTransactions.filter(tx => tx.receipt).map(tx => tx.hash)
-
-  console.log("active", active, account);
-
-  if (!active) {
-    return null;
-  }
+  // const confirmed = sortedRecentTransactions.filter(tx => tx.receipt).map(tx => tx.hash
 
   return (
     <>
