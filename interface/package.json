@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "UI interface to interact with Split Protocol",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 4000",
     "build": "next build",
     "start": "next start",
     "test": "echo 'No tests for interface.'"
@@ -24,6 +24,7 @@
     "react": "^16.14.0",
     "react-device-detect": "^1.14.0",
     "react-dom": "^16.14.0",
+    "react-feather": "^2.0.8",
     "react-spring": "^8.0.27",
     "react-use": "^15.3.4",
     "react-use-gesture": "^7.0.16",

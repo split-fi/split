@@ -7,7 +7,6 @@ import { isMobile } from "react-device-detect";
 // import ReactGA from 'react-ga'
 import styled from "styled-components";
 import { usePrevious, useMountedState } from "react-use";
-
 import { MetaMaskIcon } from "../../icons/metamask";
 import { fortmatic, injected, portis } from "../../../connectors";
 import { OVERLAY_READY } from "../../../connectors/Fortmatic";
@@ -19,8 +18,23 @@ import Option from "./Option";
 import PendingView from "./PendingView";
 import { useModalState, useModalStateActions } from "../../../contexts/modal";
 import { AppModal } from "../../../types/app";
+import { ArrowLeft, ArrowUpLeft, X } from "react-feather";
+import { H1, H3, H3Dark, P, PDark } from "../../typography";
 
-const CloseIcon = styled.div``;
+const BackIconWrapper = styled.div`
+  cursor: pointer;
+  margin-right: 4px;
+`;
+
+const CloseIcon = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 14px;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+`;
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -30,22 +44,13 @@ const Wrapper = styled.div`
 `;
 
 const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
+  display: flex;
+  align-items: center;
   padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${props => (props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit")};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
 `;
 
 const ContentWrapper = styled.div`
-  background-color: ${({ theme }) => theme.bg2};
-  padding: 2rem;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
+  padding: 0 1rem 1rem 1rem;
 `;
 
 const UpperSection = styled.div`
@@ -68,31 +73,46 @@ const UpperSection = styled.div`
   }
 `;
 
+const StyledHeaderTitle = styled(H3)`
+  color: #0e2991;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.05rem;
+`;
+
 const Blurb = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 2rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin: 1rem;
-    font-size: 12px;
-  `};
 `;
 
 const OptionGrid = styled.div`
   display: grid;
-  grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
+  grid-gap: 1rem;
 `;
 
 const HoverText = styled.div`
   :hover {
     cursor: pointer;
   }
+`;
+
+const ErrorCard = styled.div`
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 2px rgba(0, 0, 0, 0.05) solid;
+  background-color: #d36d6d;
+`;
+
+const LargeText = styled(H1)`
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 0.05rem;
+  color: white;
+  padding-bottom: 0.5rem;
 `;
 
 const WALLET_VIEWS = {
@@ -179,11 +199,15 @@ export default function WalletModal() {
     fortmatic.on(OVERLAY_READY, () => {
       closeModal();
     });
+
+    return () => {
+      fortmatic.removeAllListeners();
+    };
   }, [closeModal]);
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
-    const isMetamask = window.ethereum && window.ethereum.isMetaMask;
+    const isMetamask = window.ethereum && (window.ethereum as any).isMetaMask;
     return Object.keys(SUPPORTED_WALLETS).map(key => {
       const option = SUPPORTED_WALLETS[key];
       // check for mobile options
@@ -193,7 +217,7 @@ export default function WalletModal() {
           return null;
         }
 
-        if (!window.web3 && !window.ethereum && option.mobile) {
+        if (!window.ethereum && option.mobile) {
           return (
             <Option
               onClick={() => {
@@ -216,7 +240,7 @@ export default function WalletModal() {
       // overwrite injected when needed
       if (option.connector === injected) {
         // don't show injected if there's no injected provider
-        if (!(window.web3 || window.ethereum)) {
+        if (!window.ethereum) {
           if (option.name === "MetaMask") {
             return (
               <Option
@@ -272,14 +296,19 @@ export default function WalletModal() {
     if (error) {
       return (
         <UpperSection>
-          <CloseIcon onClick={closeModal}>x</CloseIcon>
-          <HeaderRow>{error instanceof UnsupportedChainIdError ? "Wrong Network" : "Error connecting"}</HeaderRow>
+          <CloseIcon onClick={closeModal}>
+            <X color={"#000000"} />
+          </CloseIcon>
+          <HeaderRow></HeaderRow>
           <ContentWrapper>
-            {error instanceof UnsupportedChainIdError ? (
-              <h5>Please connect to the appropriate Ethereum network.</h5>
-            ) : (
-              "Error connecting. Try refreshing the page."
-            )}
+            <ErrorCard>
+              <LargeText>{"(✖╭╮✖)"}</LargeText>
+              <P>
+                {error instanceof UnsupportedChainIdError
+                  ? "Please connect to the appropriate Ethereum network."
+                  : "Error connecting. Try refreshing the page."}
+              </P>
+            </ErrorCard>
           </ContentWrapper>
         </UpperSection>
       );
@@ -296,23 +325,22 @@ export default function WalletModal() {
     }
     return (
       <UpperSection>
-        <CloseIcon onClick={closeModal}>x</CloseIcon>
-        {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow color="blue">
-            <HoverText
+        <CloseIcon onClick={closeModal}>
+          <X color="#000000" />
+        </CloseIcon>
+        <HeaderRow>
+          {walletView !== WALLET_VIEWS.ACCOUNT && (
+            <BackIconWrapper
               onClick={() => {
                 setPendingError(false);
                 setWalletView(WALLET_VIEWS.ACCOUNT);
               }}
             >
-              Back
-            </HoverText>
-          </HeaderRow>
-        ) : (
-          <HeaderRow>
-            <HoverText>Connect to a wallet</HoverText>
-          </HeaderRow>
-        )}
+              <ArrowLeft color="#000000" size={22} />
+            </BackIconWrapper>
+          )}
+          <StyledHeaderTitle>Connect to a wallet</StyledHeaderTitle>
+        </HeaderRow>
         <ContentWrapper>
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView

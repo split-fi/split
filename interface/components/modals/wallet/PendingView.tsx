@@ -4,30 +4,30 @@ import styled from "styled-components";
 import Option from "./Option";
 import { SUPPORTED_WALLETS } from "../../../constants";
 import { injected } from "../../../connectors";
-import { darken } from "polished";
+import { P, H1, PDark } from "../../typography";
+import { PrimaryButton } from "../../button";
 
-const PendingSection = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  & > * {
-    width: 100%;
-  }
+const StyledP = styled(PDark)<{ error?: boolean }>`
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.05rem;
+  color: ${props => (props.error ? "white" : "black")};
 `;
 
-const LoadingMessage = styled.div<{ error?: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap};
-  align-items: center;
-  justify-content: flex-start;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  color: ${({ theme, error }) => (error ? theme.red1 : "inherit")};
-  border: 1px solid ${({ theme, error }) => (error ? theme.red1 : theme.text4)};
+const LargeText = styled(H1)<{ error?: boolean }>`
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 0.05rem;
+  color: ${props => (props.error ? "white" : "rgba(0,0,0,0.2)")};
+`;
 
-  & > * {
-    padding: 1rem;
-  }
+const PendingSection = styled.div``;
+
+const LoadingMessage = styled.div<{ error?: boolean }>`
+  padding: 1rem;
+  border: 2px rgba(0, 0, 0, 0.05) solid;
+  background-color: ${props => (props.error ? "#D36D6D" : "none")};
 `;
 
 const ErrorGroup = styled.div`
@@ -45,17 +45,10 @@ const ErrorButton = styled.div`
   padding: 0.5rem;
   font-weight: 600;
   user-select: none;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${({ theme }) => darken(0.1, theme.text4)};
-  }
 `;
 
 const LoadingWrapper = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  align-items: center;
-  justify-content: center;
+  padding: 0.5rem 0 1rem 0;
 `;
 
 export default function PendingView({
@@ -69,54 +62,40 @@ export default function PendingView({
   setPendingError: (error: boolean) => void;
   tryActivation: (connector: AbstractConnector) => void;
 }) {
-  const isMetamask = window?.ethereum?.isMetaMask;
+  const isMetamask = (window?.ethereum as any).isMetaMask;
 
   return (
     <PendingSection>
       <LoadingMessage error={error}>
-        <LoadingWrapper>
-          {error ? (
-            <ErrorGroup>
-              <div>Error connecting.</div>
-              <ErrorButton
-                onClick={() => {
-                  setPendingError(false);
-                  connector && tryActivation(connector);
-                }}
-              >
-                Try Again
-              </ErrorButton>
-            </ErrorGroup>
-          ) : (
-            <>Initializing...</>
-          )}
-        </LoadingWrapper>
-      </LoadingMessage>
-      {Object.keys(SUPPORTED_WALLETS).map(key => {
-        const option = SUPPORTED_WALLETS[key];
-        if (option.connector === connector) {
-          if (option.connector === injected) {
-            if (isMetamask && option.name !== "MetaMask") {
-              return null;
+        {Object.keys(SUPPORTED_WALLETS).map(key => {
+          const option = SUPPORTED_WALLETS[key];
+          if (option.connector === connector) {
+            if (option.connector === injected) {
+              if (isMetamask && option.name !== "MetaMask") {
+                return null;
+              }
+              if (!isMetamask && option.name === "MetaMask") {
+                return null;
+              }
             }
-            if (!isMetamask && option.name === "MetaMask") {
-              return null;
-            }
+            return <StyledP error={error}>{option.name}</StyledP>;
           }
-          return (
-            <Option
-              id={`connect-${key}`}
-              key={key}
-              clickable={false}
-              color={option.color}
-              header={option.name}
-              subheader={option.description}
-              icon={option.icon}
-            />
-          );
-        }
-        return null;
-      })}
+          return null;
+        })}
+        <LoadingWrapper>
+          <LargeText error={error}>{error ? "(✖╭╮✖)" : "Initializing..."}</LargeText>
+        </LoadingWrapper>
+        {error && (
+          <PrimaryButton
+            onClick={() => {
+              setPendingError(false);
+              connector && tryActivation(connector);
+            }}
+          >
+            Try Again
+          </PrimaryButton>
+        )}
+      </LoadingMessage>
     </PendingSection>
   );
 }

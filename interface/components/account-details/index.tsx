@@ -9,16 +9,26 @@ import { getEtherscanLink } from "../../utils/etherscan";
 import { injected, walletconnect, walletlink, fortmatic, portis } from "../../connectors";
 import { WalletConnectIcon } from "../icons/wallet-connect";
 import { FortmaticIcon } from "../icons/fortmatic";
-import { PrimaryButton } from "../button";
+import { SecondaryDarkButton } from "../button";
 import { ArrowRightIcon } from "../icons/arrow-right";
-import { P } from "../typography";
+import { H1, H3, P, PDark, Faded, FadedDark } from "../typography";
 import { useWeb3React } from "@web3-react/core";
+import { X } from "react-feather";
 
 const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${props => (props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit")};
+`;
+
+const StyledHeaderTitle = styled(H3)`
+  color: #0e2991;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.05rem;
+`;
+
+const DisplayAddress = styled(H1)`
+  color: black;
 `;
 
 const UpperSection = styled.div`
@@ -43,8 +53,7 @@ const UpperSection = styled.div`
 
 const InfoCard = styled.div`
   padding: 1rem;
-  border: 1px solid ${({ theme }) => theme.bg3};
-  border-radius: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.05);
   position: relative;
   display: grid;
   grid-row-gap: 12px;
@@ -65,31 +74,15 @@ const AccountGroupingRow = styled.div`
 `;
 
 const AccountSection = styled.div`
-  background-color: ${({ theme }) => theme.bg1};
   padding: 0rem 1rem;
 `;
 
-const YourAccount = styled.div`
-  h5 {
-    margin: 0 0 1rem 0;
-    font-weight: 400;
-  }
-
-  h4 {
-    margin: 0;
-    font-weight: 500;
-  }
-`;
+const YourAccount = styled.div``;
 
 const LowerSection = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  padding: 1.5rem;
-  flex-grow: 1;
+  padding: 24px 16px;
   overflow: auto;
-  background-color: ${({ theme }) => theme.bg2};
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-
+  background-color: rgba(0, 0, 0, 0.05);
   h5 {
     margin: 0;
     font-weight: 400;
@@ -119,6 +112,12 @@ const AccountControl = styled.div`
   }
 `;
 
+const AccountActionsWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+`;
+
 // const AddressLink = styled(ExternalLink)<{ hasENS: boolean; isENS: boolean }>`
 //   font-size: 0.825rem;
 //   color: ${({ theme }) => theme.text3};
@@ -142,9 +141,9 @@ const CloseIcon = styled.div`
 
 const WalletName = styled.div`
   width: initial;
-  font-size: 0.825rem;
+  font-size: 14px;
   font-weight: 500;
-  color: ${({ theme }) => theme.text3};
+  color: #000000;
 `;
 
 const IconWrapper = styled.div<{ size?: number }>`
@@ -209,7 +208,7 @@ export default function AccountDetails({
 
   function formatConnectorName() {
     const { ethereum } = window;
-    const isMetaMask = !!(ethereum && ethereum.isMetaMask);
+    const isMetaMask = !!(ethereum && (ethereum as any).isMetaMask);
     const name = Object.keys(SUPPORTED_WALLETS)
       .filter(
         k =>
@@ -247,34 +246,15 @@ export default function AccountDetails({
   return (
     <>
       <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>x</CloseIcon>
-        <HeaderRow>Account</HeaderRow>
+        <CloseIcon onClick={toggleWalletModal}>
+          <X color={"#000000"} />
+        </CloseIcon>
+        <HeaderRow>
+          <StyledHeaderTitle>Account</StyledHeaderTitle>
+        </HeaderRow>
         <AccountSection>
           <YourAccount>
             <InfoCard>
-              <AccountGroupingRow>
-                {formatConnectorName()}
-                <div>
-                  {connector !== injected && connector !== walletlink && (
-                    <PrimaryButton
-                      style={{ fontSize: ".825rem", fontWeight: 400, marginRight: "8px" }}
-                      onClick={() => {
-                        (connector as any).close();
-                      }}
-                    >
-                      Disconnect
-                    </PrimaryButton>
-                  )}
-                  <PrimaryButton
-                    style={{ fontSize: ".825rem", fontWeight: 400 }}
-                    onClick={() => {
-                      openOptions();
-                    }}
-                  >
-                    Change
-                  </PrimaryButton>
-                </div>
-              </AccountGroupingRow>
               <AccountGroupingRow id="web3-account-identifier-row">
                 <AccountControl>
                   {ENSName ? (
@@ -287,19 +267,39 @@ export default function AccountDetails({
                   ) : (
                     <>
                       <div>
-                        {getStatusIcon()}
-                        <p> {account && shortenAddress(account)}</p>
+                        <DisplayAddress> {account && shortenAddress(account)}</DisplayAddress>
                       </div>
                     </>
                   )}
                 </AccountControl>
+                {formatConnectorName()}
               </AccountGroupingRow>
               <AccountGroupingRow>
+                <AccountActionsWrapper>
+                  {connector !== injected && connector !== walletlink && (
+                    <SecondaryDarkButton
+                      onClick={() => {
+                        (connector as any).close();
+                      }}
+                    >
+                      Disconnect
+                    </SecondaryDarkButton>
+                  )}
+                  <SecondaryDarkButton
+                    onClick={() => {
+                      openOptions();
+                    }}
+                  >
+                    Change
+                  </SecondaryDarkButton>
+                </AccountActionsWrapper>
+              </AccountGroupingRow>
+              {/* <AccountGroupingRow>
                 {ENSName ? (
                   <>
                     <AccountControl>
                       <div>
-                        {/* {account && (
+                        {account && (
                           <Copy toCopy={account}>
                             <span style={{ marginLeft: '4px' }}>Copy Address</span>
                           </Copy>
@@ -313,7 +313,7 @@ export default function AccountDetails({
                             <LinkIcon size={16} />
                             <span style={{ marginLeft: '4px' }}>View on Etherscan</span>
                           </AddressLink>
-                        )} */}
+                        )}
                       </div>
                     </AccountControl>
                   </>
@@ -321,7 +321,7 @@ export default function AccountDetails({
                   <>
                     <AccountControl>
                       <div>
-                        {/* {account && (
+                        {account && (
                           <Copy toCopy={account}>
                             <span style={{ marginLeft: '4px' }}>Copy Address</span>
                           </Copy>
@@ -335,12 +335,12 @@ export default function AccountDetails({
                             <LinkIcon size={16} />
                             <span style={{ marginLeft: '4px' }}>View on Etherscan</span>
                           </AddressLink>
-                        )} */}
+                        )}
                       </div>
                     </AccountControl>
                   </>
                 )}
-              </AccountGroupingRow>
+                        </AccountGroupingRow> */}
             </InfoCard>
           </YourAccount>
         </AccountSection>
@@ -356,7 +356,9 @@ export default function AccountDetails({
         </LowerSection>
       ) : (
         <LowerSection>
-          <P>Your transactions will appear here...</P>
+          <PDark>
+            <FadedDark>Your transactions will appear here...</FadedDark>
+          </PDark>
         </LowerSection>
       )}
     </>

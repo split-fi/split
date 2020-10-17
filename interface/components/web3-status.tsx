@@ -13,6 +13,8 @@ import { shortenAddress } from "../utils/address";
 import { PrimaryButton } from "./button";
 import { useModalStateActions } from "../contexts/modal";
 import { AppModal } from "../types/app";
+import { useWeb3Connection } from "../contexts/web3-connection";
+import { Faded } from "./typography";
 
 // import Identicon from '../Identicon'
 // import Loader from '../Loader'
@@ -29,8 +31,13 @@ const IconWrapper = styled.div<{ size?: number }>`
   }
 `;
 
+const StyledFaded = styled(Faded)`
+  font-size: 14px;
+`;
+
 const Web3StatusGeneric = styled(PrimaryButton)`
   cursor: pointer;
+  width: 220px;
 `;
 
 const Web3StatusError = styled(Web3StatusGeneric)`
@@ -43,18 +50,20 @@ const Web3StatusError = styled(Web3StatusGeneric)`
   }
 `;
 
-const Web3StatusConnect = styled(Web3StatusGeneric)``;
-
-const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
-  background-color: ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg2)};
-  border: 1px solid ${({ pending, theme }) => (pending ? theme.primary1 : theme.bg3)};
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
+const Web3StatusConnect = styled(Web3StatusGeneric)`
   font-weight: 500;
+`;
+
+const Web3StatusConnected = styled(Web3StatusGeneric)`
   :hover,
   :focus {
     :focus {
     }
   }
+  display: flex;
+  padding-left: 12px;
+  padding-right: 12px;
+  justify-content: space-between;
 `;
 
 const Text = styled.p`
@@ -98,6 +107,7 @@ function StatusIcon({ connector }: { connector: AbstractConnector }) {
 }
 
 function Web3StatusInner() {
+  const { triedEagerConnect } = useWeb3Connection();
   const { account, connector, error } = useWeb3React();
 
   // const { ENSName } = useENSName(account ?? undefined)
@@ -114,10 +124,9 @@ function Web3StatusInner() {
   // const hasPendingTransactions = !!pending.length
   const { openModal } = useModalStateActions(AppModal.WALLET);
 
-  console.log("connector", connector);
   if (account) {
     return (
-      <Web3StatusConnected id="web3-status-connected" onClick={openModal} pending={false}>
+      <Web3StatusConnected id="web3-status-connected" onClick={openModal}>
         {/* {hasPendingTransactions ? (
           <RowBetween>
             <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
@@ -128,27 +137,29 @@ function Web3StatusInner() {
           </>
         )} */}
         <>{shortenAddress(account)}</>
-        {connector && <StatusIcon connector={connector} />}
+        <StyledFaded>0.05 ETH</StyledFaded>
+        {/* {connector && <StatusIcon connector={connector} />} */}
       </Web3StatusConnected>
     );
   } else if (error) {
     return (
       <Web3StatusError onClick={openModal}>
-        {/* <NetworkIcon /> */}
         <Text>{error instanceof UnsupportedChainIdError ? "Wrong Network" : "Error"}</Text>
       </Web3StatusError>
     );
-  } else {
+  } else if (triedEagerConnect) {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={openModal}>
         Connect Wallet
       </Web3StatusConnect>
     );
+  } else {
+    return <></>;
   }
 }
 
 export default function Web3Status() {
-  const { active, account } = useWeb3React();
+  // const { active, account } = useWeb3React();
   // const contextNetwork = useWeb3React()
 
   // const { ENSName } = useENSName(account ?? undefined)
@@ -161,13 +172,7 @@ export default function Web3Status() {
   // }, [allTransactions])
 
   // const pending = sortedRecentTransactions.filter(tx => !tx.receipt).map(tx => tx.hash)
-  // const confirmed = sortedRecentTransactions.filter(tx => tx.receipt).map(tx => tx.hash)
-
-  console.log("active", active, account);
-
-  if (!active) {
-    return null;
-  }
+  // const confirmed = sortedRecentTransactions.filter(tx => tx.receipt).map(tx => tx.hash
 
   return (
     <>
