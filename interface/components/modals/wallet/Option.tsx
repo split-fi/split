@@ -82,9 +82,6 @@ const IconWrapper = styled.div<{ size?: number | null }>`
     height: ${({ size }) => (size ? size + "px" : "24px")};
     width: ${({ size }) => (size ? size + "px" : "24px")};
   }
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    align-items: flex-end;
-  `};
 `;
 
 export default function Option({

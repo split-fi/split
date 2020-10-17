@@ -19,8 +19,18 @@ import Option from "./Option";
 import PendingView from "./PendingView";
 import { useModalState, useModalStateActions } from "../../../contexts/modal";
 import { AppModal } from "../../../types/app";
+import { X } from "react-feather";
+import { PDark } from "../../typography";
 
-const CloseIcon = styled.div``;
+const CloseIcon = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 14px;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+`;
 
 const Wrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -30,13 +40,7 @@ const Wrapper = styled.div`
 `;
 
 const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${props => (props.color === "blue" ? ({ theme }) => theme.primary1 : "inherit")};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
 `;
 
 const ContentWrapper = styled.div`
@@ -44,8 +48,6 @@ const ContentWrapper = styled.div`
   padding: 2rem;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
 `;
 
 const UpperSection = styled.div`
@@ -74,19 +76,11 @@ const Blurb = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 2rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin: 1rem;
-    font-size: 12px;
-  `};
 `;
 
 const OptionGrid = styled.div`
   display: grid;
-  grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
+  grid-gap: 10px; ;
 `;
 
 const HoverText = styled.div`
@@ -183,7 +177,7 @@ export default function WalletModal() {
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
-    const isMetamask = window.ethereum && window.ethereum.isMetaMask;
+    const isMetamask = window.ethereum && (window.ethereum as any).isMetaMask;
     return Object.keys(SUPPORTED_WALLETS).map(key => {
       const option = SUPPORTED_WALLETS[key];
       // check for mobile options
@@ -193,7 +187,7 @@ export default function WalletModal() {
           return null;
         }
 
-        if (!window.web3 && !window.ethereum && option.mobile) {
+        if (!window.ethereum && option.mobile) {
           return (
             <Option
               onClick={() => {
@@ -216,7 +210,7 @@ export default function WalletModal() {
       // overwrite injected when needed
       if (option.connector === injected) {
         // don't show injected if there's no injected provider
-        if (!(window.web3 || window.ethereum)) {
+        if (!window.ethereum) {
           if (option.name === "MetaMask") {
             return (
               <Option
@@ -269,11 +263,15 @@ export default function WalletModal() {
 
   function getModalContent() {
     const isMounted = useMountedState();
-    if (error) {
+    if (true) {
       return (
         <UpperSection>
-          <CloseIcon onClick={closeModal}>x</CloseIcon>
-          <HeaderRow>{error instanceof UnsupportedChainIdError ? "Wrong Network" : "Error connecting"}</HeaderRow>
+          <CloseIcon onClick={closeModal}>
+            <X color={"#000000"} />
+          </CloseIcon>
+          <HeaderRow>
+            <PDark>{error instanceof UnsupportedChainIdError ? "Wrong Network" : "Error connecting"}</PDark>
+          </HeaderRow>
           <ContentWrapper>
             {error instanceof UnsupportedChainIdError ? (
               <h5>Please connect to the appropriate Ethereum network.</h5>
