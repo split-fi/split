@@ -8,6 +8,6 @@ export enum AppModal {
 
 export enum AppAction {
   SPLIT = "SPLIT",
-  RECOMBINE = "RECOMBINE",
+  COMBINE = "COMBINE",
   MANAGE = "MANAGE",
 }
