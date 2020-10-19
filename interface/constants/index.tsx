@@ -86,3 +86,6 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     mobile: true,
   },
 };
+
+export const NETWORK_URL = process.env.NEXT_PUBLIC_NETWORK_URL || "";
+export const CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID ?? "1") || 1;

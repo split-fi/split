@@ -7,6 +7,11 @@ import { ThemedGlobalStyle } from "../theme";
 import { AppModalProvider } from "../contexts/modal";
 import { Web3ConnectionProvider } from "../contexts/web3-connection";
 import { Modals } from "../components/modals";
+import { ChainWatcherProvider } from "../contexts/chain-watcher";
+import { AssetBalancesProvider } from "../contexts/asset-balances";
+import { SplitProtocolAddressesProvider } from "../contexts/split-addresses";
+import { TokensProvider } from "../contexts/tokens";
+import { AssetAllowancesProvider } from "../contexts/asset-allowances";
 
 const AppWrapper = styled.div``;
 
@@ -29,8 +34,18 @@ export default class SplitApp extends App {
           <AppModalProvider>
             <Web3ReactProvider getLibrary={getLibrary}>
               <Web3ConnectionProvider>
-                <Modals />
-                <Component {...modifiedPageProps} />
+                <ChainWatcherProvider>
+                  <SplitProtocolAddressesProvider>
+                    <TokensProvider>
+                      <AssetBalancesProvider>
+                        <AssetAllowancesProvider>
+                          <Modals />
+                          <Component {...modifiedPageProps} />
+                        </AssetAllowancesProvider>
+                      </AssetBalancesProvider>
+                    </TokensProvider>
+                  </SplitProtocolAddressesProvider>
+                </ChainWatcherProvider>
               </Web3ConnectionProvider>
             </Web3ReactProvider>
           </AppModalProvider>
