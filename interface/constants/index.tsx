@@ -11,7 +11,7 @@ export const PATHS = {
   APP: "app",
   APP_SPLIT: "app/split",
   APP_MANAGE: "app/manage",
-  APP_RECOMBINE: "app/recombine",
+  APP_COMBINE: "app/combine",
 };
 
 export interface WalletInfo {

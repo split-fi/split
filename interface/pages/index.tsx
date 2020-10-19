@@ -7,12 +7,8 @@ import { HeroHeader } from "../components/header/hero";
 const IndexPage: React.FC = () => {
   return (
     <>
-      <HeaderFixedWrapper>
-        <HeroHeader />
-      </HeaderFixedWrapper>
-      <FooterFixedWrapper>
-        <Footer />
-      </FooterFixedWrapper>
+      <HeroHeader />
+      <Footer />
     </>
   );
 };
