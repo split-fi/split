@@ -1,5 +1,9 @@
 Arguments: 
+<<<<<<< HEAD
   /Users/francescoagosti/.nvm/versions/node/v12.18.2/bin/node /usr/local/Cellar/yarn/1.22.5/libexec/bin/yarn.js add split-contracts
+=======
+  /Users/davidsun/.nvm/versions/node/v10.15.3/bin/node /usr/local/Cellar/yarn/1.22.5/libexec/bin/yarn.js add useImmer
+>>>>>>> 4a4cb99... ADD plenty of contexts
 
 PATH: 
   /Users/francescoagosti/.nvm/versions/node/v12.18.2/bin:/Users/francescoagosti/bin:/usr/local/bin:/Users/francescoagosti/go/bin:/Users/francescoagosti/google-cloud-sdk/bin:/Users/francescoagosti/.cargo/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin
@@ -14,7 +18,11 @@ Platform:
   darwin x64
 
 Trace: 
+<<<<<<< HEAD
   Error: https://registry.yarnpkg.com/split-contracts: Not found
+=======
+  Error: https://registry.yarnpkg.com/useImmer: Not found
+>>>>>>> 4a4cb99... ADD plenty of contexts
       at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.22.5/libexec/lib/cli.js:66988:18)
       at Request.self.callback (/usr/local/Cellar/yarn/1.22.5/libexec/lib/cli.js:140749:22)
       at Request.emit (events.js:315:20)
@@ -40,6 +48,10 @@ npm manifest:
     "author": "me@bydavidsun.com",
     "license": "ISC",
     "dependencies": {
+<<<<<<< HEAD
+=======
+      "@ethersproject/providers": "^5.0.12",
+>>>>>>> 4a4cb99... ADD plenty of contexts
       "@reach/dialog": "^0.11.2",
       "@web3-react/core": "^6.1.1",
       "@web3-react/fortmatic-connector": "^6.1.6",
@@ -1461,7 +1473,11 @@ Lockfile:
       bech32 "1.1.4"
       ws "7.2.3"
   
+<<<<<<< HEAD
   "@ethersproject/providers@5.0.12":
+=======
+  "@ethersproject/providers@5.0.12", "@ethersproject/providers@^5.0.12":
+>>>>>>> 4a4cb99... ADD plenty of contexts
     version "5.0.12"
     resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.0.12.tgz#de05e865e130709ea1e0870511eb892bda7d41cb"
     integrity sha512-bRUEVNth+wGlm2Q0cQprVlixBWumfP9anrgAc3V2CbIh+GKvCwisVO8uRLrZOfOvTNSy6PUJi/Z4D5L+k3NAog==

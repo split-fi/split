@@ -7,6 +7,8 @@ import { ThemedGlobalStyle } from "../theme";
 import { AppModalProvider } from "../contexts/modal";
 import { Web3ConnectionProvider } from "../contexts/web3-connection";
 import { Modals } from "../components/modals";
+import { ChainWatcherProvider } from "../contexts/chain-watcher";
+import { AssetBalancesProvider } from "../contexts/asset-balances";
 
 const AppWrapper = styled.div``;
 
@@ -29,8 +31,12 @@ export default class SplitApp extends App {
           <AppModalProvider>
             <Web3ReactProvider getLibrary={getLibrary}>
               <Web3ConnectionProvider>
-                <Modals />
-                <Component {...modifiedPageProps} />
+                <ChainWatcherProvider>
+                  <AssetBalancesProvider>
+                    <Modals />
+                    <Component {...modifiedPageProps} />
+                  </AssetBalancesProvider>
+                </ChainWatcherProvider>
               </Web3ConnectionProvider>
             </Web3ReactProvider>
           </AppModalProvider>
