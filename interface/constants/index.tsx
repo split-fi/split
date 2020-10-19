@@ -14,6 +14,12 @@ export const PATHS = {
   APP_COMBINE: "app/combine",
 };
 
+// Only for deployed contracts.
+export const CHAIN_ID_NAME = {
+  1: "mainnet",
+  4: "rinkeby",
+};
+
 export interface WalletInfo {
   connector?: AbstractConnector;
   name: string;

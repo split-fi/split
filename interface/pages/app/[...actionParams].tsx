@@ -45,9 +45,7 @@ const AppActionsPage: React.FC = () => {
   return (
     <>
       <Header showTabs={true} />
-      <LayoutContainer>
-        <Split />
-      </LayoutContainer>
+      <LayoutContainer>{content}</LayoutContainer>
       <Footer />
     </>
   );

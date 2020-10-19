@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
+
+import { ChainId } from "../../types/ethereum";
 import { PrimaryButton } from "../button";
+import { getEtherscanLink } from "../../utils/etherscan";
+import { useSplitVault } from "../../hooks/useSplitVault";
 
 const SplitButton = styled(PrimaryButton)`
   cursor: pointer;
@@ -9,5 +13,24 @@ const SplitButton = styled(PrimaryButton)`
 export interface SplitProps {}
 
 export const Split: React.FC<SplitProps> = () => {
-  return <SplitButton onClick={console.log}>Split</SplitButton>;
+  const { splitVault, active, error } = useSplitVault();
+  const [txHash, setTxHash] = useState<string>("");
+
+  const rinkebyCETH = "0xd6801a1dffcd0a410336ef88def4320d6df1883e";
+  const onSplitClick = useCallback(async () => {
+    const tx = await splitVault.split("4040020000", rinkebyCETH);
+    setTxHash(tx.hash);
+  }, [splitVault]);
+
+  if (!active || error) {
+    // TODO(fragosti): how do we deal with these.
+    return <div>An error occured</div>;
+  }
+
+  return (
+    <div>
+      {txHash && getEtherscanLink(ChainId.Rinkeby, txHash, "transaction")}
+      <SplitButton onClick={onSplitClick}>Split</SplitButton>
+    </div>
+  );
 };
