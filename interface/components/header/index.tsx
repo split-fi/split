@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import { PrimaryButton } from "../button";
-import { SplitIcon } from "../icons/split-icon";
+import { LogoSmall } from "../icons/logo";
 import {
   HeaderContentWrapper,
   HeaderLeftContentWrapper,
@@ -12,11 +12,6 @@ import {
 import Web3Status from "../web3-status";
 import { PATHS } from "../../constants";
 import { NoStyledAnchor } from "../anchor";
-
-const StyledSplitIcon = styled(SplitIcon)`
-  width: 36px;
-  height: 36px;
-`;
 
 interface HeaderProps {
   showTabs?: boolean;
@@ -43,6 +38,10 @@ const TabButton = styled.button<TabButtonProps>`
   }
 `;
 
+const LogoWrapper = styled.div`
+  cursor: pointer;
+`;
+
 export const Header: React.FC<HeaderProps> = ({ showTabs }) => {
   const router = useRouter();
 
@@ -59,7 +58,9 @@ export const Header: React.FC<HeaderProps> = ({ showTabs }) => {
     <HeaderContentWrapper>
       <HeaderLeftContentWrapper>
         <NoStyledAnchor onClick={onSplitIconClick}>
-          <StyledSplitIcon />
+          <LogoWrapper>
+            <LogoSmall />
+          </LogoWrapper>
         </NoStyledAnchor>
       </HeaderLeftContentWrapper>
       {showTabs ? (

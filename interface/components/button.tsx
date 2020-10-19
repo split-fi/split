@@ -4,6 +4,7 @@ export const PrimaryButton = styled.button`
   text-transform: uppercase;
   border: 2px white solid;
   font-weight: 700;
+  cursor: pointer;
   padding: 12px 32px;
   color: white;
   letter-spacing: 0.05rem;

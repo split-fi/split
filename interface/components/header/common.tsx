@@ -12,7 +12,7 @@ export const HeaderContentWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   height: ${HEADER_HEIGHT}px;
-  padding: 0 24px;
+  padding: 0 30px;
   width: 100%;
   position: relative;
 `;
