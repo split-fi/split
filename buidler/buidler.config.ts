@@ -19,7 +19,13 @@ const config = {
   etherscan: {},
 };
 
-const { ETH_RPC_URL_RINKEBY, PRIVATE_KEY_RINKEBY, ETHERSCAN_API_KEY, PRIVATE_KEY_MAINNET, ETH_RPC_URL_MAINNET } = process.env;
+const {
+  ETH_RPC_URL_RINKEBY,
+  PRIVATE_KEY_RINKEBY,
+  ETHERSCAN_API_KEY,
+  PRIVATE_KEY_MAINNET,
+  ETH_RPC_URL_MAINNET,
+} = process.env;
 
 if (ETH_RPC_URL_RINKEBY && PRIVATE_KEY_RINKEBY) {
   (config.networks as any).rinkeby = {

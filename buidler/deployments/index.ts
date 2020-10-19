@@ -2,8 +2,8 @@ import { Deployments } from "./types";
 
 export const deployments: Deployments = {
   mainnet: {
-    splitVaultAddress: '0x8e31d1F69Cd5185527517F6fAc8A43edd24C93D7',
-    priceOracleAddress: '0x09d75570c572d9D0193CAc4D4F4213a1D3c8A5bd',
+    splitVaultAddress: "0x8e31d1F69Cd5185527517F6fAc8A43edd24C93D7",
+    priceOracleAddress: "0x09d75570c572d9D0193CAc4D4F4213a1D3c8A5bd",
     componentSets: {
       "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5": {
         capitalComponentTokenAddress: "0x704bD80bDdAB309fBA02736bD898Bc6a69588C63",
