@@ -5,6 +5,7 @@ import { useChainWatcher } from "./chain-watcher";
 import { useImmer } from "use-immer";
 import { useTokenContracts } from "../hooks/contracts";
 import { useTokens } from "./tokens";
+import { useSplitProtocolAddresses } from "./split-addresses";
 
 export interface AssetAllowancesProviderState {
   [tokenAddress: string]: BigNumber | undefined | null;
@@ -19,6 +20,7 @@ const AssetAllowancesContext = React.createContext<AssetAllowancesProviderState>
 const AssetAllowancesProvider: React.FC = ({ children }) => {
   const { account, chainId, library } = useWeb3React();
   const { blockNumber } = useChainWatcher();
+  const protocolAddresses = useSplitProtocolAddresses();
   const tokens = useTokens();
   const tokenAddresses = useMemo(() => tokens.map(t => t.tokenAddress), [tokens]);
   const tokenContracts = useTokenContracts(tokenAddresses);
@@ -30,7 +32,7 @@ const AssetAllowancesProvider: React.FC = ({ children }) => {
     }
     for (let tokenContract of tokenContracts) {
       tokenContract
-        .allowance(account, "")
+        .allowance(account, protocolAddresses.splitVaultAddress) // TODO is this correct?
         .then(bal => {
           setAssetAllowances(draft => ({
             ...draft,
