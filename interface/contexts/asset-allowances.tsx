@@ -4,6 +4,7 @@ import { BigNumber } from "ethers";
 import { useChainWatcher } from "./chain-watcher";
 import { useImmer } from "use-immer";
 import { useTokenContracts } from "../hooks/contracts";
+import { useTokens } from "./tokens";
 
 export interface AssetAllowancesProviderState {
   [tokenAddress: string]: BigNumber | undefined | null;
@@ -18,8 +19,8 @@ const AssetAllowancesContext = React.createContext<AssetAllowancesProviderState>
 const AssetAllowancesProvider: React.FC = ({ children }) => {
   const { account, chainId, library } = useWeb3React();
   const { blockNumber } = useChainWatcher();
-  // TODO(dave4506) (create a context for all tokenAddresses to watch)
-  const tokenAddresses = [];
+  const tokens = useTokens();
+  const tokenAddresses = useMemo(() => tokens.map(t => t.tokenAddress), [tokens]);
   const tokenContracts = useTokenContracts(tokenAddresses);
   const [assetAllowances, setAssetAllowances] = useImmer<AssetAllowancesProviderState>(initialState);
 
