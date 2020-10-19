@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({ showTabs }) => {
         <HeaderCenterContentWrapper>
           <TabButton isActive={actionId === "split"}>Split</TabButton>
           <TabButton isActive={actionId === "manage"}>Manage</TabButton>
-          <TabButton isActive={actionId === "recombine"}>Recombine</TabButton>
+          <TabButton isActive={actionId === "combine"}>Combine</TabButton>
         </HeaderCenterContentWrapper>
       ) : null}
       <HeaderRightContentWrapper>

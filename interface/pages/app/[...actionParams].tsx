@@ -1,10 +1,19 @@
 import React, { useEffect } from "react";
+import styled from "styled-components";
 import { useRouter } from "next/router";
 import { Footer } from "../../components/footer";
-import { FooterFixedWrapper } from "../../components/footer/common";
-import { HeaderFixedWrapper } from "../../components/header/common";
+import { Split } from "../../components/split";
 import { Header } from "../../components/header";
 import { PATHS } from "../../constants";
+
+const LayoutContainer = styled.main`
+  max-width: 1024px;
+  margin: 0 auto;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const AppActionsPage: React.FC = () => {
   const router = useRouter();
@@ -21,21 +30,23 @@ const AppActionsPage: React.FC = () => {
       return;
     }
 
-    if (actionId === "split" || actionId === "manage" || actionId === "recombine") {
+    if (actionId === "split" || actionId === "manage" || actionId === "combine") {
       return;
     }
 
     router.push(PATHS.APP_SPLIT);
   }, [router, actionId]);
 
+  let content = null;
+  if (actionId === "split") {
+    content = <Split />;
+  }
+
   return (
     <>
-      <HeaderFixedWrapper>
-        <Header showTabs={true} />
-      </HeaderFixedWrapper>
-      <FooterFixedWrapper>
-        <Footer />
-      </FooterFixedWrapper>
+      <Header showTabs={true} />
+      <LayoutContainer>{content}</LayoutContainer>
+      <Footer />
     </>
   );
 };

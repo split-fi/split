@@ -1,7 +1,7 @@
 {
   "name": "split-contracts",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "typechain/index.ts",
   "author": "francesco@fragosti.com",
   "license": "MIT",
   "devDependencies": {

@@ -2,7 +2,7 @@ import React from "react";
 import App from "next/app";
 import styled from "styled-components";
 import { Web3ReactProvider } from "@web3-react/core";
-import { Web3Provider } from "@ethersproject/providers";
+import { ethers } from "ethers";
 import { ThemedGlobalStyle } from "../theme";
 import { AppModalProvider } from "../contexts/modal";
 import { Web3ConnectionProvider } from "../contexts/web3-connection";
@@ -11,7 +11,7 @@ import { Modals } from "../components/modals";
 const AppWrapper = styled.div``;
 
 const getLibrary = (provider: any) => {
-  const library = new Web3Provider(provider);
+  const library = new ethers.providers.Web3Provider(provider);
   library.pollingInterval = 15000;
   return library;
 };

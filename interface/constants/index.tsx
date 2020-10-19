@@ -11,7 +11,13 @@ export const PATHS = {
   APP: "app",
   APP_SPLIT: "app/split",
   APP_MANAGE: "app/manage",
-  APP_RECOMBINE: "app/recombine",
+  APP_COMBINE: "app/combine",
+};
+
+// Only for deployed contracts.
+export const CHAIN_ID_NAME = {
+  1: "mainnet",
+  4: "rinkeby",
 };
 
 export interface WalletInfo {

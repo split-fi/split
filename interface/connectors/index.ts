@@ -1,4 +1,4 @@
-import { Web3Provider } from "@ethersproject/providers";
+import { ethers } from "ethers";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 import { WalletLinkConnector } from "@web3-react/walletlink-connector";
@@ -21,9 +21,10 @@ export const network = new NetworkConnector({
   urls: { [NETWORK_CHAIN_ID]: NETWORK_URL },
 });
 
+type Web3Provider = ethers.providers.Web3Provider;
 let networkLibrary: Web3Provider | undefined;
 export function getNetworkLibrary(): Web3Provider {
-  return (networkLibrary = networkLibrary ?? new Web3Provider(network.provider as any));
+  return (networkLibrary = networkLibrary ?? new ethers.providers.Web3Provider(network.provider as any));
 }
 
 export const injected = new InjectedConnector({

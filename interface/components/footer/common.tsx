@@ -19,10 +19,3 @@ export const FooterContentWrapper = styled.div`
 export const FooterRightContentWrapper = styled.div``;
 
 export const FooterLeftContentWrapper = styled.div``;
-
-export const FooterFixedWrapper = styled.div`
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  left: 0;
-`;
