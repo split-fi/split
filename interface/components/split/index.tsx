@@ -6,9 +6,12 @@ import { PrimaryButton } from "../button";
 import { getEtherscanLink } from "../../utils/etherscan";
 import { useSplitVault } from "../../hooks/useSplitVault";
 import { useFullTokens } from "../../contexts/tokens";
+import { useAssetAllowance } from "../../contexts/asset-allowances";
+import { useAssetBalance } from "../../contexts/asset-balances";
+import { convertToUnitAmount } from "../../utils/number";
 
 import { H1 } from "../typography";
-import { Input } from "../input";
+import { TokenInput } from "../input";
 import { Dropdown } from "../dropdown";
 
 const SplitButton = styled(PrimaryButton)`
@@ -30,15 +33,16 @@ const InputContainer = styled.div`
   max-width: 800px;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
+  align-items: baseline;
   margin: 15px 0px;
 `;
 
 const InputLabel = styled(H1)`
-  padding: 10px;
+  padding: 15px;
 `;
 
 const TokenDropdown = styled(Dropdown)`
-  padding: 10px;
+  padding: 15px;
 `;
 
 export interface SplitProps {}
@@ -48,12 +52,12 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   const tokens = useFullTokens();
   const [selectedTokenIndex, setSelectedTokenIndex] = useState(0);
   const [value, setValue] = useState<string>("");
+  const selectedToken = tokens[selectedTokenIndex];
 
   if (!tokens || !tokens.length) {
     return null;
   }
 
-  const selectedToken = tokens[selectedTokenIndex];
   const onSplitClick = useCallback(async () => {
     const tx = await splitVault.split("4040020000", selectedToken.tokenAddress);
   }, [splitVault]);
@@ -67,12 +71,11 @@ export const SplitWidget: React.FC<SplitProps> = () => {
     id: asset.tokenAddress,
     displayName: asset.symbol,
   }));
-
   return (
     <SplitContainer>
       <InputContainer>
         <InputLabel>split</InputLabel>
-        <Input max="1324523" value={value} onChange={setValue} />
+        <TokenInput tokenAddress={selectedToken.tokenAddress} value={value} onChange={setValue} />
         <TokenDropdown
           items={dropdownItems}
           selectedId={selectedToken.tokenAddress}

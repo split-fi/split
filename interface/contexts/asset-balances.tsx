@@ -84,8 +84,8 @@ const useAssetBalances = (): AssetBalancesProviderState => {
   return React.useContext(AssetBalancesContext);
 };
 
-const useAssetBalance = (tokenAddress: string | undefined): Decimal | undefined => {
-  return React.useContext(AssetBalancesContext)[tokenAddress && ""];
+const useAssetBalance = (tokenAddress: string): Decimal => {
+  return React.useContext(AssetBalancesContext)[tokenAddress] || new Decimal(0);
 };
 
 const useEthBalance = (): Decimal | undefined => {

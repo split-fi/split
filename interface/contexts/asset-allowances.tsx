@@ -70,8 +70,8 @@ const useAssetAllowances = (): AssetAllowancesProviderState => {
   return React.useContext(AssetAllowancesContext);
 };
 
-const useAssetAllowance = (tokenAddress: string | undefined): Decimal | undefined => {
-  return React.useContext(AssetAllowancesContext)[tokenAddress && ""];
+const useAssetAllowance = (tokenAddress: string): Decimal | undefined => {
+  return React.useContext(AssetAllowancesContext)[tokenAddress];
 };
 
 export { AssetAllowancesProvider, useAssetAllowances, useAssetAllowance, useRefreshAllowances };

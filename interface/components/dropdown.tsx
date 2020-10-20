@@ -11,6 +11,16 @@ const DropdownContainer = styled.div`
   cursor: pointer;
 `;
 
+const Selector = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ArrowContainer = styled.div`
+  margin-left: 10px;
+`;
+
 const Select = styled.div`
   position: absolute;
   border-radius: 21px;
@@ -45,6 +55,7 @@ const noop = () => {};
 
 export const Dropdown: React.FC<DropdownProps> = ({
   selectedId,
+  className,
   onSelect = noop,
   onSelectIndex = noop,
   items = [],
@@ -55,9 +66,13 @@ export const Dropdown: React.FC<DropdownProps> = ({
     return null;
   }
   return (
-    <DropdownContainer ref={node} onClick={() => setIsOpen(true)}>
-      <H1>{selectedItem.displayName}</H1>
-      <Triangle />
+    <DropdownContainer ref={node} onClick={() => setIsOpen(true)} className={className}>
+      <Selector>
+        <H1>{selectedItem.displayName}</H1>
+        <ArrowContainer>
+          <Triangle />
+        </ArrowContainer>
+      </Selector>
       {isOpen && (
         <Select>
           {items.map((item, index) => (

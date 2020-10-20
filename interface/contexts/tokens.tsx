@@ -52,9 +52,27 @@ const useAllTokens = (): Asset[] => {
   return allTokensMemo;
 };
 
+const useAllTokensByAddress = (): { [address: string]: Asset } | undefined => {
+  const tokens = useAllTokens();
+  const tokensMap = tokens.reduce((a, c) => ({ ...a, [c.tokenAddress]: c }), {} as { [address: string]: Asset });
+  return tokensMap;
+};
+
 const useFullToken = (tokenAddress: string): FullAsset => {
   const tokensMap = useFullTokensByAddress();
   return tokensMap[tokenAddress];
 };
 
-export { TokensProvider, useAllTokens, useFullTokens, useTokensByAssetType, useFullTokensByAddress, useFullToken };
+const useToken = (tokenAddress: string): Asset => {
+  return useAllTokensByAddress()[tokenAddress];
+};
+
+export {
+  TokensProvider,
+  useAllTokens,
+  useFullTokens,
+  useTokensByAssetType,
+  useFullTokensByAddress,
+  useFullToken,
+  useToken,
+};

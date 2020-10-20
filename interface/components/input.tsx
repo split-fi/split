@@ -1,7 +1,12 @@
 import React, { useCallback } from "react";
+import Decimal from "decimal.js";
 import styled, { css } from "styled-components";
 
 import { colors } from "../theme";
+import { useAssetAllowance } from "../contexts/asset-allowances";
+import { useAssetBalance } from "../contexts/asset-balances";
+import { useToken } from "../contexts/tokens";
+import { convertToUnitAmount } from "../utils/number";
 
 const SplitInput = styled.input<{ isError?: boolean }>`
   background: transparent;
@@ -44,7 +49,7 @@ const Message = styled.label<{ isError?: boolean }>`
 export interface InputProps {
   value: string;
   onChange: (value: string) => void;
-  max?: string;
+  message?: string;
   errorMessage?: string;
   className?: string;
   maxLength?: number;
@@ -52,7 +57,7 @@ export interface InputProps {
 }
 
 export const Input: React.FC<InputProps> = props => {
-  const { value, onChange, max, errorMessage, className, isDisabled, maxLength = 10 } = props;
+  const { value, onChange, message, errorMessage, className, isDisabled, maxLength = 10 } = props;
   const innerOnChange = useCallback(
     (newValue: string, oldValue: string) => {
       if (newValue.length > maxLength) {
@@ -71,13 +76,34 @@ export const Input: React.FC<InputProps> = props => {
         isError={isError}
         className={className}
         min="0"
-        max={max}
         type="number"
         value={value}
         onChange={e => innerOnChange(e.target.value, value)}
       />
-      {!isError && max && <Message>{max} max</Message>}
+      {!isError && message && <Message>{message}</Message>}
       {isError && <Message isError={true}>{errorMessage}</Message>}
     </InputContainer>
+  );
+};
+
+export interface TokenInputProps {
+  tokenAddress: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export const TokenInput: React.FC<TokenInputProps> = ({ tokenAddress, value, onChange }) => {
+  const tokenAllowance = useAssetAllowance(tokenAddress);
+  const tokenBalance = useAssetBalance(tokenAddress);
+  const token = useToken(tokenAddress);
+  let errorMsg = "";
+  const unitTokenBalance = convertToUnitAmount(tokenBalance, token.decimals);
+  const decimalValue = new Decimal(value || "0");
+  if (unitTokenBalance.lessThan(decimalValue)) {
+    errorMsg = `you don't have enough ${token.symbol}`;
+  }
+  const maxString = unitTokenBalance.toString();
+  return (
+    <Input value={value} onChange={onChange} maxLength={15} message={`${maxString} max`} errorMessage={errorMsg} />
   );
 };
