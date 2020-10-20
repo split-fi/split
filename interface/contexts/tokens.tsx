@@ -40,13 +40,16 @@ const useFullTokensByAddress = (): { [address: string]: FullAsset } | undefined 
 
 const useAllTokens = (): Asset[] => {
   const fullTokens = useFullTokens();
-  const allTokens = [];
-  for (const fullTokenAddress of Object.keys(fullTokens)) {
-    const fullToken = fullTokens[fullTokenAddress];
-    const { capitalComponentToken, yieldComponentToken } = fullToken.componentTokens;
-    allTokens.push(fullToken, capitalComponentToken, yieldComponentToken);
-  }
-  return allTokens;
+  const allTokensMemo = useMemo(() => {
+    const allTokens = [];
+    for (const fullTokenAddress of Object.keys(fullTokens)) {
+      const fullToken = fullTokens[fullTokenAddress];
+      const { capitalComponentToken, yieldComponentToken } = fullToken.componentTokens;
+      allTokens.push(fullToken, capitalComponentToken, yieldComponentToken);
+    }
+    return allTokens;
+  }, [fullTokens]);
+  return allTokensMemo;
 };
 
 const useFullToken = (tokenAddress: string): FullAsset => {
