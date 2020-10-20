@@ -15,7 +15,7 @@ const LogoWrapper = styled.div`
 export const HeroHeader: React.FC = () => {
   const router = useRouter();
   const onGoToAppClick = () => {
-    router.push(PATHS.APP);
+    router.push(PATHS.APP_SPLIT);
   };
   const goToHome = () => {
     router.push(PATHS.ROOT);

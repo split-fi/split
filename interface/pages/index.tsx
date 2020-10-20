@@ -41,7 +41,7 @@ const SectionH3 = styled(H3)`
 const IndexPage: React.FC = () => {
   const router = useRouter();
   const onGoToAppClick = () => {
-    router.push(PATHS.APP);
+    router.push(PATHS.APP_SPLIT);
   };
   return (
     <>
@@ -63,7 +63,7 @@ const IndexPage: React.FC = () => {
       <Section>
         <SectionH3>
           <strong>governanceXYZ:</strong> governance component of tokens with this functionality which can be used
-          through. Split’s platform to stripping the equity component from the underlying debt security
+          through. Split’s platform to stripping the equity component from the full debt security
         </SectionH3>
         <GovernanceToken height="250" />
       </Section>

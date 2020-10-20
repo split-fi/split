@@ -10,6 +10,7 @@ import { AppAction } from "../types/app";
 export const PATHS = {
   ROOT: "/",
   APP: "app/",
+  APP_SPLIT: "app/split",
 };
 
 // Only for deployed contracts.

@@ -19,8 +19,8 @@ export const CapitalToken: React.FC<SVGProps> = ({ width = "297", height = "297"
         id="c"
         transform="translate(405.056 1213)"
         fill="#eaeaea"
-        font-size="90"
-        font-family="HelveticaNeue, Helvetica Neue"
+        fontSize="90"
+        fontFamily="HelveticaNeue, Helvetica Neue"
       >
         <tspan x="0" y="86">
           c
@@ -32,7 +32,7 @@ export const CapitalToken: React.FC<SVGProps> = ({ width = "297", height = "297"
         transform="translate(354.056 1177)"
         fill="none"
         stroke="#efefef"
-        stroke-width="3"
+        strokeWidth="3"
       >
         <circle cx="126.5" cy="126.5" r="126.5" stroke="none" />
         <circle cx="126.5" cy="126.5" r="125" fill="none" />
@@ -55,8 +55,8 @@ export const YieldToken: React.FC<SVGProps> = ({ width = "297", height = "297" }
         id="y"
         transform="translate(405.056 1213)"
         fill="#eaeaea"
-        font-size="90"
-        font-family="HelveticaNeue, Helvetica Neue"
+        fontSize="90"
+        fontFamily="HelveticaNeue, Helvetica Neue"
       >
         <tspan x="0" y="86">
           y
@@ -68,7 +68,7 @@ export const YieldToken: React.FC<SVGProps> = ({ width = "297", height = "297" }
         transform="translate(354.056 1177)"
         fill="none"
         stroke="#efefef"
-        stroke-width="3"
+        strokeWidth="3"
       >
         <circle cx="126.5" cy="126.5" r="126.5" stroke="none" />
         <circle cx="126.5" cy="126.5" r="125" fill="none" />
@@ -91,8 +91,8 @@ export const GovernanceToken: React.FC<SVGProps> = ({ width = "297", height = "2
         id="g"
         transform="translate(405.056 1213)"
         fill="#eaeaea"
-        font-size="90"
-        font-family="HelveticaNeue, Helvetica Neue"
+        fontSize="90"
+        fontFamily="HelveticaNeue, Helvetica Neue"
       >
         <tspan x="0" y="86">
           g
@@ -104,7 +104,7 @@ export const GovernanceToken: React.FC<SVGProps> = ({ width = "297", height = "2
         transform="translate(354.056 1177)"
         fill="none"
         stroke="#efefef"
-        stroke-width="3"
+        strokeWidth="3"
       >
         <circle cx="126.5" cy="126.5" r="126.5" stroke="none" />
         <circle cx="126.5" cy="126.5" r="125" fill="none" />

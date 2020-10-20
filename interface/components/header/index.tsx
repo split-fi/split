@@ -71,7 +71,11 @@ export const Header: React.FC<HeaderProps> = ({ showTabs, currentAppAction, onTa
         <HeaderCenterContentWrapper>
           {Object.values(AppAction).map((appAction: AppAction) => {
             return (
-              <TabButton isActive={appAction === currentAppAction} onClick={onTabClick.bind(this, appAction)}>
+              <TabButton
+                key={appAction}
+                isActive={appAction === currentAppAction}
+                onClick={onTabClick.bind(this, appAction)}
+              >
                 {APP_ACTION_TO_TAB_TITLE[appAction]}
               </TabButton>
             );
