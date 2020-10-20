@@ -32,7 +32,7 @@ const useTokensByAssetType = (assetType: AssetType): FullAsset[] | undefined => 
   return React.useContext(FullTokensContext)?.filter(a => a.type === assetType);
 };
 
-const useTokensByAddressMap = (): { [address: string]: FullAsset } | undefined => {
+const useFullTokensByAddress = (): { [address: string]: FullAsset } | undefined => {
   const tokens = useFullTokens();
   const tokensMap = tokens.reduce((a, c) => ({ ...a, [c.tokenAddress]: c }), {} as { [address: string]: FullAsset });
   return tokensMap;
@@ -49,9 +49,9 @@ const useAllTokens = (): Asset[] => {
   return allTokens;
 };
 
-const useToken = (tokenAddress: string) => {
-  const tokensMap = useTokensByAddressMap();
+const useFullToken = (tokenAddress: string): FullAsset => {
+  const tokensMap = useFullTokensByAddress();
   return tokensMap[tokenAddress];
 };
 
-export { TokensProvider, useAllTokens, useFullTokens, useTokensByAssetType, useTokensByAddressMap, useToken };
+export { TokensProvider, useAllTokens, useFullTokens, useTokensByAssetType, useFullTokensByAddress, useFullToken };

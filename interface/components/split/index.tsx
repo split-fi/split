@@ -45,14 +45,17 @@ export interface SplitProps {}
 
 export const SplitWidget: React.FC<SplitProps> = () => {
   const { splitVault, active, error } = useSplitVault();
-
   const tokens = useFullTokens();
-  const [txHash, setTxHash] = useState<string>("");
+  const [selectedTokenIndex, setSelectedTokenIndex] = useState(0);
   const [value, setValue] = useState<string>("");
-  const rinkebyCETH = "0xd6801a1dffcd0a410336ef88def4320d6df1883e";
+
+  if (!tokens || !tokens.length) {
+    return null;
+  }
+
+  const selectedToken = tokens[selectedTokenIndex];
   const onSplitClick = useCallback(async () => {
-    const tx = await splitVault.split("4040020000", rinkebyCETH);
-    setTxHash(tx.hash);
+    const tx = await splitVault.split("4040020000", selectedToken.tokenAddress);
   }, [splitVault]);
 
   if (!active || error) {
@@ -60,27 +63,31 @@ export const SplitWidget: React.FC<SplitProps> = () => {
     return <div>An error occured</div>;
   }
 
-  // const dropdownItems = tokens.map(asset => ({
-  //   id: asset.symbol,
-
-  // }));
+  const dropdownItems = tokens.map(asset => ({
+    id: asset.tokenAddress,
+    displayName: asset.symbol,
+  }));
 
   return (
     <SplitContainer>
       <InputContainer>
         <InputLabel>split</InputLabel>
         <Input max="1324523" value={value} onChange={setValue} />
-        <TokenDropdown />
+        <TokenDropdown
+          items={dropdownItems}
+          selectedId={selectedToken.tokenAddress}
+          onSelectIndex={setSelectedTokenIndex}
+        />
       </InputContainer>
       <InputContainer>
         <InputLabel>to get</InputLabel>
         <InputLabel>{value}</InputLabel>
-        <InputLabel>ccETH</InputLabel>
+        <InputLabel>{selectedToken.componentTokens.capitalComponentToken.symbol}</InputLabel>
       </InputContainer>
       <InputContainer>
         <InputLabel>and</InputLabel>
         <InputLabel>{value}</InputLabel>
-        <InputLabel>ycETH</InputLabel>
+        <InputLabel>{selectedToken.componentTokens.yieldComponentToken.symbol}</InputLabel>
       </InputContainer>
       <SplitButton onClick={onSplitClick}>Split</SplitButton>
     </SplitContainer>
