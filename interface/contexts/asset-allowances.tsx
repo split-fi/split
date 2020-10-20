@@ -4,7 +4,7 @@ import { Decimal } from "decimal.js";
 import { useChainWatcher } from "./chain-watcher";
 import { useImmer } from "use-immer";
 import { useTokenContracts } from "../hooks/contracts";
-import { useTokens } from "./tokens";
+import { useAllTokens } from "./tokens";
 import { useSplitProtocolAddresses } from "./split-addresses";
 
 export interface AssetAllowancesProviderState {
@@ -25,7 +25,7 @@ const AssetAllowancesProvider: React.FC = ({ children }) => {
   const { account, chainId, library } = useWeb3React();
   const { blockNumber } = useChainWatcher();
   const protocolAddresses = useSplitProtocolAddresses();
-  const tokens = useTokens();
+  const tokens = useAllTokens();
   const tokenAddresses = useMemo(() => tokens.map(t => t.tokenAddress), [tokens]);
   const tokenContracts = useTokenContracts(tokenAddresses);
   const [assetAllowances, setAssetAllowances] = useImmer<AssetAllowancesProviderState>({});

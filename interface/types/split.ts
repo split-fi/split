@@ -1,4 +1,4 @@
-export type AssetType = "underlying" | "yield-split" | "capital-split" | "governance-split";
+export type AssetType = "full" | "yield-split" | "capital-split" | "governance-split";
 
 export interface Asset {
   tokenAddress: string;
@@ -8,7 +8,17 @@ export interface Asset {
   decimals: number;
 }
 
-export interface SplitAsset extends Asset {
-  underlyingTokenAddress: string;
-  type: Exclude<AssetType, "underlying">;
+export interface ComponentTokens {
+  yieldComponentToken: ComponentToken;
+  capitalComponentToken: ComponentToken;
+}
+
+export interface FullAsset extends Asset {
+  type: Exclude<AssetType, "yield-split" | "capital-split" | "governance-split">;
+  componentTokens: ComponentTokens;
+}
+
+export interface ComponentToken extends Asset {
+  fullTokenAddress: string;
+  type: Exclude<AssetType, "full">;
 }

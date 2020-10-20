@@ -5,7 +5,7 @@ import { Decimal } from "decimal.js";
 import { useChainWatcher } from "./chain-watcher";
 import { useImmer } from "use-immer";
 import { useTokenContracts } from "../hooks/contracts";
-import { useTokens } from "./tokens";
+import { useAllTokens } from "./tokens";
 
 export interface AssetBalancesProviderState {
   eth: Decimal | undefined | null;
@@ -29,7 +29,7 @@ const AssetBalancesActionContext = React.createContext<AssetBalancesActionsProvi
 const AssetBalancesProvider: React.FC = ({ children }) => {
   const { account, chainId, library } = useWeb3React();
   const { blockNumber } = useChainWatcher();
-  const tokens = useTokens();
+  const tokens = useAllTokens();
   const tokenAddresses = useMemo(() => tokens.map(t => t.tokenAddress), [tokens]);
   const tokenContracts = useTokenContracts(tokenAddresses);
   const [assetBalances, setAssetBalances] = useImmer<AssetBalancesProviderState>(initialState);

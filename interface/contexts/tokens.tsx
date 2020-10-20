@@ -1,15 +1,14 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-import { Asset, AssetType, SplitAsset } from "../types/split";
-import { AVAILABLE_TOKENS } from "../data/tokens";
+import { Asset, FullAsset, AssetType } from "../types/split";
+import { AVAILABLE_FULL_TOKENS } from "../data/tokens";
 import { ChainId } from "../types/ethereum";
 
-export type TokensProviderState = Asset[] | undefined;
+export type TokensProviderState = FullAsset[] | undefined;
 
 const initialState: TokensProviderState = undefined;
 
-const TokensContext = React.createContext<TokensProviderState>(initialState);
+const FullTokensContext = React.createContext<TokensProviderState>(initialState);
 
 // TODO(dave4506) as split tokens become more diverse and dynamically added via governance, this context will need to accomodate for that
 const TokensProvider: React.FC = ({ children }) => {
@@ -18,26 +17,36 @@ const TokensProvider: React.FC = ({ children }) => {
   const tokens = useMemo(() => {
     if (!chainId) {
       // defaults to providing mainnet? TODO
-      return AVAILABLE_TOKENS[ChainId.Mainnet];
+      return AVAILABLE_FULL_TOKENS[ChainId.Mainnet];
     }
-    return AVAILABLE_TOKENS[chainId];
+    return AVAILABLE_FULL_TOKENS[chainId];
   }, [chainId]);
-
-  return <TokensContext.Provider value={tokens}>{children}</TokensContext.Provider>;
+  return <FullTokensContext.Provider value={tokens}>{children}</FullTokensContext.Provider>;
 };
 
-const useTokens = (): TokensProviderState => {
-  return React.useContext(TokensContext);
+const useFullTokens = (): TokensProviderState => {
+  return React.useContext(FullTokensContext);
 };
 
-const useTokensByAssetType = (assetType: AssetType): Asset[] | undefined => {
-  return React.useContext(TokensContext)?.filter(a => a.type === assetType);
+const useTokensByAssetType = (assetType: AssetType): FullAsset[] | undefined => {
+  return React.useContext(FullTokensContext)?.filter(a => a.type === assetType);
 };
 
-const useTokensByAddressMap = (): { [address: string]: Asset } | undefined => {
-  const tokens = useTokens();
-  const tokensMap = tokens.reduce((a, c) => ({ ...a, [c.tokenAddress]: c }), {} as { [address: string]: Asset });
+const useTokensByAddressMap = (): { [address: string]: FullAsset } | undefined => {
+  const tokens = useFullTokens();
+  const tokensMap = tokens.reduce((a, c) => ({ ...a, [c.tokenAddress]: c }), {} as { [address: string]: FullAsset });
   return tokensMap;
+};
+
+const useAllTokens = (): Asset[] => {
+  const fullTokens = useFullTokens();
+  const allTokens = [];
+  for (const fullTokenAddress of Object.keys(fullTokens)) {
+    const fullToken = fullTokens[fullTokenAddress];
+    const { capitalComponentToken, yieldComponentToken } = fullToken.componentTokens;
+    allTokens.push(fullToken, capitalComponentToken, yieldComponentToken);
+  }
+  return allTokens;
 };
 
 const useToken = (tokenAddress: string) => {
@@ -45,17 +54,4 @@ const useToken = (tokenAddress: string) => {
   return tokensMap[tokenAddress];
 };
 
-const useTokenAndSplitComponents = (tokenAddress): [Asset, Asset, Asset] => {
-  const tokens = useTokens();
-  const underlyingToken = useToken(tokenAddress);
-  const capitalComponentToken = tokens.find(
-    t => (t as SplitAsset).underlyingTokenAddress === tokenAddress && t.type === "capital-split",
-  );
-  const yieldComponentToken = tokens.find(
-    t => (t as SplitAsset).underlyingTokenAddress === tokenAddress && t.type === "yield-split",
-  );
-
-  return [underlyingToken, capitalComponentToken, yieldComponentToken];
-};
-
-export { TokensProvider, useTokens, useTokensByAssetType, useTokensByAddressMap, useToken, useTokenAndSplitComponents };
+export { TokensProvider, useAllTokens, useFullTokens, useTokensByAssetType, useTokensByAddressMap, useToken };
