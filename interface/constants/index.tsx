@@ -5,19 +5,23 @@ import { WalletConnectIcon } from "../components/icons/wallet-connect";
 import { FortmaticIcon } from "../components/icons/fortmatic";
 
 import { fortmatic, injected, walletconnect } from "../connectors";
+import { AppAction } from "../types/app";
 
 export const PATHS = {
   ROOT: "/",
-  APP: "app",
-  APP_SPLIT: "app/split",
-  APP_MANAGE: "app/manage",
-  APP_COMBINE: "app/combine",
+  APP: "app/",
 };
 
 // Only for deployed contracts.
 export const CHAIN_ID_NAME = {
   1: "mainnet",
   4: "rinkeby",
+};
+
+export const APP_PARAM_TO_APP_ACTION = {
+  split: AppAction.SPLIT,
+  manage: AppAction.MANAGE,
+  combine: AppAction.COMBINE,
 };
 
 export interface WalletInfo {

@@ -1,22 +1,30 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-import { BigNumber } from "ethers";
+import { Decimal } from "decimal.js";
 import { useChainWatcher } from "./chain-watcher";
 import { useImmer } from "use-immer";
 import { useTokenContracts } from "../hooks/contracts";
 import { useTokens } from "./tokens";
 
 export interface AssetBalancesProviderState {
-  eth: BigNumber | undefined | null;
-  [tokenAddress: string]: BigNumber | undefined | null;
+  eth: Decimal | undefined | null;
+  [tokenAddress: string]: Decimal | undefined | null;
 }
 
 const initialState: AssetBalancesProviderState = {
   eth: undefined,
 };
 
+export interface AssetBalancesActionsProviderState {
+  refreshBalances: () => void;
+}
+
 const AssetBalancesContext = React.createContext<AssetBalancesProviderState>(initialState);
+
+const AssetBalancesActionContext = React.createContext<AssetBalancesActionsProviderState>({
+  refreshBalances: () => new Error("AssetBalancesActions Provider not set"),
+});
 
 const AssetBalancesProvider: React.FC = ({ children }) => {
   const { account, chainId, library } = useWeb3React();
@@ -25,6 +33,7 @@ const AssetBalancesProvider: React.FC = ({ children }) => {
   const tokenAddresses = useMemo(() => tokens.map(t => t.tokenAddress), [tokens]);
   const tokenContracts = useTokenContracts(tokenAddresses);
   const [assetBalances, setAssetBalances] = useImmer<AssetBalancesProviderState>(initialState);
+  const [refreshCounter, setRefreshCounter] = useState(0);
 
   useEffect(() => {
     if (!account) {
@@ -35,7 +44,7 @@ const AssetBalancesProvider: React.FC = ({ children }) => {
       .then(bal => {
         setAssetBalances(draft => ({
           ...draft,
-          eth: bal,
+          eth: new Decimal(bal.toString()),
         }));
       })
       .catch(_ => {
@@ -48,29 +57,39 @@ const AssetBalancesProvider: React.FC = ({ children }) => {
       tokenContract
         .balanceOf(account)
         .then(bal => {
-          setAssetBalances(draft => ({
-            ...draft,
-            [tokenContract.address]: bal,
-          }));
+          setAssetBalances(draft => {
+            draft[tokenContract.address] = new Decimal(bal.toString());
+          });
         })
         .catch(_ => {
-          setAssetBalances(draft => ({
-            ...draft,
-            [tokenContract.address]: null,
-          }));
+          setAssetBalances(draft => {
+            draft[tokenContract.address] = null;
+          });
         });
     }
-  }, [account, chainId, blockNumber, tokenAddresses]);
+  }, [account, chainId, blockNumber, tokenAddresses, refreshCounter]);
 
-  return <AssetBalancesContext.Provider value={assetBalances}>{children}</AssetBalancesContext.Provider>;
+  const refreshBalances = useCallback(() => {
+    setRefreshCounter(refreshCounter + 1);
+  }, [setRefreshCounter]);
+
+  return (
+    <AssetBalancesActionContext.Provider value={{ refreshBalances }}>
+      <AssetBalancesContext.Provider value={assetBalances}>{children}</AssetBalancesContext.Provider>
+    </AssetBalancesActionContext.Provider>
+  );
 };
 
 const useAssetBalances = (): AssetBalancesProviderState => {
   return React.useContext(AssetBalancesContext);
 };
 
-const useAssetBalance = (tokenAddress: string | undefined): BigNumber | undefined => {
+const useAssetBalance = (tokenAddress: string | undefined): Decimal | undefined => {
   return React.useContext(AssetBalancesContext)[tokenAddress && ""];
 };
 
-export { AssetBalancesProvider, useAssetBalances, useAssetBalance };
+const useEthBalance = (): Decimal | undefined => {
+  return React.useContext(AssetBalancesContext).eth;
+};
+
+export { AssetBalancesProvider, useAssetBalances, useAssetBalance, useEthBalance };

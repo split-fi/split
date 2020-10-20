@@ -14,7 +14,10 @@ import { PrimaryButton } from "./button";
 import { useModalStateActions } from "../contexts/modal";
 import { AppModal } from "../types/app";
 import { useWeb3Connection } from "../contexts/web3-connection";
+import { useEthBalance } from "../contexts/asset-balances";
 import { Faded } from "./typography";
+import { useEthToken } from "../hooks/useEthToken";
+import { formatTokenAmount } from "../utils/format";
 
 // import Identicon from '../Identicon'
 // import Loader from '../Loader'
@@ -108,7 +111,8 @@ function StatusIcon({ connector }: { connector: AbstractConnector }) {
 function Web3StatusInner() {
   const { triedEagerConnect } = useWeb3Connection();
   const { account, connector, error } = useWeb3React();
-
+  const ethBalance = useEthBalance();
+  const ethToken = useEthToken();
   // const { ENSName } = useENSName(account ?? undefined)
 
   // const allTransactions = useAllTransactions()
@@ -136,7 +140,7 @@ function Web3StatusInner() {
           </>
         )} */}
         <>{shortenAddress(account)}</>
-        <StyledFaded>0.05 ETH</StyledFaded>
+        {ethBalance && <StyledFaded>{formatTokenAmount(ethBalance, ethToken).minimizedWithUnits}</StyledFaded>}
         {/* {connector && <StatusIcon connector={connector} />} */}
       </Web3StatusConnected>
     );

@@ -10,11 +10,14 @@ import {
   HeaderRightContentWrapper,
 } from "./common";
 import Web3Status from "../web3-status";
-import { PATHS } from "../../constants";
+import { APP_PARAM_TO_APP_ACTION, PATHS } from "../../constants";
 import { NoStyledAnchor } from "../anchor";
+import { AppAction } from "../../types/app";
 
 interface HeaderProps {
   showTabs?: boolean;
+  currentAppAction: AppAction;
+  onTabClick: (appAction: AppAction) => void;
 }
 
 interface TabButtonProps {
@@ -42,14 +45,15 @@ const LogoWrapper = styled.div`
   cursor: pointer;
 `;
 
-export const Header: React.FC<HeaderProps> = ({ showTabs }) => {
+const APP_ACTION_TO_TAB_TITLE = {
+  [AppAction.SPLIT]: "Split",
+  [AppAction.MANAGE]: "Manage",
+  [AppAction.COMBINE]: "Combine",
+};
+
+export const Header: React.FC<HeaderProps> = ({ showTabs, currentAppAction, onTabClick }) => {
   const router = useRouter();
 
-  const { query } = router;
-
-  const routerProvidedParams = Array.isArray(query.actionParams) ? query.actionParams : [null];
-
-  const [actionId] = routerProvidedParams as [string | null | undefined];
   const onSplitIconClick = () => {
     router.push(PATHS.ROOT);
   };
@@ -65,9 +69,13 @@ export const Header: React.FC<HeaderProps> = ({ showTabs }) => {
       </HeaderLeftContentWrapper>
       {showTabs ? (
         <HeaderCenterContentWrapper>
-          <TabButton isActive={actionId === "split"}>Split</TabButton>
-          <TabButton isActive={actionId === "manage"}>Manage</TabButton>
-          <TabButton isActive={actionId === "combine"}>Combine</TabButton>
+          {Object.values(AppAction).map((appAction: AppAction) => {
+            return (
+              <TabButton isActive={appAction === currentAppAction} onClick={onTabClick.bind(this, appAction)}>
+                {APP_ACTION_TO_TAB_TITLE[appAction]}
+              </TabButton>
+            );
+          })}
         </HeaderCenterContentWrapper>
       ) : null}
       <HeaderRightContentWrapper>
