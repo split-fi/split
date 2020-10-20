@@ -4,11 +4,14 @@ export const H1 = styled.h1`
   color: white;
   padding: 0;
   margin: 0;
+  font-weight: normal;
+  font-size: 40px;
 `;
 
 export const H2 = styled.h2`
   color: white;
   padding: 0;
+  font-weight: normal;
   margin: 0;
 `;
 
@@ -16,11 +19,14 @@ export const H3 = styled.h3`
   color: white;
   padding: 0;
   margin: 0;
+  font-weight: normal;
+  font-size: 28px;
 `;
 
 export const H4 = styled.h4`
   color: white;
   padding: 0;
+  font-weight: normal;
   margin: 0;
 `;
 

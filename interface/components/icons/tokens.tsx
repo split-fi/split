@@ -5,8 +5,8 @@ interface SVGProps {
   height?: string;
 }
 
-export const CapitalToken: React.FC<SVGProps> = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="296.509" height="297.138" viewBox="0 0 296.509 297.138">
+export const CapitalToken: React.FC<SVGProps> = ({ width = "297", height = "297" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 296.509 297.138">
     <g id="Group_63" data-name="Group 63" transform="translate(-354.056 -1177)">
       <path
         id="Path_15"
@@ -41,8 +41,8 @@ export const CapitalToken: React.FC<SVGProps> = () => (
   </svg>
 );
 
-export const YieldToken: React.FC<SVGProps> = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="296.509" height="297.138" viewBox="0 0 296.509 297.138">
+export const YieldToken: React.FC<SVGProps> = ({ width = "297", height = "297" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 296.509 297.138">
     <g id="Group_13" data-name="Group 13" transform="translate(-354.056 -1177)">
       <path
         id="Path_15"
@@ -77,8 +77,8 @@ export const YieldToken: React.FC<SVGProps> = () => (
   </svg>
 );
 
-export const GovernanceToken: React.FC<SVGProps> = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="296.509" height="297.138" viewBox="0 0 296.509 297.138">
+export const GovernanceToken: React.FC<SVGProps> = ({ width = "297", height = "297" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 296.509 297.138">
     <g id="Group_64" data-name="Group 64" transform="translate(-354.056 -1177)">
       <path
         id="Path_15"
