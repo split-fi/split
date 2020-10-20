@@ -65,10 +65,11 @@ export const Input: React.FC<InputProps> = props => {
   );
   const isError = !!errorMessage;
   return (
-    <InputContainer isDisabled={isDisabled} className={className}>
+    <InputContainer isDisabled={isDisabled}>
       <SplitInput
         disabled={isDisabled}
         isError={isError}
+        className={className}
         min="0"
         max={max}
         type="number"

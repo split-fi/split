@@ -6,10 +6,27 @@ import { PrimaryButton } from "../button";
 import { getEtherscanLink } from "../../utils/etherscan";
 import { useSplitVault } from "../../hooks/useSplitVault";
 
+import { H1 } from "../typography";
 import { Input } from "../input";
 
 const SplitButton = styled(PrimaryButton)`
   cursor: pointer;
+`;
+
+const SplitContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const InputContainer = styled.div`
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  margin: 15px 0px;
+`;
+
+const InputLabel = styled(H1)`
+  padding: 10px;
 `;
 
 export interface SplitProps {}
@@ -31,10 +48,23 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   }
 
   return (
-    <div>
-      <Input max="1324523" value={value} onChange={setValue} />
-      {txHash && getEtherscanLink(ChainId.Rinkeby, txHash, "transaction")}
+    <SplitContainer>
+      <InputContainer>
+        <InputLabel>split</InputLabel>
+        <Input max="1324523" value={value} onChange={setValue} />
+        <InputLabel>cETH</InputLabel>
+      </InputContainer>
+      <InputContainer>
+        <InputLabel>to get</InputLabel>
+        <InputLabel>{value}</InputLabel>
+        <InputLabel>ccETH</InputLabel>
+      </InputContainer>
+      <InputContainer>
+        <InputLabel>and</InputLabel>
+        <InputLabel>{value}</InputLabel>
+        <InputLabel>ycETH</InputLabel>
+      </InputContainer>
       <SplitButton onClick={onSplitClick}>Split</SplitButton>
-    </div>
+    </SplitContainer>
   );
 };
