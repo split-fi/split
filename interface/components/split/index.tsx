@@ -12,7 +12,7 @@ const SplitButton = styled(PrimaryButton)`
 
 export interface SplitProps {}
 
-export const Split: React.FC<SplitProps> = () => {
+export const SplitWidget: React.FC<SplitProps> = () => {
   const { splitVault, active, error } = useSplitVault();
   const [txHash, setTxHash] = useState<string>("");
 

@@ -2,6 +2,15 @@ import { ChainId } from "../types/ethereum";
 import { Asset } from "../types/split";
 import { createAssetsForTokenFromDeployments } from "../utils/tokens";
 
+// NOTE: THIS IS NOT THE WETH TOKEN, it is a metadata object for native eth
+export const ETH_TOKEN: Asset = {
+  tokenAddress: "0x0000000000000000000000000000000000000000",
+  name: "Ether",
+  symbol: "ETH",
+  decimals: 18,
+  type: "underlying",
+};
+
 export const AVAILABLE_TOKENS: { [chainId: number]: Asset[] } = {
   1: [
     ...createAssetsForTokenFromDeployments(

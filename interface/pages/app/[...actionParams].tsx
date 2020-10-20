@@ -1,15 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
+import findKey from "lodash/findKey";
 import { useRouter } from "next/router";
 import { Footer } from "../../components/footer";
-import { Split } from "../../components/split";
+import { SplitWidget } from "../../components/split";
 import { Header } from "../../components/header";
-import { PATHS } from "../../constants";
+import { APP_PARAM_TO_APP_ACTION, PATHS } from "../../constants";
+import { HEADER_HEIGHT } from "../../components/header/common";
+import { FOOTER_HEIGHT } from "../../components/footer/common";
+import { AppAction } from "../../types/app";
+import { ManageWidget } from "../../components/manage";
+import { CombineWidget } from "../../components/combine";
 
 const LayoutContainer = styled.main`
   max-width: 1024px;
   margin: 0 auto;
-  height: 80vh;
+  height: calc(100vh - ${HEADER_HEIGHT + FOOTER_HEIGHT}px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -22,29 +28,48 @@ const AppActionsPage: React.FC = () => {
 
   const routerProvidedParams = Array.isArray(query.actionParams) ? query.actionParams : [null];
 
-  const [actionId] = routerProvidedParams as [string | null | undefined];
+  const [appActionFromParams] = routerProvidedParams as [string | null | undefined];
+
+  const [currentAppAction, setAppAction] = useState("split" as AppAction);
+
+  const setAppActionAndShallowPush = useCallback(
+    (appAction: AppAction) => {
+      setAppAction(appAction);
+      const appActionParam = findKey(APP_PARAM_TO_APP_ACTION, a => a === appAction);
+      router.push(appActionParam, undefined, { shallow: true });
+    },
+    [router, setAppAction],
+  );
 
   // TODO(dave4506) lift this logic into a proper routing logic with next.js + the constants
   useEffect(() => {
-    if (!actionId) {
+    if (!appActionFromParams) {
       return;
     }
 
-    if (actionId === "split" || actionId === "manage" || actionId === "combine") {
-      return;
+    if (!!APP_PARAM_TO_APP_ACTION[appActionFromParams]) {
+      setAppAction(APP_PARAM_TO_APP_ACTION[appActionFromParams]);
+    } else {
+      setAppActionAndShallowPush(AppAction.SPLIT);
     }
+  }, [router, appActionFromParams]);
 
-    router.push(PATHS.APP_SPLIT);
-  }, [router, actionId]);
-
-  let content = null;
-  if (actionId === "split") {
-    content = <Split />;
-  }
+  const content = useMemo(() => {
+    if (currentAppAction === AppAction.SPLIT) {
+      return <SplitWidget />;
+    }
+    if (currentAppAction === AppAction.MANAGE) {
+      return <ManageWidget />;
+    }
+    if (currentAppAction === AppAction.COMBINE) {
+      return <CombineWidget />;
+    }
+    return null;
+  }, [currentAppAction]);
 
   return (
     <>
-      <Header showTabs={true} />
+      <Header showTabs={true} currentAppAction={currentAppAction} onTabClick={setAppActionAndShallowPush} />
       <LayoutContainer>{content}</LayoutContainer>
       <Footer />
     </>
