@@ -1,7 +1,9 @@
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
+import { chain } from "lodash";
 import { useMemo } from "react";
-import { Erc20Factory } from "split-contracts";
+import { Erc20Factory, SplitVaultFactory } from "split-contracts";
+import { useSplitProtocolAddresses } from "../contexts/split-addresses";
 
 // account is not optional
 export function getSigner(library: Web3Provider, account: string): JsonRpcSigner {
@@ -25,4 +27,14 @@ export const useTokenContracts = (tokenAddresses: string[]) => {
   return useMemo(() => {
     return tokenAddresses.map(ta => Erc20Factory.connect(ta, getProviderOrSigner(library, account)));
   }, [library, account, tokenAddresses]);
+};
+
+export const useSplitVault = () => {
+  const { library, account } = useWeb3React();
+  const { splitVaultAddress } = useSplitProtocolAddresses();
+  return useMemo(() => SplitVaultFactory.connect(splitVaultAddress, getProviderOrSigner(library, account)), [
+    library,
+    account,
+    splitVaultAddress,
+  ]);
 };

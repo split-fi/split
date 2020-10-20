@@ -55,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({ showTabs, currentAppAction, onTa
   const router = useRouter();
 
   const onSplitIconClick = () => {
-    router.push(PATHS.ROOT);
+    router.push("/");
   };
 
   return (

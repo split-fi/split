@@ -6,7 +6,7 @@ const AppPage: React.FC = () => {
   const router = useRouter();
   // TODO(dave4506) lift this logic into a proper routing logic with next.js + the constants
   useEffect(() => {
-    router.push(PATHS.APP_SPLIT);
+    router.push("/app/split");
   }, [router]);
   return <></>;
 };

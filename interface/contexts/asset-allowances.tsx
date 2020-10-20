@@ -57,7 +57,7 @@ const AssetAllowancesProvider: React.FC = ({ children }) => {
 
   return (
     <AssetAllowancesActionContext.Provider value={{ refreshAllowances }}>
-      <AssetAllowancesContext.Provider value={assetAllowances}>{children}</AssetAllowancesContext.Provider>;
+      <AssetAllowancesContext.Provider value={assetAllowances}>{children}</AssetAllowancesContext.Provider>
     </AssetAllowancesActionContext.Provider>
   );
 };

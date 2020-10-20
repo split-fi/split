@@ -41,7 +41,7 @@ const SectionH3 = styled(H3)`
 const IndexPage: React.FC = () => {
   const router = useRouter();
   const onGoToAppClick = () => {
-    router.push(PATHS.APP);
+    router.push("/app/split");
   };
   return (
     <>
