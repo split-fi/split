@@ -11,6 +11,12 @@ import { Input } from "../input";
 
 const SplitButton = styled(PrimaryButton)`
   cursor: pointer;
+  margin-top: 20px;
+  border-radius: 50%;
+  width: 200px;
+  height: 200px;
+  align-self: center;
+  font-size: 40px;
 `;
 
 const SplitContainer = styled.div`
