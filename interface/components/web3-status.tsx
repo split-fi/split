@@ -36,7 +36,6 @@ const StyledFaded = styled(Faded)`
 `;
 
 const Web3StatusGeneric = styled(PrimaryButton)`
-  cursor: pointer;
   width: 220px;
 `;
 

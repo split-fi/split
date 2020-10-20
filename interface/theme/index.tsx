@@ -6,7 +6,7 @@ export const LIGHT_THEME = {};
 export const ThemedGlobalStyle = createGlobalStyle`
     body, html, * {
         box-sizing: border-box;
-        font-family: Helvetica, Arial;
+        font-family: 'Roboto', Arial;
     }
     
     html {

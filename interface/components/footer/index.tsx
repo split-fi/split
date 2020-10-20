@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { PrimaryAnchor } from "../anchor";
-import { PrimaryButton } from "../button";
+
 import { P } from "../typography";
+import { Discord, Github, Twitter } from "../icons/social";
 import { FooterContentWrapper, FooterLeftContentWrapper, FooterRightContentWrapper } from "./common";
 
 const LinksWrapper = styled.div`
@@ -19,10 +19,9 @@ export const Footer: React.FC = () => {
       </FooterLeftContentWrapper>
       <FooterRightContentWrapper>
         <LinksWrapper>
-          <PrimaryAnchor>Discord</PrimaryAnchor>
-          <PrimaryAnchor>Twitter</PrimaryAnchor>
-          <PrimaryAnchor>Github</PrimaryAnchor>
-          <PrimaryAnchor>CONTACT</PrimaryAnchor>
+          <Twitter />
+          <Discord />
+          <Github />
         </LinksWrapper>
       </FooterRightContentWrapper>
     </FooterContentWrapper>
