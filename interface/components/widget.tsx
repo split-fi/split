@@ -19,4 +19,3 @@ export const InputContainer = styled.div`
   gap: 50px 12px;
   width: 800px;
 `;
-
