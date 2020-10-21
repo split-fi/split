@@ -72,7 +72,7 @@ const StyledH1 = styled(H1)`
   margin-bottom: 24px;
 `;
 
-const ManagePageWrapper = styled(PageWrapper)`
+const ManagePageWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1.4fr;
   grid-gap: 72px;

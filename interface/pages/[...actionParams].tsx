@@ -12,13 +12,16 @@ import { AppAction } from "../types/app";
 import { ManageWidget } from "../components/manage";
 import { CombineWidget } from "../components/combine";
 
+const MARGIN_TOP = 120;
+
 const LayoutContainer = styled.main`
   max-width: 1024px;
   margin: 0 auto;
-  height: calc(100vh - ${HEADER_HEIGHT + FOOTER_HEIGHT}px);
+  height: calc(100vh - ${HEADER_HEIGHT + FOOTER_HEIGHT + MARGIN_TOP}px);
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: center;
+  margin-top: ${MARGIN_TOP}px;
 `;
 
 const AppActionsPage: React.FC = () => {
