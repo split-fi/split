@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { Decimal } from "decimal.js";
-import { useChainWatcher } from "./chain-watcher";
+import { useBlockchain } from "./blockchain";
 import { useImmer } from "use-immer";
 import { useTokenContracts } from "../hooks/contracts";
 import { useAllTokens } from "./tokens";
@@ -28,7 +28,7 @@ const AssetBalancesActionContext = React.createContext<AssetBalancesActionsProvi
 
 const AssetBalancesProvider: React.FC = ({ children }) => {
   const { account, chainId, library } = useWeb3React();
-  const { blockNumber } = useChainWatcher();
+  const { blockNum } = useBlockchain();
   const tokens = useAllTokens();
   const tokenAddresses = useMemo(() => tokens.map(t => t.tokenAddress), [tokens]);
   const tokenContracts = useTokenContracts(tokenAddresses);
@@ -67,7 +67,7 @@ const AssetBalancesProvider: React.FC = ({ children }) => {
           });
         });
     }
-  }, [account, chainId, blockNumber, tokenAddresses, refreshCounter]);
+  }, [account, chainId, blockNum, tokenAddresses, refreshCounter]);
 
   const refreshBalances = useCallback(() => {
     setRefreshCounter(refreshCounter + 1);
