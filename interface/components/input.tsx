@@ -93,7 +93,6 @@ export interface TokenInputProps {
 }
 
 export const TokenInput: React.FC<TokenInputProps> = ({ tokenAddress, value, onChange }) => {
-  const tokenAllowance = useAssetAllowance(tokenAddress);
   const tokenBalance = useAssetBalance(tokenAddress);
   const token = useToken(tokenAddress);
   let errorMsg = "";

@@ -13,11 +13,15 @@ export const PrimaryButton = styled.button`
   &:focus {
     outline: none;
   }
-  &:hover,
-  &:hover > * {
+  &:hover:enabled,
+  &:hover:enabled > * {
     background-color: #ffffff;
     color: #0e2991;
     font-style: italic;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
 `;
 
@@ -29,12 +33,16 @@ export const SecondaryDarkButton = styled.button`
   letter-spacing: 0.05rem;
   background-color: rgba(0, 0, 0, 0);
   font-size: 14px;
-  &:focus {
+  &:focus:enabled {
     outline: none;
   }
-  &:hover {
+  &:hover:enabled {
     color: #0e2991;
     border-color: #0e2991;
     font-style: italic;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
 `;
