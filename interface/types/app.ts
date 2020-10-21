@@ -10,8 +10,8 @@ export enum AppModal {
 
 export enum AppAction {
   SPLIT = "SPLIT",
-  COMBINE = "COMBINE",
   MANAGE = "MANAGE",
+  COMBINE = "COMBINE",
 }
 
 export type BannerType = "loading" | "success" | "error" | "default";
