@@ -2,15 +2,15 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import findKey from "lodash/findKey";
 import { useRouter } from "next/router";
-import { Footer } from "../../components/footer";
-import { SplitWidget } from "../../components/split";
-import { Header } from "../../components/header";
-import { APP_PARAM_TO_APP_ACTION, PATHS } from "../../constants";
-import { HEADER_HEIGHT } from "../../components/header/common";
-import { FOOTER_HEIGHT } from "../../components/footer/common";
-import { AppAction } from "../../types/app";
-import { ManageWidget } from "../../components/manage";
-import { CombineWidget } from "../../components/combine";
+import { Footer } from "../components/footer";
+import { SplitWidget } from "../components/split";
+import { Header } from "../components/header";
+import { APP_PARAM_TO_APP_ACTION, PATHS } from "../constants";
+import { HEADER_HEIGHT } from "../components/header/common";
+import { FOOTER_HEIGHT } from "../components/footer/common";
+import { AppAction } from "../types/app";
+import { ManageWidget } from "../components/manage";
+import { CombineWidget } from "../components/combine";
 
 const LayoutContainer = styled.main`
   max-width: 1024px;

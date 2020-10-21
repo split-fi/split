@@ -12,7 +12,7 @@ export const ManageWidget: React.FC<ManageWidgetProps> = () => {
   const { active, error } = useWeb3React();
 
   if (!active || error) {
-    return <div>An error occured</div>;
+    return <div>Please connect your wallet.</div>;
   }
 
   return <div>Manage Widget</div>;

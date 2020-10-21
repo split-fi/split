@@ -35,6 +35,7 @@ const Option = styled.div`
   margin: 20px 0px;
   &:hover {
     font-style: italic;
+    font-weight: bold;
   }
 `;
 

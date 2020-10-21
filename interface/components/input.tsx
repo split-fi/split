@@ -24,8 +24,9 @@ const SplitInput = styled.input<{ isError?: boolean }>`
       color: ${colors.red};
       border-bottom: 2px solid ${colors.red} !important;
     `}
-  &&:focus {
+  &:focus {
     font-style: italic;
+    font-weight: bold;
     border-bottom: 3px solid white;
   }
 `;
@@ -93,7 +94,6 @@ export interface TokenInputProps {
 }
 
 export const TokenInput: React.FC<TokenInputProps> = ({ tokenAddress, value, onChange }) => {
-  const tokenAllowance = useAssetAllowance(tokenAddress);
   const tokenBalance = useAssetBalance(tokenAddress);
   const token = useToken(tokenAddress);
   let errorMsg = "";
