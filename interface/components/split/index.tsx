@@ -15,6 +15,7 @@ import { PrimaryButton } from "../button";
 import { H1 } from "../typography";
 import { TokenInput } from "../input";
 import { Dropdown } from "../dropdown";
+import { PageWrapper } from "../content";
 
 const SplitButton = styled(PrimaryButton)`
   cursor: pointer;
@@ -26,7 +27,7 @@ const SplitButton = styled(PrimaryButton)`
   font-size: 40px;
 `;
 
-const SplitContainer = styled.div`
+const SplitPageWrapper = styled(PageWrapper)`
   display: flex;
   flex-direction: column;
 `;
@@ -46,6 +47,8 @@ const InputLabel = styled(H1)`
 const TokenDropdown = styled(Dropdown)`
   padding: 15px 0px;
 `;
+
+const SplitWidgetWrapper = styled.div``;
 
 export interface SplitProps {}
 
@@ -82,7 +85,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
     .toDecimalPlaces(4)
     .toString();
   return (
-    <SplitContainer>
+    <SplitPageWrapper>
       <InputContainer>
         <InputLabel>split</InputLabel>
         <TokenInput tokenAddress={selectedToken.tokenAddress} value={value} onChange={setValue} />
@@ -105,6 +108,6 @@ export const SplitWidget: React.FC<SplitProps> = () => {
       <SplitButton disabled={value === "" || value === "0"} onClick={onSplitClick}>
         Split
       </SplitButton>
-    </SplitContainer>
+    </SplitPageWrapper>
   );
 };

@@ -39,7 +39,7 @@ const StyledFaded = styled(Faded)`
 `;
 
 const Web3StatusGeneric = styled(PrimaryButton)`
-  width: 220px;
+  width: 240px;
 `;
 
 const Web3StatusError = styled(Web3StatusGeneric)`
@@ -63,8 +63,8 @@ const Web3StatusConnected = styled(Web3StatusGeneric)`
     }
   }
   display: flex;
-  padding-left: 12px;
-  padding-right: 12px;
+  padding-left: 16px;
+  padding-right: 16px;
   justify-content: space-between;
 `;
 
