@@ -11,40 +11,14 @@ import { MAX_INT_256 } from "../../constants";
 
 import { componentTokenAmountToFullTokenAmount, convertToBaseAmount } from "../../utils/number";
 
-import { PrimaryButton } from "../button";
-import { H1 } from "../typography";
 import { TokenInput } from "../input";
+import { H1 } from "../typography";
 import { Dropdown } from "../dropdown";
-
-const SplitButton = styled(PrimaryButton)`
-  cursor: pointer;
-  margin-top: 20px;
-  border-radius: 50%;
-  width: 200px;
-  height: 200px;
-  align-self: center;
-  font-size: 40px;
-`;
+import { ConfirmButton, InputContainer } from "../widget";
 
 const SplitContainer = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const InputContainer = styled.div`
-  max-width: 800px;
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
-  align-items: baseline;
-  margin: 15px 0px;
-`;
-
-const InputLabel = styled(H1)`
-  padding: 15px 0px;
-`;
-
-const TokenDropdown = styled(Dropdown)`
-  padding: 15px 0px;
 `;
 
 export interface SplitProps {}
@@ -82,27 +56,19 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   return (
     <SplitContainer>
       <InputContainer>
-        <InputLabel>split</InputLabel>
+        <H1>split</H1>
         <TokenInput tokenAddress={selectedToken.tokenAddress} value={value} onChange={setValue} />
-        <TokenDropdown
-          items={dropdownItems}
-          selectedId={selectedToken.tokenAddress}
-          onSelectIndex={setSelectedTokenIndex}
-        />
+        <Dropdown items={dropdownItems} selectedId={selectedToken.tokenAddress} onSelectIndex={setSelectedTokenIndex} />
+        <H1>to get</H1>
+        <H1>{componentTokenValue}</H1>
+        <H1>{selectedToken.componentTokens.capitalComponentToken.symbol}</H1>
+        <H1>and</H1>
+        <H1>{componentTokenValue}</H1>
+        <H1>{selectedToken.componentTokens.yieldComponentToken.symbol}</H1>
       </InputContainer>
-      <InputContainer>
-        <InputLabel>to get</InputLabel>
-        <InputLabel>{componentTokenValue}</InputLabel>
-        <InputLabel>{selectedToken.componentTokens.capitalComponentToken.symbol}</InputLabel>
-      </InputContainer>
-      <InputContainer>
-        <InputLabel>and</InputLabel>
-        <InputLabel>{componentTokenValue}</InputLabel>
-        <InputLabel>{selectedToken.componentTokens.yieldComponentToken.symbol}</InputLabel>
-      </InputContainer>
-      <SplitButton disabled={value === "" || value === "0"} onClick={onSplitClick}>
+      <ConfirmButton disabled={value === "" || value === "0"} onClick={onSplitClick}>
         Split
-      </SplitButton>
+      </ConfirmButton>
     </SplitContainer>
   );
 };

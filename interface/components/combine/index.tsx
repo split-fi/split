@@ -8,7 +8,9 @@ import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
 
 import { convertToBaseAmount, fullTokenAmountToComponentTokenAmount } from "../../utils/number";
 
-import { ConfirmButton, InputContainer, InputLabel, TokenDropdown } from "../widget";
+import { H1 } from "../typography";
+import { Dropdown } from "../dropdown";
+import { ConfirmButton, InputContainer } from "../widget";
 import { TokenInput } from "../input";
 
 const CombineButton = styled(ConfirmButton)`
@@ -50,31 +52,23 @@ export const CombineWidget: React.FC<CombineWidgetProps> = () => {
   return (
     <CombineContainer>
       <InputContainer>
-        <InputLabel>combine</InputLabel>
+        <H1>combine</H1>
         <TokenInput
           tokenAddress={selectedToken.componentTokens.capitalComponentToken.tokenAddress}
           value={value}
           onChange={setValue}
         />
-        <InputLabel>{selectedToken.componentTokens.capitalComponentToken.symbol}</InputLabel>
-      </InputContainer>
-      <InputContainer>
-        <InputLabel>and</InputLabel>
+        <H1>{selectedToken.componentTokens.capitalComponentToken.symbol}</H1>
+        <H1>and</H1>
         <TokenInput
           tokenAddress={selectedToken.componentTokens.yieldComponentToken.tokenAddress}
           value={value}
           onChange={setValue}
         />
-        <InputLabel>{selectedToken.componentTokens.yieldComponentToken.symbol}</InputLabel>
-      </InputContainer>
-      <InputContainer>
-        <InputLabel>to get</InputLabel>
-        <InputLabel>{fullTokenValue}</InputLabel>
-        <TokenDropdown
-          items={dropdownItems}
-          selectedId={selectedToken.tokenAddress}
-          onSelectIndex={setSelectedTokenIndex}
-        />
+        <H1>{selectedToken.componentTokens.yieldComponentToken.symbol}</H1>
+        <H1>to get</H1>
+        <H1>{fullTokenValue}</H1>
+        <Dropdown items={dropdownItems} selectedId={selectedToken.tokenAddress} onSelectIndex={setSelectedTokenIndex} />
       </InputContainer>
       <CombineButton disabled={value === "" || value === "0"} onClick={onCombineClick}>
         Combine
