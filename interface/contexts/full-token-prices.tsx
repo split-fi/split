@@ -5,7 +5,7 @@ import { Decimal } from "decimal.js";
 
 import { useCTokenPriceOracle } from "../hooks/contracts";
 
-import { useChainWatcher } from "./chain-watcher";
+import { useBlockchain } from "./blockchain";
 import { useFullTokens } from "./tokens";
 
 export interface FullTokenPricesProviderState {
@@ -24,7 +24,7 @@ const FullTokenPricesActionContext = React.createContext<FullTokenPricesActionsP
 
 const FullTokenPricesProvider: React.FC = ({ children }) => {
   const { account, chainId } = useWeb3React();
-  const { blockNumber } = useChainWatcher();
+  const { blockNum } = useBlockchain();
   const tokens = useFullTokens();
   const tokenAddresses = useMemo(() => tokens.map(t => t.tokenAddress), [tokens]);
   const [fullTokenPrices, setFullTokenPrices] = useImmer<FullTokenPricesProviderState>({});
@@ -46,7 +46,7 @@ const FullTokenPricesProvider: React.FC = ({ children }) => {
           });
         });
     }
-  }, [account, chainId, blockNumber, tokenAddresses, priceOracle, refreshCounter]);
+  }, [account, chainId, blockNum, tokenAddresses, priceOracle, refreshCounter]);
 
   const refreshPrices = useCallback(() => {
     setRefreshCounter(refreshCounter + 1);

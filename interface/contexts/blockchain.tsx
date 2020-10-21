@@ -3,20 +3,20 @@ import { useWeb3React } from "@web3-react/core";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import { NETWORK_URL } from "../constants";
 
-export interface ChainWatcherProviderState {
-  blockNumber: number | undefined | null;
+export interface BlockchainProviderState {
+  blockNum: number | undefined | null;
 }
 
-const initialState: ChainWatcherProviderState = {
-  blockNumber: undefined,
+const initialState: BlockchainProviderState = {
+  blockNum: undefined,
 };
 
-const ChainWatcherContext = React.createContext<ChainWatcherProviderState>(initialState);
+const BlockchainContext = React.createContext<BlockchainProviderState>(initialState);
 
-const ChainWatcherProvider: React.FC = ({ children }) => {
+const BlockchainProvider: React.FC = ({ children }) => {
   const { chainId } = useWeb3React();
 
-  const [blockNumber, setBlockNumber] = useState<undefined | null | number>();
+  const [blockNum, setblockNum] = useState<undefined | null | number>();
 
   useEffect(() => {
     if (chainId === undefined) {
@@ -30,35 +30,35 @@ const ChainWatcherProvider: React.FC = ({ children }) => {
     // set initial value
     provider.getBlockNumber().then((blockNum: number) => {
       if (!stale) {
-        setBlockNumber(blockNum);
+        setblockNum(blockNum);
       }
     });
 
     provider.on("block", (blockNum: number) => {
       if (stale) {
       }
-      setBlockNumber(blockNum);
+      setblockNum(blockNum);
     });
 
     // remove listener when the component is unmounted
     return () => {
       provider.removeAllListeners("block");
-      setBlockNumber(undefined);
+      setblockNum(undefined);
       stale = true;
     };
   }, [chainId]);
 
   const value = useMemo(() => {
     return {
-      blockNumber,
+      blockNum,
     };
-  }, [blockNumber]);
+  }, [blockNum]);
 
-  return <ChainWatcherContext.Provider value={value}>{children}</ChainWatcherContext.Provider>;
+  return <BlockchainContext.Provider value={value}>{children}</BlockchainContext.Provider>;
 };
 
-const useChainWatcher = (): ChainWatcherProviderState => {
-  return React.useContext(ChainWatcherContext);
+const useBlockchain = (): BlockchainProviderState => {
+  return React.useContext(BlockchainContext);
 };
 
-export { ChainWatcherProvider, useChainWatcher };
+export { BlockchainProvider, useBlockchain };
