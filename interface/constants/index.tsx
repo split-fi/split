@@ -1,4 +1,3 @@
-import { Decimal } from "decimal.js";
 import { AbstractConnector } from "@web3-react/abstract-connector";
 import { MetaMaskIcon } from "../components/icons/metamask";
 import { ArrowRightIcon } from "../components/icons/arrow-right";
