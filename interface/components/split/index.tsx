@@ -9,7 +9,7 @@ import { useFullTokenPrice } from "../../contexts/full-token-prices";
 import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
 import { MAX_INT_256 } from "../../constants";
 
-import { convertToBaseAmount, convertToUnitAmount } from "../../utils/number";
+import { componentTokenAmountToFullTokenAmount, convertToBaseAmount } from "../../utils/number";
 
 import { PrimaryButton } from "../button";
 import { H1 } from "../typography";
@@ -59,9 +59,9 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   const allowance = useAssetAllowance(selectedToken.tokenAddress);
   const tokenContract = useTokenContract(selectedToken.tokenAddress);
   const deployment = useSplitProtocolAddresses();
+  const baseAmount = convertToBaseAmount(value || "0", selectedToken.decimals);
 
   const onSplitClick = useCallback(async () => {
-    const baseAmount = convertToBaseAmount(value, selectedToken.decimals);
     if (allowance.lessThan(baseAmount)) {
       await tokenContract.approve(deployment.splitVaultAddress, MAX_INT_256);
     }
@@ -78,9 +78,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   }));
 
   // The price from the price oracle is scaled by 18 decimal places.
-  const componentTokenValue = convertToUnitAmount(price.mul(value || 0), 28)
-    .toDecimalPlaces(4)
-    .toString();
+  const componentTokenValue = componentTokenAmountToFullTokenAmount(baseAmount, price).toDecimalPlaces(4).toString();
   return (
     <SplitContainer>
       <InputContainer>
