@@ -8,40 +8,16 @@ import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
 
 import { convertToBaseAmount, fullTokenAmountToComponentTokenAmount } from "../../utils/number";
 
-import { PrimaryButton } from "../button";
-import { H1 } from "../typography";
+import { ConfirmButton, InputContainer, InputLabel, TokenDropdown } from "../widget";
 import { TokenInput } from "../input";
-import { Dropdown } from "../dropdown";
 
-const CombineButton = styled(PrimaryButton)`
-  cursor: pointer;
-  margin-top: 20px;
-  border-radius: 50%;
-  width: 200px;
-  height: 200px;
-  align-self: center;
+const CombineButton = styled(ConfirmButton)`
   font-size: 32px;
 `;
 
 const CombineContainer = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const InputContainer = styled.div`
-  max-width: 800px;
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr;
-  align-items: baseline;
-  margin: 15px 0px;
-`;
-
-const InputLabel = styled(H1)`
-  padding: 15px 0px;
-`;
-
-const TokenDropdown = styled(Dropdown)`
-  padding: 15px 0px;
 `;
 
 export interface CombineWidgetProps {}
