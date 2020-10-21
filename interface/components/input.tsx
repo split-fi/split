@@ -3,7 +3,6 @@ import Decimal from "decimal.js";
 import styled, { css } from "styled-components";
 
 import { colors } from "../theme";
-import { useAssetAllowance } from "../contexts/asset-allowances";
 import { useAssetBalance } from "../contexts/asset-balances";
 import { useToken } from "../contexts/tokens";
 import { convertToUnitAmount } from "../utils/number";
