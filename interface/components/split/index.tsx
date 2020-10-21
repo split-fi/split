@@ -1,15 +1,12 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 
-import { ChainId } from "../../types/ethereum";
-import { PrimaryButton } from "../button";
-import { getEtherscanLink } from "../../utils/etherscan";
-import { useSplitVault } from "../../hooks/useSplitVault";
+import { useSplitVault } from "../../hooks/contracts";
 import { useFullTokens } from "../../contexts/tokens";
-import { useAssetAllowance } from "../../contexts/asset-allowances";
-import { useAssetBalance } from "../../contexts/asset-balances";
-import { convertToUnitAmount } from "../../utils/number";
+import { useFullTokenPrice } from "../../contexts/full-token-prices";
+import { convertToBaseAmount, convertToUnitAmount } from "../../utils/number";
 
+import { PrimaryButton } from "../button";
 import { H1 } from "../typography";
 import { TokenInput } from "../input";
 import { Dropdown } from "../dropdown";
@@ -48,29 +45,31 @@ const TokenDropdown = styled(Dropdown)`
 export interface SplitProps {}
 
 export const SplitWidget: React.FC<SplitProps> = () => {
-  const { splitVault, active, error } = useSplitVault();
+  const { splitVault } = useSplitVault();
   const tokens = useFullTokens();
   const [selectedTokenIndex, setSelectedTokenIndex] = useState(0);
   const [value, setValue] = useState<string>("");
   const selectedToken = tokens[selectedTokenIndex];
-
-  if (!tokens || !tokens.length) {
-    return null;
-  }
-
+  const price = useFullTokenPrice(selectedToken.tokenAddress);
   const onSplitClick = useCallback(async () => {
-    const tx = await splitVault.split("4040020000", selectedToken.tokenAddress);
+    const baseAmount = convertToBaseAmount(value, selectedToken.decimals);
+    await splitVault.split(baseAmount.toString(), selectedToken.tokenAddress);
   }, [splitVault]);
 
-  if (!active || error) {
-    // TODO(fragosti): how do we deal with these.
-    return <div>An error occured</div>;
+  if (!tokens || !tokens.length || !price) {
+    // TODO(fragosti): deal with this more gracefully
+    return null;
   }
 
   const dropdownItems = tokens.map(asset => ({
     id: asset.tokenAddress,
     displayName: asset.symbol,
   }));
+
+  // The price from the price oracle is scaled by 18 decimal places.
+  const componentTokenValue = convertToUnitAmount(price.mul(value || 0), 28)
+    .toDecimalPlaces(10)
+    .toString();
   return (
     <SplitContainer>
       <InputContainer>
@@ -84,12 +83,12 @@ export const SplitWidget: React.FC<SplitProps> = () => {
       </InputContainer>
       <InputContainer>
         <InputLabel>to get</InputLabel>
-        <InputLabel>{value}</InputLabel>
+        <InputLabel>{componentTokenValue}</InputLabel>
         <InputLabel>{selectedToken.componentTokens.capitalComponentToken.symbol}</InputLabel>
       </InputContainer>
       <InputContainer>
         <InputLabel>and</InputLabel>
-        <InputLabel>{value}</InputLabel>
+        <InputLabel>{componentTokenValue}</InputLabel>
         <InputLabel>{selectedToken.componentTokens.yieldComponentToken.symbol}</InputLabel>
       </InputContainer>
       <SplitButton onClick={onSplitClick}>Split</SplitButton>

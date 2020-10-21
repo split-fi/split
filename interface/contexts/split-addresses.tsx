@@ -16,7 +16,7 @@ const SplitProtocolAddressesProvider: React.FC = ({ children }) => {
 
   const value = useMemo(() => {
     if (!chainId) {
-      return;
+      return deployments.mainnet;
     }
     return deployments[CHAIN_ID_NAME[chainId]];
   }, [chainId]);

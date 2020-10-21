@@ -37,7 +37,7 @@ const AssetAllowancesProvider: React.FC = ({ children }) => {
     }
     for (let tokenContract of tokenContracts) {
       tokenContract
-        .allowance(account, protocolAddresses.splitVaultAddress) // TODO is this correct?
+        .allowance(account, protocolAddresses.splitVaultAddress)
         .then(bal => {
           setAssetAllowances(draft => {
             draft[tokenContract.address] = new Decimal(bal.toString());
@@ -57,7 +57,7 @@ const AssetAllowancesProvider: React.FC = ({ children }) => {
 
   return (
     <AssetAllowancesActionContext.Provider value={{ refreshAllowances }}>
-      <AssetAllowancesContext.Provider value={assetAllowances}>{children}</AssetAllowancesContext.Provider>;
+      <AssetAllowancesContext.Provider value={assetAllowances}>{children}</AssetAllowancesContext.Provider>
     </AssetAllowancesActionContext.Provider>
   );
 };

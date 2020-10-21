@@ -9,6 +9,7 @@ import { Web3ConnectionProvider } from "../contexts/web3-connection";
 import { Modals } from "../components/modals";
 import { ChainWatcherProvider } from "../contexts/chain-watcher";
 import { AssetBalancesProvider } from "../contexts/asset-balances";
+import { FullTokenPricesProvider } from "../contexts/full-token-prices";
 import { SplitProtocolAddressesProvider } from "../contexts/split-addresses";
 import { TokensProvider } from "../contexts/tokens";
 import { AssetAllowancesProvider } from "../contexts/asset-allowances";
@@ -39,8 +40,10 @@ export default class SplitApp extends App {
                     <TokensProvider>
                       <AssetBalancesProvider>
                         <AssetAllowancesProvider>
-                          <Modals />
-                          <Component {...modifiedPageProps} />
+                          <FullTokenPricesProvider>
+                            <Modals />
+                            <Component {...modifiedPageProps} />
+                          </FullTokenPricesProvider>
                         </AssetAllowancesProvider>
                       </AssetBalancesProvider>
                     </TokensProvider>
