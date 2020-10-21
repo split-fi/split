@@ -1,3 +1,4 @@
+import { Decimal } from "decimal.js";
 import { AbstractConnector } from "@web3-react/abstract-connector";
 import { MetaMaskIcon } from "../components/icons/metamask";
 import { ArrowRightIcon } from "../components/icons/arrow-right";
@@ -6,6 +7,8 @@ import { FortmaticIcon } from "../components/icons/fortmatic";
 
 import { fortmatic, injected, walletconnect } from "../connectors";
 import { AppAction } from "../types/app";
+
+export const MAX_INT_256 = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
 
 export const PATHS = {
   ROOT: "/",

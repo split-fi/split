@@ -3,7 +3,12 @@ import styled from "styled-components";
 
 import { useSplitVault } from "../../hooks/contracts";
 import { useFullTokens } from "../../contexts/tokens";
+import { useAssetAllowance } from "../../contexts/asset-allowances";
+import { useTokenContract } from "../../hooks/contracts";
 import { useFullTokenPrice } from "../../contexts/full-token-prices";
+import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
+import { MAX_INT_256 } from "../../constants";
+
 import { convertToBaseAmount, convertToUnitAmount } from "../../utils/number";
 
 import { PrimaryButton } from "../button";
@@ -51,10 +56,17 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   const [value, setValue] = useState<string>("");
   const selectedToken = tokens[selectedTokenIndex];
   const price = useFullTokenPrice(selectedToken.tokenAddress);
+  const allowance = useAssetAllowance(selectedToken.tokenAddress);
+  const tokenContract = useTokenContract(selectedToken.tokenAddress);
+  const deployment = useSplitProtocolAddresses();
+
   const onSplitClick = useCallback(async () => {
     const baseAmount = convertToBaseAmount(value, selectedToken.decimals);
-    const txn = await splitVault.split(baseAmount.toString(), selectedToken.tokenAddress);
-  }, [splitVault]);
+    if (allowance.lessThan(baseAmount)) {
+      await tokenContract.approve(deployment.splitVaultAddress, MAX_INT_256);
+    }
+    await splitVault.split(baseAmount.toString(), selectedToken.tokenAddress);
+  }, [value, splitVault, selectedToken, deployment]);
 
   if (!tokens || !tokens.length || !price) {
     // TODO(fragosti): deal with this more gracefully
@@ -91,7 +103,9 @@ export const SplitWidget: React.FC<SplitProps> = () => {
         <InputLabel>{componentTokenValue}</InputLabel>
         <InputLabel>{selectedToken.componentTokens.yieldComponentToken.symbol}</InputLabel>
       </InputContainer>
-      <SplitButton disabled={value === "" || value === "0"} onClick={onSplitClick}>Split</SplitButton>
+      <SplitButton disabled={value === "" || value === "0"} onClick={onSplitClick}>
+        Split
+      </SplitButton>
     </SplitContainer>
   );
 };
