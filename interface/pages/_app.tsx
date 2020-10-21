@@ -7,12 +7,14 @@ import { ThemedGlobalStyle } from "../theme";
 import { AppModalProvider } from "../contexts/modal";
 import { Web3ConnectionProvider } from "../contexts/web3-connection";
 import { Modals } from "../components/modals";
-import { ChainWatcherProvider } from "../contexts/chain-watcher";
+import { BlockchainProvider } from "../contexts/blockchain";
 import { AssetBalancesProvider } from "../contexts/asset-balances";
 import { FullTokenPricesProvider } from "../contexts/full-token-prices";
 import { SplitProtocolAddressesProvider } from "../contexts/split-addresses";
 import { TokensProvider } from "../contexts/tokens";
 import { AssetAllowancesProvider } from "../contexts/asset-allowances";
+import { TransactionProvider } from "../contexts/transaction";
+import { BannerProvider } from "../contexts/banner";
 
 const AppWrapper = styled.div``;
 
@@ -33,24 +35,28 @@ export default class SplitApp extends App {
         <ThemedGlobalStyle />
         <AppWrapper>
           <AppModalProvider>
-            <Web3ReactProvider getLibrary={getLibrary}>
-              <Web3ConnectionProvider>
-                <ChainWatcherProvider>
-                  <SplitProtocolAddressesProvider>
-                    <TokensProvider>
-                      <AssetBalancesProvider>
-                        <AssetAllowancesProvider>
-                          <FullTokenPricesProvider>
-                            <Modals />
-                            <Component {...modifiedPageProps} />
-                          </FullTokenPricesProvider>
-                        </AssetAllowancesProvider>
-                      </AssetBalancesProvider>
-                    </TokensProvider>
-                  </SplitProtocolAddressesProvider>
-                </ChainWatcherProvider>
-              </Web3ConnectionProvider>
-            </Web3ReactProvider>
+            <BannerProvider>
+              <Web3ReactProvider getLibrary={getLibrary}>
+                <Web3ConnectionProvider>
+                  <BlockchainProvider>
+                    <TransactionProvider>
+                      <SplitProtocolAddressesProvider>
+                        <TokensProvider>
+                          <AssetBalancesProvider>
+                            <AssetAllowancesProvider>
+                              <FullTokenPricesProvider>
+                                <Modals />
+                                <Component {...modifiedPageProps} />
+                              </FullTokenPricesProvider>
+                            </AssetAllowancesProvider>
+                          </AssetBalancesProvider>
+                        </TokensProvider>
+                      </SplitProtocolAddressesProvider>
+                    </TransactionProvider>
+                  </BlockchainProvider>
+                </Web3ConnectionProvider>
+              </Web3ReactProvider>
+            </BannerProvider>
           </AppModalProvider>
         </AppWrapper>
       </>
