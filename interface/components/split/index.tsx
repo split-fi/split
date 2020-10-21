@@ -35,11 +35,11 @@ const InputContainer = styled.div`
 `;
 
 const InputLabel = styled(H1)`
-  padding: 15px;
+  padding: 15px 0px;
 `;
 
 const TokenDropdown = styled(Dropdown)`
-  padding: 15px;
+  padding: 15px 0px;
 `;
 
 export interface SplitProps {}
@@ -53,7 +53,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   const price = useFullTokenPrice(selectedToken.tokenAddress);
   const onSplitClick = useCallback(async () => {
     const baseAmount = convertToBaseAmount(value, selectedToken.decimals);
-    await splitVault.split(baseAmount.toString(), selectedToken.tokenAddress);
+    const txn = await splitVault.split(baseAmount.toString(), selectedToken.tokenAddress);
   }, [splitVault]);
 
   if (!tokens || !tokens.length || !price) {
@@ -68,7 +68,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
 
   // The price from the price oracle is scaled by 18 decimal places.
   const componentTokenValue = convertToUnitAmount(price.mul(value || 0), 28)
-    .toDecimalPlaces(10)
+    .toDecimalPlaces(4)
     .toString();
   return (
     <SplitContainer>
@@ -91,7 +91,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
         <InputLabel>{componentTokenValue}</InputLabel>
         <InputLabel>{selectedToken.componentTokens.yieldComponentToken.symbol}</InputLabel>
       </InputContainer>
-      <SplitButton onClick={onSplitClick}>Split</SplitButton>
+      <SplitButton disabled={value === "" || value === "0"} onClick={onSplitClick}>Split</SplitButton>
     </SplitContainer>
   );
 };
