@@ -24,8 +24,9 @@ const SplitInput = styled.input<{ isError?: boolean }>`
       color: ${colors.red};
       border-bottom: 2px solid ${colors.red} !important;
     `}
-  &&:focus {
+  &:focus {
     font-style: italic;
+    font-weight: bold;
     border-bottom: 3px solid white;
   }
 `;

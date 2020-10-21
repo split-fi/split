@@ -12,7 +12,7 @@ export const CombineWidget: React.FC<CombineWidgetProps> = () => {
   const { active, error } = useWeb3React();
 
   if (!active || error) {
-    return <div>An error occured</div>;
+    return <div>Please connect your wallet.</div>;
   }
 
   return <div>Combine Widget</div>;

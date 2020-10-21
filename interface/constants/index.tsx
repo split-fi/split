@@ -11,8 +11,7 @@ export const MAX_INT_256 = "1157920892373161954235709850086879078532699846656405
 
 export const PATHS = {
   ROOT: "/",
-  APP: "app/",
-  APP_SPLIT: "app/split",
+  SPLIT: "/split",
 };
 
 // Only for deployed contracts.
