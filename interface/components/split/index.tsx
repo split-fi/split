@@ -15,9 +15,8 @@ import { TokenInput } from "../input";
 import { H1 } from "../typography";
 import { Dropdown } from "../dropdown";
 import { ConfirmButton, InputContainer } from "../widget";
-import { PageWrapper } from "../content";
 
-const SplitPageWrapper = styled(PageWrapper)`
+const SplitContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
@@ -55,7 +54,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   // The price from the price oracle is scaled by 18 decimal places.
   const componentTokenValue = componentTokenAmountToFullTokenAmount(baseAmount, price).toDecimalPlaces(4).toString();
   return (
-    <SplitPageWrapper>
+    <SplitContainer>
       <InputContainer>
         <H1>split</H1>
         <TokenInput tokenAddress={selectedToken.tokenAddress} value={value} onChange={setValue} />
@@ -70,6 +69,6 @@ export const SplitWidget: React.FC<SplitProps> = () => {
       <ConfirmButton disabled={value === "" || value === "0"} onClick={onSplitClick}>
         Split
       </ConfirmButton>
-    </SplitPageWrapper>
+    </SplitContainer>
   );
 };
