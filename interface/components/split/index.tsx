@@ -69,8 +69,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   }, [value, splitVault, selectedToken, deployment]);
 
   if (!tokens || !tokens.length || !price) {
-    // TODO(fragosti): deal with this more gracefully
-    return null;
+    return <div>Please connect your wallet.</div>;
   }
 
   const dropdownItems = tokens.map(asset => ({
