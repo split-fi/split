@@ -29,6 +29,7 @@
     "react-dom": "^16.14.0",
     "react-feather": "^2.0.8",
     "react-spring": "^8.0.27",
+    "react-table": "^7.6.0",
     "react-use": "^15.3.4",
     "react-use-gesture": "^7.0.16",
     "styled-components": "^5.2.0",

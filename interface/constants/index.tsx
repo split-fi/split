@@ -6,8 +6,10 @@ import { FortmaticIcon } from "../components/icons/fortmatic";
 
 import { fortmatic, injected, walletconnect } from "../connectors";
 import { AppAction } from "../types/app";
+import Decimal from "decimal.js";
 
 export const MAX_INT_256 = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
+export const ZERO = new Decimal(0);
 
 export const PATHS = {
   ROOT: "/",
