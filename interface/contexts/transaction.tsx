@@ -9,10 +9,10 @@ import { Web3Provider } from "@ethersproject/providers";
 import { useTxBannerActions } from "./banner";
 import { formatTokenAmount } from "../utils/format";
 
-const BLOCK_NUM_AGO_TILL_DISMISS = 10;
+const BLOCK_NUM_AGO_TILL_DISMISS = 6;
 
 export interface TransactionActionsProviderState {
-  addTransaction: (sender: string, txHash: string, metadata?: TransactionMetadata) => void;
+  addTransaction: (txHash: string, metadata?: TransactionMetadata) => void;
 }
 
 interface TransactionMap {
@@ -36,19 +36,17 @@ const TransactionProvider: React.FC = ({ children }) => {
     if (!chainId || !blockNum) {
       return;
     }
+    // TODO: maybe worth looping on banners not transactions
     for (const transaction of Object.values(transactionsMap)) {
       if (!!transaction.lastBlockNumChecked) {
         if (blockNum - transaction.lastBlockNumChecked >= BLOCK_NUM_AGO_TILL_DISMISS) {
           updateTxBanner(transaction.txHash, {
             dismissed: true,
-          });  
+          });
         }
       }
     }
-  }, [
-    chainId,
-    blockNum,
-  ]);
+  }, [chainId, blockNum, transactionsMap]);
 
   // watches for transactions and updates banners
   useEffect(() => {
@@ -69,27 +67,35 @@ const TransactionProvider: React.FC = ({ children }) => {
               });
               if (receipt.status === 1) {
                 const { metadata } = transaction;
-                if (metadata.type === 'split') {
+                if (metadata.type === "split") {
                   const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
                   updateTxBanner(transaction.txHash, {
-                    description: `${formatTokenAmount(metadata.fullTokenAmount, metadata.fullToken).minimizedWithUnits} combined from ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}`,
+                    description: `${
+                      formatTokenAmount(metadata.fullTokenAmount, metadata.fullToken).minimizedWithUnits
+                    } combined from ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}`,
                     type: "success",
                   });
                 }
-                if (metadata.type === 'combine') {
+                if (metadata.type === "combine") {
                   const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
                   updateTxBanner(transaction.txHash, {
-                    description: `${formatTokenAmount(metadata.componentTokenAmount, capitalComponentToken).minimized} ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol} obtained from ${metadata.fullToken.symbol}`,
+                    description: `${
+                      formatTokenAmount(metadata.componentTokenAmount, capitalComponentToken).minimized
+                    } ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol} obtained from ${
+                      metadata.fullToken.symbol
+                    }`,
                     type: "success",
                   });
                 }
-                if (metadata.type === 'withdraw') {
+                if (metadata.type === "withdraw") {
                   updateTxBanner(transaction.txHash, {
-                    description: `${formatTokenAmount(metadata.widthdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits} withdrawn`,
+                    description: `${
+                      formatTokenAmount(metadata.widthdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits
+                    } withdrawn`,
                     type: "success",
                   });
                 }
-                if (metadata.type === 'approve') {
+                if (metadata.type === "approve") {
                   updateTxBanner(transaction.txHash, {
                     description: `approved ${metadata.token.symbol}`,
                     type: "success",
@@ -99,7 +105,7 @@ const TransactionProvider: React.FC = ({ children }) => {
                 updateTxBanner(transaction.txHash, {
                   description: "Transaction failed",
                   type: "error",
-                })
+                });
               }
             } else {
               setTransactionsMap(draft => {
@@ -115,7 +121,7 @@ const TransactionProvider: React.FC = ({ children }) => {
   }, [chainId, blockNum, setTransactionsMap, transactionsMap]);
 
   const addTransaction = useCallback(
-    (sender: string, txHash: string, metadata?: TransactionMetadata) => {
+    (txHash: string, metadata?: TransactionMetadata) => {
       // do not add a tx if already in the map
       if (!!transactionsMap[txHash]) {
         return;
@@ -123,7 +129,6 @@ const TransactionProvider: React.FC = ({ children }) => {
 
       setTransactionsMap(draft => {
         draft[txHash] = {
-          senderAddress: sender,
           txHash,
           metadata,
           status: "in-progress",
@@ -131,21 +136,34 @@ const TransactionProvider: React.FC = ({ children }) => {
         };
       });
 
-      if (metadata.type === 'combine') {
+      if (metadata.type === "combine") {
         const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
-        addPendingTxBanner(txHash, `combining ${formatTokenAmount(metadata.componentTokenAmount,capitalComponentToken).minimized} ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol} into ${metadata.fullToken.symbol}`);
+        addPendingTxBanner(
+          txHash,
+          `combining ${formatTokenAmount(metadata.componentTokenAmount, capitalComponentToken).minimized} ${
+            capitalComponentToken.symbol
+          } and ${yieldComponentToken.symbol} into ${metadata.fullToken.symbol}`,
+        );
       }
 
-      if (metadata.type === 'split') {
+      if (metadata.type === "split") {
         const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
-        addPendingTxBanner(txHash, `splitting ${formatTokenAmount(metadata.fullTokenAmount, metadata.fullToken).minimized} ${metadata.fullToken} into ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}`);
+        addPendingTxBanner(
+          txHash,
+          `splitting ${formatTokenAmount(metadata.fullTokenAmount, metadata.fullToken).minimized} ${
+            metadata.fullToken.symbol
+          } into ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}`,
+        );
       }
 
-      if (metadata.type === 'withdraw') {
-        addPendingTxBanner(txHash, `withdrawing ${formatTokenAmount(metadata.widthdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits}`);
+      if (metadata.type === "withdraw") {
+        addPendingTxBanner(
+          txHash,
+          `withdrawing ${formatTokenAmount(metadata.widthdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits}`,
+        );
       }
 
-      if (metadata.type === 'approve') {
+      if (metadata.type === "approve") {
         addPendingTxBanner(txHash, `approving ${metadata.token.symbol}`);
       }
     },

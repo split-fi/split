@@ -61,7 +61,12 @@ export const TxBanner: FC<TxBannerMetadata> = ({ type, txHash, description }) =>
   return (
     <BannerWrapper type={type}>
       <StyledP type={type}>{description}</StyledP>
-      <StyledA type={type} style={{marginLeft: 4}} href={getEtherscanLink(chainId ?? 1, txHash, "transaction")}>
+      <StyledA
+        target="_blank"
+        type={type}
+        style={{ marginLeft: 4 }}
+        href={getEtherscanLink(chainId ?? 1, txHash, "transaction")}
+      >
         see on etherscan
       </StyledA>
     </BannerWrapper>

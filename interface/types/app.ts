@@ -13,8 +13,8 @@ export enum AppModal {
 
 export enum AppAction {
   SPLIT = "SPLIT",
-  MANAGE = "MANAGE",
   COMBINE = "COMBINE",
+  MANAGE = "MANAGE",
 }
 
 export type BannerType = "loading" | "success" | "error" | "default";
@@ -32,33 +32,37 @@ export interface TxBannerMetadata extends BannerMetadata {
 export interface ApproveTransactionMetadata {
   tokenAmount: Decimal;
   token: Asset;
+  type: "approve";
 }
 
 export interface SplitTransactionMetadata {
   fullToken: FullAsset;
   fullTokenAmount: Decimal;
-  type: 'split';
+  type: "split";
 }
 
 export interface CombineTransactionMetadata {
   fullToken: FullAsset;
   componentTokenAmount: Decimal;
-  type: 'combine';
+  type: "combine";
 }
 
 export interface WithdrawTransactionMetadata {
   widthdrawTokenAmount: Decimal;
   withdrawToken: Asset;
-  type: 'withdraw';
+  type: "withdraw";
 }
 
-export type TransactionMetadata = ApproveTransactionMetadata | SplitTransactionMetadata | WithdrawTransactionMetadata | CombineTransactionMetadata;
+export type TransactionMetadata =
+  | ApproveTransactionMetadata
+  | SplitTransactionMetadata
+  | WithdrawTransactionMetadata
+  | CombineTransactionMetadata;
 
 export type TransactionStatus = "in-progress" | "success" | "failed";
 
 export interface TransactionObject {
   chainId: number;
-  senderAddress: string;
   txHash: string;
   status: TransactionStatus;
   metadata?: TransactionMetadata;

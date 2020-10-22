@@ -12,6 +12,7 @@ import { H1 } from "../typography";
 import { Dropdown } from "../dropdown";
 import { ConfirmButton, InputContainer } from "../widget";
 import { TokenInput } from "../input";
+import { useTransactionActions } from "../../contexts/transaction";
 
 const CombineButton = styled(ConfirmButton)`
   font-size: 32px;
@@ -28,6 +29,7 @@ export const CombineWidget: React.FC<CombineWidgetProps> = () => {
   const { splitVault } = useSplitVault();
   const tokens = useFullTokens();
   const [selectedTokenIndex, setSelectedTokenIndex] = useState(0);
+  const { addTransaction } = useTransactionActions();
   const [value, setValue] = useState<string>("");
   const selectedToken = tokens[selectedTokenIndex];
   const price = useFullTokenPrice(selectedToken.tokenAddress);
@@ -36,7 +38,14 @@ export const CombineWidget: React.FC<CombineWidgetProps> = () => {
 
   const onCombineClick = useCallback(async () => {
     // No allowance needed for combining
-    await splitVault.combine(baseAmount.toString(), selectedToken.tokenAddress);
+    const tx = await splitVault.combine(baseAmount.toString(), selectedToken.tokenAddress);
+    addTransaction(tx.hash, {
+      fullToken: selectedToken,
+      componentTokenAmount: baseAmount,
+      type: "combine",
+    });
+    // TODO: clear input on success????
+    setValue("");
   }, [value, splitVault, selectedToken, deployment]);
 
   if (!tokens || !tokens.length || !price) {

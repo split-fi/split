@@ -95,7 +95,7 @@ const useTxBannerActions = () => {
     return txBanners.reduce((a: { [txHash: string]: number }, c: TxBannerMetadata, i: number) => {
       return {
         ...a,
-        [c.txHash]: i,
+        [c.txHash]: i + 1, // add one to get around falsy value
       };
     }, {} as { [txHash: string]: number });
   }, [txBanners]);
@@ -105,13 +105,13 @@ const useTxBannerActions = () => {
         if (!txHashToIndexMap[txHash]) {
           return;
         }
-        bannerActions.updateBanner(txHashToIndexMap[txHash], { dismissed: true });
+        bannerActions.updateBanner(txHashToIndexMap[txHash] - 1, { dismissed: true });
       },
       updateTxBanner: (txHash: string, changes: Partial<TxBannerMetadata>) => {
         if (!txHashToIndexMap[txHash]) {
           return;
         }
-        bannerActions.updateBanner(txHashToIndexMap[txHash], changes);
+        bannerActions.updateBanner(txHashToIndexMap[txHash] - 1, changes);
       },
       addPendingTxBanner: (txHash: string, description: string) => {
         bannerActions.addBanner({
@@ -122,7 +122,7 @@ const useTxBannerActions = () => {
         } as TxBannerMetadata);
       },
     }),
-    [],
+    [txHashToIndexMap, bannerActions],
   );
 };
 
