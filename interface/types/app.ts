@@ -48,7 +48,7 @@ export interface CombineTransactionMetadata {
 }
 
 export interface WithdrawTransactionMetadata {
-  widthdrawTokenAmount: Decimal;
+  withdrawTokenAmount: Decimal;
   withdrawToken: Asset;
   type: "withdraw";
 }

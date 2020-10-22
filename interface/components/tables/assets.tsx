@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import { useTable } from "react-table";
 import styled from "styled-components";
 
@@ -13,6 +13,8 @@ import { useTransaction, useTransactionActions } from "../../contexts/transactio
 import { useYieldBalances } from "../../contexts/yield-balances";
 import { Faded } from "../typography";
 import { useFullTokens } from "../../contexts/tokens";
+import { useYieldTokenContracts } from "../../hooks/contracts";
+import { YieldComponentToken } from "split-contracts/typechain/YieldComponentToken";
 
 type Filter = "capital-split" | "yield-split";
 
@@ -51,6 +53,20 @@ const YieldTable: React.FC<YieldTableProps> = ({ data }) => {
     data,
   });
 
+  const yieldContracts = useYieldTokenContracts(
+    data.map(t => t.fullToken.componentTokens.yieldComponentToken.tokenAddress),
+  );
+  const yieldContractByAddress = useMemo(
+    () =>
+      yieldContracts.reduce((a: any, c: YieldComponentToken) => {
+        return {
+          ...a,
+          [c.address]: c,
+        };
+      }, {} as { [address: string]: YieldComponentToken }),
+    [yieldContracts],
+  );
+
   return (
     <div {...getTableProps()}>
       <TBody>
@@ -88,7 +104,11 @@ const YieldTable: React.FC<YieldTableProps> = ({ data }) => {
                   return (
                     <>
                       <TCell {...cell.getCellProps()} style={{ flexDirection: "row-reverse" }}>
-                        <WidthdrawAction tokenAddress={componentToken.tokenAddress} />
+                        <WidthdrawAction
+                          withdrawToken={componentToken}
+                          withdrawTokenAmount={yieldOfComponent}
+                          withdrawContract={yieldContractByAddress[componentToken.tokenAddress]}
+                        />
                       </TCell>
                     </>
                   );
@@ -157,13 +177,25 @@ const CapitalTable: React.FC<CapitalTableProps> = ({ data }) => {
 const WithdrawActionWrapper = styled.div``;
 
 interface WidthdrawActionProps {
-  tokenAddress: string;
+  withdrawTokenAmount: Decimal;
+  withdrawToken: Asset;
+  withdrawContract: YieldComponentToken | undefined;
 }
 
-const WidthdrawAction: FC<WidthdrawActionProps> = ({ tokenAddress }) => {
+const WidthdrawAction: FC<WidthdrawActionProps> = ({ withdrawContract, withdrawTokenAmount, withdrawToken }) => {
   const [txHash, setWithdrawTxHash] = useState<string | undefined>(undefined);
   const { addTransaction } = useTransactionActions();
   const transactionObject = useTransaction(txHash);
+
+  const onWithdrawClick = useCallback(async () => {
+    const tx = await withdrawContract.withdrawYield();
+    addTransaction(tx.hash, {
+      withdrawTokenAmount,
+      withdrawToken,
+      type: "withdraw",
+    });
+  }, [withdrawContract, withdrawTokenAmount, withdrawToken]);
+
   return (
     <WithdrawActionWrapper>
       {!!transactionObject ? (
@@ -171,7 +203,7 @@ const WidthdrawAction: FC<WidthdrawActionProps> = ({ tokenAddress }) => {
           <Faded>Withdrawing...</Faded>
         </TCellLabel>
       ) : (
-        <PrimaryButton>Withdraw</PrimaryButton>
+        <>{withdrawContract && <PrimaryButton onClick={onWithdrawClick}>Withdraw</PrimaryButton>}</>
       )}
     </WithdrawActionWrapper>
   );
