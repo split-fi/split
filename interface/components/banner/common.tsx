@@ -5,7 +5,7 @@ import { BannerMetadata, BannerType, TxBannerMetadata } from "../../types/app";
 import { getEtherscanLink } from "../../utils/etherscan";
 import { PrimaryAnchor } from "../anchor";
 import { FOOTER_HEIGHT } from "../footer/common";
-import { P } from "../typography";
+import { H3 } from "../typography";
 
 export const BannersWrapper = styled.div`
   position: fixed;
@@ -44,15 +44,16 @@ export const BannerWrapper = styled.div<BannerTypeProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
+  padding: 16px 0;
 `;
 
-const StyledP = styled(P)<BannerTypeProps>`
+const StyledH3 = styled(H3)<BannerTypeProps>`
   color: ${props => bannerTypeToColor(props.type)};
 `;
 
 const StyledA = styled(PrimaryAnchor)<BannerTypeProps>`
   color: ${props => bannerTypeToColor(props.type)};
+  font-size: 28px;
 `;
 
 export const TxBanner: FC<TxBannerMetadata> = ({ type, txHash, description }) => {
@@ -60,7 +61,7 @@ export const TxBanner: FC<TxBannerMetadata> = ({ type, txHash, description }) =>
 
   return (
     <BannerWrapper type={type}>
-      <StyledP type={type}>{description}</StyledP>
+      <StyledH3 type={type}>{description}</StyledH3>
       <StyledA
         target="_blank"
         type={type}
@@ -76,7 +77,7 @@ export const TxBanner: FC<TxBannerMetadata> = ({ type, txHash, description }) =>
 export const Banner: FC<BannerMetadata> = ({ type, description }) => {
   return (
     <BannerWrapper type={type}>
-      <StyledP type={type}>{description}</StyledP>
+      <StyledH3 type={type}>{description}</StyledH3>
     </BannerWrapper>
   );
 };
