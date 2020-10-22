@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
   return (
     <FooterContentWrapper>
       <FooterLeftContentWrapper>
-        <P>@SPLIT 2020 / This is in beta put in money at your own risk</P>
+        <P>© SPLIT 2020 BETA – Put in money at your own risk</P>
       </FooterLeftContentWrapper>
       <FooterRightContentWrapper>
         <LinksWrapper>

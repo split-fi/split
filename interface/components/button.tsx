@@ -26,29 +26,6 @@ export const PrimaryButton = styled.button`
   }
 `;
 
-export const SecondaryButton = styled.button`
-  border: 2px rgba(255, 255, 255, 0.05) solid;
-  font-weight: 900;
-  border-radius: 999px;
-  padding: 12px 32px;
-  color: #ffffff;
-  letter-spacing: 0.05rem;
-  background-color: rgba(0, 0, 0, 0);
-  font-size: 14px;
-  &:focus:enabled {
-    outline: none;
-  }
-  &:hover:enabled {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
-    font-style: italic;
-  }
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
-`;
-
 export const SecondaryDarkButton = styled.button`
   border: 2px rgba(0, 0, 0, 0.05) solid;
   font-weight: 900;

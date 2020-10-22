@@ -103,6 +103,6 @@ export const TokenInput: React.FC<TokenInputProps> = ({ tokenAddress, value, onC
   }
   const maxString = unitTokenBalance.toString();
   return (
-    <Input value={value} onChange={onChange} maxLength={15} message={`${maxString} max`} errorMessage={errorMsg} />
+    <Input value={value} onChange={onChange} maxLength={22} message={`${maxString} max`} errorMessage={errorMsg} />
   );
 };
