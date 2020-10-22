@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "https://github.com/split-fi/split.git",
   "author": "francesco@fragosti.com",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
     "buidler",

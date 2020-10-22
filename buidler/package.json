@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "author": "francesco@fragosti.com",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "devDependencies": {
     "@nomiclabs/buidler": "^1.4.7",
     "@nomiclabs/buidler-ethers": "^2.0.0",
