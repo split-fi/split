@@ -15,6 +15,9 @@ import { TokenInput } from "../input";
 import { H1 } from "../typography";
 import { Dropdown } from "../dropdown";
 import { ConfirmButton, InputContainer } from "../widget";
+import { useTransactionActions } from "../../contexts/transaction";
+import { ApproveTransactionMetadata } from "../../types/app";
+import Decimal from "decimal.js";
 
 const SplitContainer = styled.div`
   display: flex;
@@ -26,6 +29,7 @@ export interface SplitProps {}
 export const SplitWidget: React.FC<SplitProps> = () => {
   const { splitVault } = useSplitVault();
   const tokens = useFullTokens();
+  const { addTransaction } = useTransactionActions();
   const [selectedTokenIndex, setSelectedTokenIndex] = useState(0);
   const [value, setValue] = useState<string>("");
   const selectedToken = tokens[selectedTokenIndex];
@@ -37,9 +41,21 @@ export const SplitWidget: React.FC<SplitProps> = () => {
 
   const onSplitClick = useCallback(async () => {
     if (allowance.lessThan(baseAmount)) {
-      await tokenContract.approve(deployment.splitVaultAddress, MAX_INT_256);
+      const tx = await tokenContract.approve(deployment.splitVaultAddress, MAX_INT_256);
+      addTransaction(tx.hash, {
+        token: selectedToken,
+        tokenAmount: new Decimal(MAX_INT_256),
+        type: "approve",
+      });
     }
-    await splitVault.split(baseAmount.toString(), selectedToken.tokenAddress);
+    const tx = await splitVault.split(baseAmount.toString(), selectedToken.tokenAddress);
+    addTransaction(tx.hash, {
+      fullToken: selectedToken,
+      fullTokenAmount: baseAmount,
+      type: "split",
+    });
+    // TODO: clear input on success????
+    setValue("");
   }, [value, splitVault, selectedToken, deployment]);
 
   if (!tokens || !tokens.length || !price) {
