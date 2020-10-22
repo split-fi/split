@@ -33,6 +33,11 @@ const AnimationContainer = styled.div`
   }
 `;
 
+const Layout = styled.main`
+  max-width: 1400px;
+  margin: 0 auto;
+`;
+
 const Section = styled.section<{ isReversed?: boolean }>`
   padding: 80px 40px;
   display: flex;
@@ -68,37 +73,40 @@ const IndexPage: React.FC = () => {
   return (
     <>
       <HeroHeader />
-      <Section>
-        <HeroContainer>
-          <HeroH1>
-            Split Protocol facilitates the disaggregation of existing ERC20 tokens into various components representing
-            different, valuable properties of the asset.
-          </HeroH1>
-          <CTAButton onClick={onGoToAppClick}>Go to app</CTAButton>
-        </HeroContainer>
-        <AnimationContainer>{View}</AnimationContainer>
-      </Section>
-      <Section>
-        <YieldToken height="250" />
-        <SectionH3>
-          <strong>yieldXYZ</strong> can be minted from any income-generating token – from cDAI to YFI to UNI LP tokens –
-          with the holder able to redeem accumulated income or receive it automatically if transferred
-        </SectionH3>
-      </Section>
-      <Section isReversed={true}>
-        <SectionH3>
-          <strong>governanceXYZ</strong> can be minted from any token with attached governance rights—such as COMP, KNC
-          or YFI—providing the holder with full voting rights for potentially only a fraction of the full token price
-        </SectionH3>
-        <GovernanceToken height="250" />
-      </Section>
-      <Section>
-        <CapitalToken height="250" />
-        <SectionH3>
-          <strong>capitalXYZ</strong> is minted from every Split Protocol deconstruction providing growth-focused
-          exposure
-        </SectionH3>
-      </Section>
+      <Layout>
+        <Section>
+          <HeroContainer>
+            <HeroH1>
+              Split Protocol facilitates the disaggregation of existing ERC20 tokens into various components
+              representing different, valuable properties of the asset.
+            </HeroH1>
+            <CTAButton onClick={onGoToAppClick}>Go to app</CTAButton>
+          </HeroContainer>
+          <AnimationContainer>{View}</AnimationContainer>
+        </Section>
+        <Section>
+          <YieldToken height="250" />
+          <SectionH3>
+            <strong>yieldXYZ</strong> can be minted from any income-generating token – from cDAI to YFI to UNI LP tokens
+            – with the holder able to redeem accumulated income or receive it automatically if transferred
+          </SectionH3>
+        </Section>
+        <Section isReversed={true}>
+          <SectionH3>
+            <strong>governanceXYZ</strong> can be minted from any token with attached governance rights—such as COMP,
+            KNC or YFI—providing the holder with full voting rights for potentially only a fraction of the full token
+            price
+          </SectionH3>
+          <GovernanceToken height="250" />
+        </Section>
+        <Section>
+          <CapitalToken height="250" />
+          <SectionH3>
+            <strong>capitalXYZ</strong> is minted from every Split Protocol deconstruction providing growth-focused
+            exposure
+          </SectionH3>
+        </Section>
+      </Layout>
       <Footer />
     </>
   );
