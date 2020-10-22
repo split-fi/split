@@ -13,9 +13,6 @@ import splitMergeAnimation from "../data/split_merge.json";
 
 const HeroContainer = styled.section`
   display: flex;
-  padding-left: 120px;
-  padding-bottom: 100px;
-  padding-top: 100px;
   flex-direction: column;
 `;
 
@@ -31,13 +28,16 @@ const CTAButton = styled(PrimaryButton)`
 
 const AnimationContainer = styled.div`
   width: 600px;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
-const Section = styled.section`
+const Section = styled.section<{ isReversed?: boolean }>`
   padding: 80px 40px;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: ${props => (props.isReversed ? "wrap-reverse" : "wrap")};
   justify-content: space-around;
   align-items: center;
 `;
@@ -85,7 +85,7 @@ const IndexPage: React.FC = () => {
           with the holder able to redeem accumulated income or receive it automatically if transferred
         </SectionH3>
       </Section>
-      <Section>
+      <Section isReversed={true}>
         <SectionH3>
           <strong>governanceXYZ</strong> can be minted from any token with attached governance rights—such as COMP, KNC
           or YFI—providing the holder with full voting rights for potentially only a fraction of the full token price
