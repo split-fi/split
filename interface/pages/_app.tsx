@@ -15,6 +15,7 @@ import { TokensProvider } from "../contexts/tokens";
 import { AssetAllowancesProvider } from "../contexts/asset-allowances";
 import { TransactionProvider } from "../contexts/transaction";
 import { BannerProvider } from "../contexts/banner";
+import { YieldBalancesProvider } from "../contexts/yield-balances";
 
 const AppWrapper = styled.div``;
 
@@ -45,8 +46,10 @@ export default class SplitApp extends App {
                           <AssetBalancesProvider>
                             <AssetAllowancesProvider>
                               <FullTokenPricesProvider>
-                                <Modals />
-                                <Component {...modifiedPageProps} />
+                                <YieldBalancesProvider>
+                                  <Modals />
+                                  <Component {...modifiedPageProps} />
+                                </YieldBalancesProvider>
                               </FullTokenPricesProvider>
                             </AssetAllowancesProvider>
                           </AssetBalancesProvider>

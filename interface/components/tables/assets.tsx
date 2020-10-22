@@ -10,6 +10,7 @@ import { PrimaryButton } from "../button";
 import { ZERO } from "../../constants";
 import { useAssetBalances } from "../../contexts/asset-balances";
 import { useTransaction, useTransactionActions } from "../../contexts/transaction";
+import { useYieldBalances } from "../../contexts/yield-balances";
 import { Faded } from "../typography";
 import { useFullTokens } from "../../contexts/tokens";
 
@@ -56,7 +57,12 @@ const YieldTable: React.FC<YieldTableProps> = ({ data }) => {
         <HeaderTR></HeaderTR>
         {rows.map(row => {
           prepareRow(row);
-          const { fullToken, componentToken, balanceOfComponent } = row.original as ComponentTokenWithFullAndBalance;
+          const {
+            fullToken,
+            componentToken,
+            balanceOfComponent,
+            yieldOfComponent,
+          } = row.original as ComponentTokenWithFullAndBalance;
           return (
             <TR key={fullToken.tokenAddress} {...(row.getRowProps() as any)}>
               {row.cells.map(cell => {
@@ -73,10 +79,7 @@ const YieldTable: React.FC<YieldTableProps> = ({ data }) => {
                   return (
                     <TCell {...cell.getCellProps()} style={{ flexDirection: "row-reverse" }}>
                       <TCellLabel>
-                        withdraw{" "}
-                        {`${formatTokenAmount(balanceOfComponent, componentToken).minimized} ${
-                          fullToken.underlyingAssetSymbol
-                        }`}
+                        withdraw {formatTokenAmount(yieldOfComponent, fullToken).minimizedWithUnits}
                       </TCellLabel>
                     </TCell>
                   );
@@ -130,7 +133,7 @@ const CapitalTable: React.FC<CapitalTableProps> = ({ data }) => {
                   );
                 }
                 if (cell.column.id === "worth") {
-                  // TODO(fragosti): Need a better way of doing this.
+                  // TODO(fragosti): Need a better way of doing this. HACK.
                   return (
                     <TCell {...cell.getCellProps()} style={{ flexDirection: "row-reverse" }}>
                       <TCellLabel>
@@ -178,14 +181,15 @@ export interface ComponentTokenWithFullAndBalance {
   fullToken: FullAsset;
   componentToken: Asset;
   balanceOfComponent: Decimal;
+  yieldOfComponent: Decimal;
 }
 
 const AssetsTable: React.FC<AssetsTableProps> = ({ filter }) => {
   const fullTokens = useFullTokens();
   const tokenBalances = useAssetBalances();
+  const yieldBalances = useYieldBalances();
   const isCapitalSplit = filter === "capital-split";
   const data = fullTokens.map(fullToken => {
-    // TODO(fragosti): This is a naive filtering method.
     const componentToken = isCapitalSplit
       ? fullToken.componentTokens.capitalComponentToken
       : fullToken.componentTokens.yieldComponentToken;
@@ -193,6 +197,7 @@ const AssetsTable: React.FC<AssetsTableProps> = ({ filter }) => {
       fullToken,
       componentToken,
       balanceOfComponent: tokenBalances[componentToken.tokenAddress] ?? ZERO,
+      yieldOfComponent: yieldBalances[componentToken.tokenAddress] ?? ZERO,
     };
   });
   return (
