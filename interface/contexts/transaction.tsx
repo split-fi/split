@@ -70,7 +70,9 @@ const TransactionProvider: React.FC = ({ children }) => {
                 if (metadata.type === "split") {
                   const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
                   updateTxBanner(transaction.txHash, {
-                    description: `${capitalComponentToken.symbol} and ${yieldComponentToken.symbol} obtained from combining ${
+                    description: `${capitalComponentToken.symbol} and ${
+                      yieldComponentToken.symbol
+                    } obtained from combining ${
                       formatTokenAmount(metadata.fullTokenAmount, metadata.fullToken).minimizedWithUnits
                     }`,
                     type: "success",
@@ -79,9 +81,7 @@ const TransactionProvider: React.FC = ({ children }) => {
                 if (metadata.type === "combine") {
                   const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
                   updateTxBanner(transaction.txHash, {
-                    description: `${
-                      metadata.fullToken.symbol
-                    } obtained from splitting ${
+                    description: `${metadata.fullToken.symbol} obtained from splitting ${
                       formatTokenAmount(metadata.componentTokenAmount, capitalComponentToken).minimized
                     } ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}
                     `,
@@ -91,7 +91,7 @@ const TransactionProvider: React.FC = ({ children }) => {
                 if (metadata.type === "withdraw") {
                   updateTxBanner(transaction.txHash, {
                     description: `${
-                      formatTokenAmount(metadata.widthdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits
+                      formatTokenAmount(metadata.withdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits
                     } withdrawn`,
                     type: "success",
                   });
@@ -160,7 +160,7 @@ const TransactionProvider: React.FC = ({ children }) => {
       if (metadata.type === "withdraw") {
         addPendingTxBanner(
           txHash,
-          `withdrawing ${formatTokenAmount(metadata.widthdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits}`,
+          `withdrawing ${formatTokenAmount(metadata.withdrawTokenAmount, metadata.withdrawToken).minimizedWithUnits}`,
         );
       }
 
