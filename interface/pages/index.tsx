@@ -13,14 +13,15 @@ import splitMergeAnimation from "../data/split_merge.json";
 
 const HeroContainer = styled.section`
   display: flex;
-  padding: 100px 140px;
-  padding-right: 30px;
+  padding-left: 120px;
+  padding-bottom: 100px;
+  padding-top: 100px;
   flex-direction: column;
 `;
 
 const HeroH1 = styled(H1)`
   text-align: left;
-  max-width: 700px;
+  max-width: 600px;
   margin-bottom: 50px;
 `;
 
@@ -41,10 +42,6 @@ const Section = styled.section`
   align-items: center;
 `;
 
-const HeroSection = styled(Section)`
-  justify-content: flex-start;
-`;
-
 const SectionH3 = styled(H3)`
   max-width: 600px;
 `;
@@ -57,14 +54,12 @@ const IndexPage: React.FC = () => {
     autoplay: false,
     loop: false,
     onComplete: () => {
-      console.log("onComplete");
       speed = speed * -1;
       setSpeed(speed);
       play();
     },
   });
   useEffect(() => {
-    console.log("useEffect");
     play();
   }, []);
   const onGoToAppClick = () => {
@@ -73,7 +68,7 @@ const IndexPage: React.FC = () => {
   return (
     <>
       <HeroHeader />
-      <HeroSection>
+      <Section>
         <HeroContainer>
           <HeroH1>
             Split Protocol facilitates the disaggregation of existing ERC20 tokens into various components representing
@@ -82,7 +77,7 @@ const IndexPage: React.FC = () => {
           <CTAButton onClick={onGoToAppClick}>Go to app</CTAButton>
         </HeroContainer>
         <AnimationContainer>{View}</AnimationContainer>
-      </HeroSection>
+      </Section>
       <Section>
         <YieldToken height="250" />
         <SectionH3>

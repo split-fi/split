@@ -1,6 +1,4 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
-import { AppComponent } from "next/dist/next-server/lib/router/router";
 import { BannerMetadata, BannerType, TxBannerMetadata } from "../types/app";
 import { useImmer } from "use-immer";
 
