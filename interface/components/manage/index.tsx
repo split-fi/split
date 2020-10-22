@@ -23,8 +23,7 @@ export interface ManageWidgetProps {}
 
 export const ManageWidget: React.FC<ManageWidgetProps> = () => {
   const { active, error } = useWeb3React();
-  const tokenBalances = useAssetBalances();
-
+  
   if (!active || error) {
     return <div>Please connect your wallet.</div>;
   }

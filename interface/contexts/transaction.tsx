@@ -70,9 +70,9 @@ const TransactionProvider: React.FC = ({ children }) => {
                 if (metadata.type === "split") {
                   const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
                   updateTxBanner(transaction.txHash, {
-                    description: `${
+                    description: `${capitalComponentToken.symbol} and ${yieldComponentToken.symbol} obtained from combining ${
                       formatTokenAmount(metadata.fullTokenAmount, metadata.fullToken).minimizedWithUnits
-                    } combined from ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}`,
+                    }`,
                     type: "success",
                   });
                 }
@@ -80,10 +80,11 @@ const TransactionProvider: React.FC = ({ children }) => {
                   const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
                   updateTxBanner(transaction.txHash, {
                     description: `${
-                      formatTokenAmount(metadata.componentTokenAmount, capitalComponentToken).minimized
-                    } ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol} obtained from ${
                       metadata.fullToken.symbol
-                    }`,
+                    } obtained from splitting ${
+                      formatTokenAmount(metadata.componentTokenAmount, capitalComponentToken).minimized
+                    } ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}
+                    `,
                     type: "success",
                   });
                 }
