@@ -56,21 +56,19 @@ const IndexPage: React.FC = () => {
       <Section>
         <YieldToken height="250" />
         <SectionH3>
-          <strong>yieldXYZ:</strong> can be minted from any income generating token (from cDAI to UNI LP tokens) with
-          the holder able to redeem accumulated income or receive it automatically if it is sold
+          <strong>yieldXYZ</strong> can be minted from any income-generating token – from cDAI to YFI to UNI LP tokens – with the holder able to redeem accumulated income or receive it automatically if transferred
         </SectionH3>
       </Section>
       <Section>
         <SectionH3>
-          <strong>governanceXYZ:</strong> governance component of tokens with this functionality which can be used
-          through. Split’s platform to stripping the equity component from the full debt security
+          <strong>governanceXYZ</strong> can be minted from any token with attached governance rights—such as COMP, KNC or YFI—providing the holder with full voting rights for potentially only a fraction of the full token price
         </SectionH3>
         <GovernanceToken height="250" />
       </Section>
       <Section>
         <CapitalToken height="250" />
         <SectionH3>
-          <strong>capitalXYZ:</strong> capital component is a simple token never minted individually
+          <strong>capitalXYZ</strong> is minted from every Split Protocol deconstruction providing growth-focused exposure
         </SectionH3>
       </Section>
       <Footer />
