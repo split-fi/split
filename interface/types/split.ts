@@ -6,6 +6,7 @@ export interface Asset {
   name: string;
   type: AssetType;
   decimals: number;
+  underlyingAssetSymbol?: string;
 }
 
 export interface ComponentTokens {

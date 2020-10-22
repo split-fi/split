@@ -50,12 +50,17 @@ const useAllTokens = (): Asset[] => {
 
 const useTokensByAssetType = (assetType: AssetType): Asset[] | undefined => {
   const allTokens = useAllTokens();
-  return allTokens.filter(a => a.type === assetType);
+  const filteredTokens = useMemo(() => {
+    return allTokens.filter(a => a.type === assetType);
+  }, [allTokens]);
+  return filteredTokens;
 };
 
 const useAllTokensByAddress = (): { [address: string]: Asset } | undefined => {
   const tokens = useAllTokens();
-  const tokensMap = tokens.reduce((a, c) => ({ ...a, [c.tokenAddress]: c }), {} as { [address: string]: Asset });
+  const tokensMap = useMemo(() => {
+    return tokens.reduce((a, c) => ({ ...a, [c.tokenAddress]: c }), {} as { [address: string]: Asset });
+  }, [tokens]);
   return tokensMap;
 };
 

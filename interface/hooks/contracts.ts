@@ -1,7 +1,7 @@
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { useMemo } from "react";
-import { CTokenPriceOracleFactory, Erc20Factory, SplitVaultFactory } from "split-contracts";
+import { CTokenPriceOracleFactory, Erc20Factory, SplitVaultFactory, YieldComponentTokenFactory } from "split-contracts";
 import { useSplitProtocolAddresses } from "../contexts/split-addresses";
 
 // account is not optional
@@ -46,4 +46,11 @@ export const useCTokenPriceOracle = () => {
     [library, account, priceOracleAddress],
   );
   return { priceOracle, active, error };
+};
+
+export const useYieldTokenContracts = (tokenAddresses: string[]) => {
+  const { library, account } = useWeb3React();
+  return useMemo(() => {
+    return tokenAddresses.map(ta => YieldComponentTokenFactory.connect(ta, getProviderOrSigner(library, account)));
+  }, [library, account, tokenAddresses]);
 };
