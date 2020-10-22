@@ -9,7 +9,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { useTxBannerActions } from "./banner";
 import { formatTokenAmount } from "../utils/format";
 
-const BLOCK_NUM_AGO_TILL_DISMISS = 6;
+const BLOCK_NUM_AGO_TILL_DISMISS = 2;
 
 export interface TransactionActionsProviderState {
   addTransaction: (txHash: string, metadata?: TransactionMetadata) => void;
@@ -72,7 +72,7 @@ const TransactionProvider: React.FC = ({ children }) => {
                   updateTxBanner(transaction.txHash, {
                     description: `${capitalComponentToken.symbol} and ${
                       yieldComponentToken.symbol
-                    } obtained from combining ${
+                    } obtained from splitting ${
                       formatTokenAmount(metadata.fullTokenAmount, metadata.fullToken).minimizedWithUnits
                     }`,
                     type: "success",
@@ -81,7 +81,7 @@ const TransactionProvider: React.FC = ({ children }) => {
                 if (metadata.type === "combine") {
                   const { yieldComponentToken, capitalComponentToken } = metadata.fullToken.componentTokens;
                   updateTxBanner(transaction.txHash, {
-                    description: `${metadata.fullToken.symbol} obtained from splitting ${
+                    description: `${metadata.fullToken.symbol} obtained from combining ${
                       formatTokenAmount(metadata.componentTokenAmount, capitalComponentToken).minimized
                     } ${capitalComponentToken.symbol} and ${yieldComponentToken.symbol}
                     `,
