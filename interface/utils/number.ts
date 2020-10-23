@@ -20,12 +20,9 @@ export const fullTokenAmountToComponentTokenAmount = (
   price: Decimal,
   underlyingTokenDecimals: number,
 ) => {
-  let pow = 10;
-  if (underlyingTokenDecimals === 8) {
-    pow = -2;
-  }
+  const pow = 18 + underlyingTokenDecimals;
   const adjustment = new Decimal(10).pow(pow);
-  return baseAmount.mul(adjustment).div(price);
+  return baseAmount.mul(price).div(adjustment);
 };
 
 export const componentTokenAmountToFullTokenAmount = (
@@ -33,12 +30,9 @@ export const componentTokenAmountToFullTokenAmount = (
   price: Decimal,
   underlyingTokenDecimals: number,
 ) => {
-  let pow = 36;
-  if (underlyingTokenDecimals === 8) {
-    pow = 24;
-  }
+  const pow = underlyingTokenDecimals - 8;
   const adjustment = new Decimal(10).pow(pow);
-  return baseAmount.mul(price).div(adjustment);
+  return baseAmount.mul(adjustment).div(price);
 };
 
 export interface FormattedTokenAmount {

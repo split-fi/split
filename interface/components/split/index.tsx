@@ -9,7 +9,11 @@ import { useFullTokenPrice } from "../../contexts/full-token-prices";
 import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
 import { MAX_INT_256 } from "../../constants";
 
-import { componentTokenAmountToFullTokenAmount, convertToBaseAmount } from "../../utils/number";
+import {
+  componentTokenAmountToFullTokenAmount,
+  convertToBaseAmount,
+  fullTokenAmountToComponentTokenAmount,
+} from "../../utils/number";
 
 import { TokenInput } from "../input";
 import { H1 } from "../typography";
@@ -68,7 +72,7 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   }));
 
   // The price from the price oracle is scaled by 18 decimal places.
-  const componentTokenValue = componentTokenAmountToFullTokenAmount(
+  const componentTokenValue = fullTokenAmountToComponentTokenAmount(
     baseAmount,
     price,
     selectedToken.userlyingAssetMetaData.decimals,
