@@ -28,7 +28,7 @@ export const HeroHeader: React.FC = () => {
         </LogoWrapper>
       </HeaderLeftContentWrapper>
       <HeaderRightContentWrapper>
-        <PrimaryButton onClick={onGoToAppClick}>Go To App</PrimaryButton>
+        <PrimaryButton onClick={onGoToAppClick}>Go to app</PrimaryButton>
       </HeaderRightContentWrapper>
     </HeaderContentWrapper>
   );

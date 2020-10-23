@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Head from "next/head";
 import styled from "styled-components";
 import findKey from "lodash/findKey";
 import { useRouter } from "next/router";
@@ -72,6 +73,9 @@ const AppActionsPage: React.FC = () => {
 
   return (
     <>
+      <Head>
+        <title>Split – {currentAppAction.toLowerCase()}</title>
+      </Head>
       <Header showTabs={true} currentAppAction={currentAppAction} onTabClick={setAppActionAndShallowPush} />
       <LayoutContainer>{content}</LayoutContainer>
       <Footer />
