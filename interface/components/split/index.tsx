@@ -68,7 +68,13 @@ export const SplitWidget: React.FC<SplitProps> = () => {
   }));
 
   // The price from the price oracle is scaled by 18 decimal places.
-  const componentTokenValue = componentTokenAmountToFullTokenAmount(baseAmount, price).toDecimalPlaces(4).toString();
+  const componentTokenValue = componentTokenAmountToFullTokenAmount(
+    baseAmount,
+    price,
+    selectedToken.userlyingAssetMetaData.decimals,
+  )
+    .toDecimalPlaces(4)
+    .toString();
   return (
     <SplitContainer>
       <InputContainer>
