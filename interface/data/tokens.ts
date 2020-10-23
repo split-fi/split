@@ -96,5 +96,16 @@ export const AVAILABLE_FULL_TOKENS: { [chainId: number]: FullAsset[] } = {
       },
       4,
     ),
+    assetToFullAsset(
+      {
+        tokenAddress: "0x5b281a6dda0b271e91ae35de655ad301c976edb1",
+        name: "Compound USDC",
+        symbol: "cUSDC",
+        decimals: 8,
+        type: "full",
+        underlyingAssetSymbol: "USDC",
+      },
+      4,
+    ),
   ],
 };
