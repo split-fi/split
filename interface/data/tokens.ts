@@ -122,7 +122,7 @@ export const AVAILABLE_FULL_TOKENS: { [chainId: number]: FullAsset[] } = {
         userlyingAssetMetaData: {
           symbol: "USDC",
           name: "USD Coin",
-          decimals: 8,
+          decimals: 6,
         },
       },
       4,

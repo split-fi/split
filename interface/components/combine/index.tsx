@@ -6,7 +6,7 @@ import { useFullTokens } from "../../contexts/tokens";
 import { useFullTokenPrice } from "../../contexts/full-token-prices";
 import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
 
-import { convertToBaseAmount, fullTokenAmountToComponentTokenAmount } from "../../utils/number";
+import { componentTokenAmountToFullTokenAmount, convertToBaseAmount, fullTokenAmountToComponentTokenAmount } from "../../utils/number";
 
 import { H1 } from "../typography";
 import { Dropdown } from "../dropdown";
@@ -57,7 +57,7 @@ export const CombineWidget: React.FC<CombineWidgetProps> = () => {
     displayName: asset.symbol,
   }));
 
-  const fullTokenValue = fullTokenAmountToComponentTokenAmount(
+  const fullTokenValue = componentTokenAmountToFullTokenAmount(
     baseAmount,
     price,
     selectedToken.userlyingAssetMetaData.decimals,
