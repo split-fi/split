@@ -31,6 +31,11 @@ export const deployments: Deployments = {
         capitalComponentTokenAddress: "0x75271A98EE3AA43482dF3c92ea4e4cEFFab53D8f",
         yieldComponentTokenAddress: "0xa3C203CB85DcaD41C6eaa2572DC131Dc24db1bCa",
       },
+      // cUSDC
+      "0x5b281a6dda0b271e91ae35de655ad301c976edb1": {
+        capitalComponentTokenAddress: "0x71d2beCA71a141adAeb7B5AD62680BAeB22e2e42",
+        yieldComponentTokenAddress: "0x7220eD76f750554f4384600BC4C66fe808502F3b",
+      },
     },
   },
 };

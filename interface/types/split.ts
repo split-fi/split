@@ -1,12 +1,15 @@
 export type AssetType = "full" | "yield-split" | "capital-split" | "governance-split";
 
-export interface Asset {
-  tokenAddress: string;
+export interface AssetMetaData {
   symbol: string;
   name: string;
-  type: AssetType;
   decimals: number;
-  underlyingAssetSymbol?: string;
+}
+
+export interface Asset extends AssetMetaData {
+  tokenAddress: string;
+  type: AssetType;
+  userlyingAssetMetaData: AssetMetaData;
 }
 
 export interface ComponentTokens {

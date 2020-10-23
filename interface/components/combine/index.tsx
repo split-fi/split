@@ -57,7 +57,13 @@ export const CombineWidget: React.FC<CombineWidgetProps> = () => {
     displayName: asset.symbol,
   }));
 
-  const fullTokenValue = fullTokenAmountToComponentTokenAmount(baseAmount, price).toDecimalPlaces(4).toString();
+  const fullTokenValue = fullTokenAmountToComponentTokenAmount(
+    baseAmount,
+    price,
+    selectedToken.userlyingAssetMetaData.decimals,
+  )
+    .toDecimalPlaces(4)
+    .toString();
   return (
     <CombineContainer>
       <InputContainer>

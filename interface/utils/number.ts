@@ -13,14 +13,31 @@ export const convertToBaseAmount = (amount: string, decimals: number) => {
 
 // Split tokens are always 18 decimal places
 // cTokens are always 8 decimal places
+// Actual tokens vary.
 // The price from the price oracle is scaled by 18 decimal places.
-export const fullTokenAmountToComponentTokenAmount = (baseAmount: Decimal, price: Decimal) => {
-  const adjustment = new Decimal(10).pow(10);
+export const fullTokenAmountToComponentTokenAmount = (
+  baseAmount: Decimal,
+  price: Decimal,
+  underlyingTokenDecimals: number,
+) => {
+  let pow = 10;
+  if (underlyingTokenDecimals === 8) {
+    pow = -2;
+  }
+  const adjustment = new Decimal(10).pow(pow);
   return baseAmount.mul(adjustment).div(price);
 };
 
-export const componentTokenAmountToFullTokenAmount = (baseAmount: Decimal, price: Decimal) => {
-  const adjustment = new Decimal(10).pow(36);
+export const componentTokenAmountToFullTokenAmount = (
+  baseAmount: Decimal,
+  price: Decimal,
+  underlyingTokenDecimals: number,
+) => {
+  let pow = 36;
+  if (underlyingTokenDecimals === 8) {
+    pow = 24;
+  }
+  const adjustment = new Decimal(10).pow(pow);
   return baseAmount.mul(price).div(adjustment);
 };
 

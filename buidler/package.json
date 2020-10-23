@@ -30,6 +30,7 @@
     "deploy:oracle": "buidler deploy_oracle",
     "deploy:components": "buidler deploy_component_tokens",
     "add:component_set": "buidler add_component_set",
+    "mint:test_token": "buidler mint_test_token",
     "verify:contract": "buidler verify",
     "build": "buidler compile && buidler typechain",
     "compile": "buidler compile",
