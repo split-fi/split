@@ -35,7 +35,7 @@ export const componentTokenAmountToFullTokenAmount = (
 ) => {
   let pow = 36;
   if (underlyingTokenDecimals === 8) {
-    pow = 23;
+    pow = 24;
   }
   const adjustment = new Decimal(10).pow(pow);
   return baseAmount.mul(price).div(adjustment);
