@@ -159,7 +159,7 @@ const CapitalTable: React.FC<CapitalTableProps> = ({ data }) => {
                       <TCellLabel>
                         worth{" "}
                         {`${formatTokenAmount(balanceOfComponent, componentToken).minimized} ${
-                          fullToken.underlyingAssetSymbol
+                          fullToken.userlyingAssetMetaData.symbol
                         }`}
                       </TCellLabel>
                     </TCell>
