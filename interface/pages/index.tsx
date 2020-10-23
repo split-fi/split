@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Head from "next/head";
 import { useLottie } from "lottie-react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
@@ -72,6 +73,9 @@ const IndexPage: React.FC = () => {
   };
   return (
     <>
+      <Head>
+        <title>Split</title>
+      </Head>
       <HeroHeader />
       <Layout>
         <Section>
