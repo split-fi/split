@@ -6,7 +6,11 @@ import { useFullTokens } from "../../contexts/tokens";
 import { useFullTokenPrice } from "../../contexts/full-token-prices";
 import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
 
-import { componentTokenAmountToFullTokenAmount, convertToBaseAmount, fullTokenAmountToComponentTokenAmount } from "../../utils/number";
+import {
+  componentTokenAmountToFullTokenAmount,
+  convertToBaseAmount,
+  fullTokenAmountToComponentTokenAmount,
+} from "../../utils/number";
 
 import { H1 } from "../typography";
 import { Dropdown } from "../dropdown";

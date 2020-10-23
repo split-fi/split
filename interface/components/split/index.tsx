@@ -9,7 +9,11 @@ import { useFullTokenPrice } from "../../contexts/full-token-prices";
 import { useSplitProtocolAddresses } from "../../contexts/split-addresses";
 import { MAX_INT_256 } from "../../constants";
 
-import { componentTokenAmountToFullTokenAmount, convertToBaseAmount, fullTokenAmountToComponentTokenAmount } from "../../utils/number";
+import {
+  componentTokenAmountToFullTokenAmount,
+  convertToBaseAmount,
+  fullTokenAmountToComponentTokenAmount,
+} from "../../utils/number";
 
 import { TokenInput } from "../input";
 import { H1 } from "../typography";
