@@ -41,13 +41,15 @@ export default class SplitDocument extends Document {
             rel="stylesheet"
           />
           <script async src="https://www.googletagmanager.com/gtag/js?id=G-4FHE20LTYG"></script>
-          <script dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-4FHE20LTYG');`
-          }}/>
+            gtag('config', 'G-4FHE20LTYG');`,
+            }}
+          />
         </Head>
         <body>
           <Main />
