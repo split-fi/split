@@ -19,9 +19,13 @@ export const Footer: React.FC = () => {
       </FooterLeftContentWrapper>
       <FooterRightContentWrapper>
         <LinksWrapper>
-          <Twitter />
+          <a href="https://twitter.com/splitprotocol" target="_blank">
+            <Twitter />
+          </a>
+          <a href="https://github.com/split-fi/split" target="_blank">
+            <Github />
+          </a>
           <Discord />
-          <Github />
         </LinksWrapper>
       </FooterRightContentWrapper>
     </FooterContentWrapper>
