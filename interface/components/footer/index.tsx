@@ -25,7 +25,9 @@ export const Footer: React.FC = () => {
           <a href="https://github.com/split-fi/split" target="_blank">
             <Github />
           </a>
-          <Discord />
+          <a href="https://discord.gg/Z5sgBxd9" target="_blank">
+            <Discord />
+          </a>
         </LinksWrapper>
       </FooterRightContentWrapper>
     </FooterContentWrapper>
