@@ -18,7 +18,7 @@
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^3.0.0",
-    "ethers": "^5.0.0",
+    "ethers": "^5.0.19",
     "ts-generator": "^0.0.8",
     "ts-node": "^9.0.0",
     "typechain": "^2.0.1",
