@@ -10,6 +10,11 @@ export const deployments: Deployments = {
         capitalComponentTokenAddress: "0x704bD80bDdAB309fBA02736bD898Bc6a69588C63",
         yieldComponentTokenAddress: "0x3d9Ba05f737b9e84e90a163216E586FBBD5e48Ff",
       },
+      // cBAT
+      "0x6c8c6b02e7b2be14d4fa6022dfd6d75921d90e4e": {
+        capitalComponentTokenAddress: "0x15bD9367dA17D534870D958843a1d828B5Ba2414",
+        yieldComponentTokenAddress: "0xE8B8d22B96eda2aCf98C71085375600B20bF822f",
+      },
     },
   },
   rinkeby: {
