@@ -17,7 +17,7 @@
     "buidler-typechain": "^0.2.1",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
-    "ethereum-waffle": "^3.0.0",
+    "ethereum-waffle": "^3.2.0",
     "ethers": "^5.0.0",
     "ts-generator": "^0.0.8",
     "ts-node": "^9.0.0",
