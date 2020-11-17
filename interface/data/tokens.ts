@@ -65,6 +65,36 @@ export const AVAILABLE_FULL_TOKENS: { [chainId: number]: FullAsset[] } = {
       },
       1,
     ),
+    assetToFullAsset(
+      {
+        tokenAddress: "0x6c8c6b02e7b2be14d4fa6022dfd6d75921d90e4e",
+        name: "Compound Basic Attention Token",
+        symbol: "cBAT",
+        decimals: 8,
+        type: "full",
+        userlyingAssetMetaData: {
+          symbol: "BAT",
+          name: "Basic Attention Token",
+          decimals: 18,
+        },
+      },
+      1,
+    ),
+    assetToFullAsset(
+      {
+        tokenAddress: "0x35a18000230da775cac24873d00ff85bccded550",
+        name: "Compound Uniswap",
+        symbol: "cUNI",
+        decimals: 8,
+        type: "full",
+        userlyingAssetMetaData: {
+          symbol: "UNI",
+          name: "Uniswap",
+          decimals: 18,
+        },
+      },
+      1,
+    ),
   ],
   4: [
     assetToFullAsset(
