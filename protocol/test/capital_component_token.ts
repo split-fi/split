@@ -1,5 +1,5 @@
 import { expect, use } from "chai";
-import { ethers } from "@nomiclabs/buidler";
+import { ethers } from "hardhat";
 import { solidity } from "ethereum-waffle";
 
 import { CapitalComponentToken } from "../typechain/CapitalComponentToken";

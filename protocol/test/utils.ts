@@ -1,4 +1,4 @@
-import { ethers } from "@nomiclabs/buidler";
+import { ethers } from "hardhat";
 
 import { CapitalComponentToken } from "../typechain/CapitalComponentToken";
 import { YieldComponentToken } from "../typechain/YieldComponentToken";

@@ -1,15 +1,20 @@
 require("dotenv").config();
-import { usePlugin, BuidlerConfig } from "@nomiclabs/buidler/config";
+import { HardhatUserConfig } from "hardhat/config";
+
+import "@nomiclabs/hardhat-waffle";
+import "hardhat-typechain";
+import "@nomiclabs/hardhat-etherscan";
 
 import "./tasks";
 
-usePlugin("@nomiclabs/buidler-waffle");
-usePlugin("buidler-typechain");
-usePlugin("@nomiclabs/buidler-etherscan");
-
 const config = {
-  solc: {
+  solidity: {
     version: "0.6.8",
+    settings: {
+      optimizer: {
+        enabled: true,
+      },
+    },
   },
   typechain: {
     outDir: "typechain",
@@ -45,4 +50,4 @@ if (ETHERSCAN_API_KEY) {
   (config.etherscan as any).apiKey = ETHERSCAN_API_KEY;
 }
 
-export default config as BuidlerConfig;
+export default config as HardhatUserConfig;

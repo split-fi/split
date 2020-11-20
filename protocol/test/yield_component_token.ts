@@ -1,6 +1,6 @@
 import { expect, use } from "chai";
 import { BigNumber } from "ethers";
-import { ethers } from "@nomiclabs/buidler";
+import { ethers } from "hardhat";
 import { solidity } from "ethereum-waffle";
 
 import { YieldComponentToken } from "../typechain/YieldComponentToken";

@@ -5,6 +5,6 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "npm"
-    directory: "/buidler"
+    directory: "/protocol"
     schedule:
       interval: "weekly"

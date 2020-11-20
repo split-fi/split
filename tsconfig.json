@@ -9,5 +9,5 @@
     "declarationMap": true,
     "sourceMap": true
   },
-  "references": [{ "path:": "./buidler" }, { "path": "./interface" }]
+  "references": [{ "path:": "./protocol" }, { "path": "./interface" }]
 }
