@@ -14,53 +14,53 @@ pragma solidity 0.6.12;
  * the owner.
  */
 contract BalancerOwnable {
-    // State variables
+  // State variables
 
-    address private _owner;
+  address private _owner;
 
-    // Event declarations
+  // Event declarations
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    // Modifiers
+  // Modifiers
 
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(_owner == msg.sender, "ERR_NOT_CONTROLLER");
-        _;
-    }
+  /**
+   * @dev Throws if called by any account other than the owner.
+   */
+  modifier onlyOwner() {
+    require(_owner == msg.sender, "ERR_NOT_CONTROLLER");
+    _;
+  }
 
-    // Function declarations
+  // Function declarations
 
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor () internal {
-        _owner = msg.sender;
-    }
+  /**
+   * @dev Initializes the contract setting the deployer as the initial owner.
+   */
+  constructor() internal {
+    _owner = msg.sender;
+  }
 
-    /**
-     * @notice Transfers ownership of the contract to a new account (`newOwner`).
-     *         Can only be called by the current owner
-     * @dev external for gas optimization
-     * @param newOwner - address of new owner
-     */
-    function setController(address newOwner) external onlyOwner {
-        require(newOwner != address(0), "ERR_ZERO_ADDRESS");
+  /**
+   * @notice Transfers ownership of the contract to a new account (`newOwner`).
+   *         Can only be called by the current owner
+   * @dev external for gas optimization
+   * @param newOwner - address of new owner
+   */
+  function setController(address newOwner) external onlyOwner {
+    require(newOwner != address(0), "ERR_ZERO_ADDRESS");
 
-        emit OwnershipTransferred(_owner, newOwner);
+    emit OwnershipTransferred(_owner, newOwner);
 
-        _owner = newOwner;
-    }
+    _owner = newOwner;
+  }
 
-    /**
-     * @notice Returns the address of the current owner
-     * @dev external for gas optimization
-     * @return address - of the owner (AKA controller)
-     */
-    function getController() external view returns (address) {
-        return _owner;
-    }
+  /**
+   * @notice Returns the address of the current owner
+   * @dev external for gas optimization
+   * @return address - of the owner (AKA controller)
+   */
+  function getController() external view returns (address) {
+    return _owner;
+  }
 }

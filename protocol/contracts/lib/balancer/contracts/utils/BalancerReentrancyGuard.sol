@@ -19,51 +19,51 @@ pragma solidity 0.6.12;
  *   if another _lock_ call is in progress
  */
 contract BalancerReentrancyGuard {
-    // Booleans are more expensive than uint256 or any type that takes up a full
-    // word because each write operation emits an extra SLOAD to first read the
-    // slot's contents, replace the bits taken up by the boolean, and then write
-    // back. This is the compiler's defense against contract upgrades and
-    // pointer aliasing, and it cannot be disabled.
+  // Booleans are more expensive than uint256 or any type that takes up a full
+  // word because each write operation emits an extra SLOAD to first read the
+  // slot's contents, replace the bits taken up by the boolean, and then write
+  // back. This is the compiler's defense against contract upgrades and
+  // pointer aliasing, and it cannot be disabled.
 
-    // The values being non-zero value makes deployment a bit more expensive,
-    // but in exchange the refund on every call to nonReentrant will be lower in
-    // amount. Since refunds are capped to a percentage of the total
-    // transaction's gas, it is best to keep them low in cases like this one, to
-    // increase the likelihood of the full refund coming into effect.
-    uint private constant _NOT_ENTERED = 1;
-    uint private constant _ENTERED = 2;
+  // The values being non-zero value makes deployment a bit more expensive,
+  // but in exchange the refund on every call to nonReentrant will be lower in
+  // amount. Since refunds are capped to a percentage of the total
+  // transaction's gas, it is best to keep them low in cases like this one, to
+  // increase the likelihood of the full refund coming into effect.
+  uint256 private constant _NOT_ENTERED = 1;
+  uint256 private constant _ENTERED = 2;
 
-    uint private _status;
+  uint256 private _status;
 
-    constructor () internal {
-        _status = _NOT_ENTERED;
-    }
+  constructor() internal {
+    _status = _NOT_ENTERED;
+  }
 
-    /**
-     * @dev Prevents a contract from calling itself, directly or indirectly.
-     * Calling a `_lock_` function from another `_lock_`
-     * function is not supported. It is possible to prevent this from happening
-     * by making the `_lock_` function external, and make it call a
-     * `private` function that does the actual work.
-     */
-    modifier lock() {
-        // On the first call to _lock_, _notEntered will be true
-        require(_status != _ENTERED, "ERR_REENTRY");
+  /**
+   * @dev Prevents a contract from calling itself, directly or indirectly.
+   * Calling a `_lock_` function from another `_lock_`
+   * function is not supported. It is possible to prevent this from happening
+   * by making the `_lock_` function external, and make it call a
+   * `private` function that does the actual work.
+   */
+  modifier lock() {
+    // On the first call to _lock_, _notEntered will be true
+    require(_status != _ENTERED, "ERR_REENTRY");
 
-        // Any calls to _lock_ after this point will fail
-        _status = _ENTERED;
-        _;
-        // By storing the original value once again, a refund is triggered (see
-        // https://eips.ethereum.org/EIPS/eip-2200)
-        _status = _NOT_ENTERED;
-    }
+    // Any calls to _lock_ after this point will fail
+    _status = _ENTERED;
+    _;
+    // By storing the original value once again, a refund is triggered (see
+    // https://eips.ethereum.org/EIPS/eip-2200)
+    _status = _NOT_ENTERED;
+  }
 
-    /**
-     * @dev Also add a modifier that doesn't create a lock, but protects functions that
-     *      should not be called while a _lock_ function is running
-     */
-     modifier viewlock() {
-        require(_status != _ENTERED, "ERR_REENTRY_VIEW");
-        _;
-     }
+  /**
+   * @dev Also add a modifier that doesn't create a lock, but protects functions that
+   *      should not be called while a _lock_ function is running
+   */
+  modifier viewlock() {
+    require(_status != _ENTERED, "ERR_REENTRY_VIEW");
+    _;
+  }
 }

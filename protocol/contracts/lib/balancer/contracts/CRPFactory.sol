@@ -25,64 +25,54 @@ import "./ConfigurableRightsPool.sol";
  *      5: canChangeCap - can change the BSP cap (max # of pool tokens)
  */
 contract CRPFactory {
-    // State variables
+  // State variables
 
-    // Keep a list of all Configurable Rights Pools
-    mapping(address=>bool) private _isCrp;
+  // Keep a list of all Configurable Rights Pools
+  mapping(address => bool) private _isCrp;
 
-    // Event declarations
+  // Event declarations
 
-    // Log the address of each new smart pool, and its creator
-    event LogNewCrp(
-        address indexed caller,
-        address indexed pool
-    );
+  // Log the address of each new smart pool, and its creator
+  event LogNewCrp(address indexed caller, address indexed pool);
 
-    // Function declarations
+  // Function declarations
 
-    /**
-     * @notice Create a new CRP
-     * @dev emits a LogNewCRP event
-     * @param factoryAddress - the BFactory instance used to create the underlying pool
-     * @param poolParams - struct containing the names, tokens, weights, balances, and swap fee
-     * @param rights - struct of permissions, configuring this CRP instance (see above for definitions)
-     */
-    function newCrp(
-        address factoryAddress,
-        ConfigurableRightsPool.PoolParams calldata poolParams,
-        RightsManager.Rights calldata rights
-    )
-        external
-        returns (ConfigurableRightsPool)
-    {
-        require(poolParams.constituentTokens.length >= BalancerConstants.MIN_ASSET_LIMIT, "ERR_TOO_FEW_TOKENS");
+  /**
+   * @notice Create a new CRP
+   * @dev emits a LogNewCRP event
+   * @param factoryAddress - the BFactory instance used to create the underlying pool
+   * @param poolParams - struct containing the names, tokens, weights, balances, and swap fee
+   * @param rights - struct of permissions, configuring this CRP instance (see above for definitions)
+   */
+  function newCrp(
+    address factoryAddress,
+    ConfigurableRightsPool.PoolParams calldata poolParams,
+    RightsManager.Rights calldata rights
+  ) external returns (ConfigurableRightsPool) {
+    require(poolParams.constituentTokens.length >= BalancerConstants.MIN_ASSET_LIMIT, "ERR_TOO_FEW_TOKENS");
 
-        // Arrays must be parallel
-        require(poolParams.tokenBalances.length == poolParams.constituentTokens.length, "ERR_START_BALANCES_MISMATCH");
-        require(poolParams.tokenWeights.length == poolParams.constituentTokens.length, "ERR_START_WEIGHTS_MISMATCH");
+    // Arrays must be parallel
+    require(poolParams.tokenBalances.length == poolParams.constituentTokens.length, "ERR_START_BALANCES_MISMATCH");
+    require(poolParams.tokenWeights.length == poolParams.constituentTokens.length, "ERR_START_WEIGHTS_MISMATCH");
 
-        ConfigurableRightsPool crp = new ConfigurableRightsPool(
-            factoryAddress,
-            poolParams,
-            rights
-        );
+    ConfigurableRightsPool crp = new ConfigurableRightsPool(factoryAddress, poolParams, rights);
 
-        emit LogNewCrp(msg.sender, address(crp));
+    emit LogNewCrp(msg.sender, address(crp));
 
-        _isCrp[address(crp)] = true;
-        // The caller is the controller of the CRP
-        // The CRP will be the controller of the underlying Core BPool
-        crp.setController(msg.sender);
+    _isCrp[address(crp)] = true;
+    // The caller is the controller of the CRP
+    // The CRP will be the controller of the underlying Core BPool
+    crp.setController(msg.sender);
 
-        return crp;
-    }
+    return crp;
+  }
 
-    /**
-     * @notice Check to see if a given address is a CRP
-     * @param addr - address to check
-     * @return boolean indicating whether it is a CRP
-     */
-    function isCrp(address addr) external view returns (bool) {
-        return _isCrp[addr];
-    }
+  /**
+   * @notice Check to see if a given address is a CRP
+   * @param addr - address to check
+   * @return boolean indicating whether it is a CRP
+   */
+  function isCrp(address addr) external view returns (bool) {
+    return _isCrp[addr];
+  }
 }
