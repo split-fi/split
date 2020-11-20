@@ -12,9 +12,9 @@ const config = {
     version: "0.6.8",
     settings: {
       optimizer: {
-        enabled: true
-      }
-    }
+        enabled: true,
+      },
+    },
   },
   typechain: {
     outDir: "typechain",
