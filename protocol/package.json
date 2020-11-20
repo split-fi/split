@@ -9,7 +9,7 @@
     "@nomiclabs/hardhat-etherscan": "^2.0.1",
     "@nomiclabs/hardhat-waffle": "^2.0.0",
     "@openzeppelin/contracts": "^3.2.0",
-    "@typechain/ethers-v5": "^1.0.0",
+    "@typechain/ethers-v5": "^4.0.0",
     "@types/chai": "^4.2.13",
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.11.5",
@@ -19,10 +19,10 @@
     "ethers": "^5.0.0",
     "hardhat": "^2.0.3",
     "hardhat-typechain": "^0.3.3",
-    "ts-generator": "^0.0.8",
+    "ts-generator": "^0.1.1",
     "ts-node": "^9.0.0",
-    "typechain": "^2.0.1",
-    "typescript": "^4.0.3"
+    "typechain": "^4.0.0",
+    "typescript": "^4.1.2"
   },
   "scripts": {
     "clean": "hardhat clean",
