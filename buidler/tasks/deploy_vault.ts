@@ -1,4 +1,4 @@
-import { task } from "@nomiclabs/buidler/config";
+import { task } from "hardhat/config";
 
 task("deploy_vault", "deploys the SplitVault", async (_args, bre) => {
   await bre.run("compile");
