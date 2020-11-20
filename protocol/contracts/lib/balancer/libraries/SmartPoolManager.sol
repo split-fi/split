@@ -272,7 +272,11 @@ library SmartPoolManager {
     newToken.isCommitted = false;
 
     // First gets the tokens from msg.sender to this contract (Pool Controller)
-    bool returnValue = BalancerIERC20(newToken.addr).transferFrom(self.getController(), address(self), newToken.balance);
+    bool returnValue = BalancerIERC20(newToken.addr).transferFrom(
+      self.getController(),
+      address(self),
+      newToken.balance
+    );
     require(returnValue, "ERR_ERC20_FALSE");
 
     // Now with the tokens this contract can bind them to the pool it controls

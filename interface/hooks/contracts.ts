@@ -1,7 +1,12 @@
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
 import { useMemo } from "react";
-import { CTokenPriceOracle__factory, ERC20__factory, SplitVault__factory, YieldComponentToken__factory } from "split-contracts";
+import {
+  CTokenPriceOracle__factory,
+  ERC20__factory,
+  SplitVault__factory,
+  YieldComponentToken__factory,
+} from "split-contracts";
 import { useSplitProtocolAddresses } from "../contexts/split-addresses";
 
 // account is not optional
