@@ -5,7 +5,7 @@ pragma solidity 0.6.12;
 
 /* solhint-disable func-order */
 
-interface IERC20 {
+interface BalancerIERC20 {
   // Emitted when the allowance of a spender for an owner is set by a call to approve.
   // Value is the new allowance
   event Approval(address indexed owner, address indexed spender, uint256 value);

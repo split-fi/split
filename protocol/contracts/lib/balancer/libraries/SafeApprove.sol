@@ -3,7 +3,7 @@ pragma solidity 0.6.12;
 
 // Imports
 
-import "../interfaces/IERC20.sol";
+import "../interfaces/BalancerIERC20.sol";
 
 // Libraries
 
@@ -22,7 +22,7 @@ library SafeApprove {
    * @param amount - number of tokens being approved
    */
   function safeApprove(
-    IERC20 token,
+    BalancerIERC20 token,
     address spender,
     uint256 amount
   ) internal returns (bool) {

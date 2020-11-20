@@ -40,7 +40,7 @@ import "../libraries/SafeApprove.sol";
  */
 contract ConfigurableRightsPool is PCToken, BalancerOwnable, BalancerReentrancyGuard {
   using BalancerSafeMath for uint256;
-  using SafeApprove for IERC20;
+  using SafeApprove for BalancerIERC20;
 
   // Type declarations
 
@@ -798,10 +798,10 @@ contract ConfigurableRightsPool is PCToken, BalancerOwnable, BalancerReentrancyG
       uint256 bal = _initialBalances[i];
       uint256 denorm = gradualUpdate.startWeights[i];
 
-      bool returnValue = IERC20(t).transferFrom(msg.sender, address(this), bal);
+      bool returnValue = BalancerIERC20(t).transferFrom(msg.sender, address(this), bal);
       require(returnValue, "ERR_ERC20_FALSE");
 
-      returnValue = IERC20(t).safeApprove(address(bPool), BalancerConstants.MAX_UINT);
+      returnValue = BalancerIERC20(t).safeApprove(address(bPool), BalancerConstants.MAX_UINT);
       require(returnValue, "ERR_ERC20_FALSE");
 
       bPool.bind(t, bal, denorm);
@@ -835,7 +835,7 @@ contract ConfigurableRightsPool is PCToken, BalancerOwnable, BalancerReentrancyG
     uint256 tokenBalance = bPool.getBalance(erc20);
     uint256 tokenWeight = bPool.getDenormalizedWeight(erc20);
 
-    bool xfer = IERC20(erc20).transferFrom(from, address(this), amount);
+    bool xfer = BalancerIERC20(erc20).transferFrom(from, address(this), amount);
     require(xfer, "ERR_ERC20_FALSE");
     bPool.rebind(erc20, BalancerSafeMath.badd(tokenBalance, amount), tokenWeight);
   }
@@ -852,7 +852,7 @@ contract ConfigurableRightsPool is PCToken, BalancerOwnable, BalancerReentrancyG
     uint256 tokenWeight = bPool.getDenormalizedWeight(erc20);
     bPool.rebind(erc20, BalancerSafeMath.bsub(tokenBalance, amount), tokenWeight);
 
-    bool xfer = IERC20(erc20).transfer(to, amount);
+    bool xfer = BalancerIERC20(erc20).transfer(to, amount);
     require(xfer, "ERR_ERC20_FALSE");
   }
 

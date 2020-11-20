@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 
 // Imports
 
-import "../interfaces/IERC20.sol";
+import "../interfaces/BalancerIERC20.sol";
 import "../interfaces/IConfigurableRightsPool.sol";
 import "../contracts/IBFactory.sol";
 import "./BalancerSafeMath.sol";
@@ -91,7 +91,7 @@ library SmartPoolManager {
       bPool.rebind(token, newBalance, newWeight);
 
       // Now with the tokens this contract can send them to msg.sender
-      bool xfer = IERC20(token).transfer(msg.sender, deltaBalance);
+      bool xfer = BalancerIERC20(token).transfer(msg.sender, deltaBalance);
       require(xfer, "ERR_ERC20_FALSE");
 
       self.pullPoolShareFromLib(msg.sender, poolShares);
@@ -112,7 +112,7 @@ library SmartPoolManager {
       deltaBalance = BalancerSafeMath.bmul(currentBalance, BalancerSafeMath.bdiv(deltaWeight, currentWeight));
 
       // First gets the tokens from msg.sender to this contract (Pool Controller)
-      bool xfer = IERC20(token).transferFrom(msg.sender, address(this), deltaBalance);
+      bool xfer = BalancerIERC20(token).transferFrom(msg.sender, address(this), deltaBalance);
       require(xfer, "ERR_ERC20_FALSE");
 
       // Now with the tokens this contract can bind them to the pool it controls
@@ -272,13 +272,13 @@ library SmartPoolManager {
     newToken.isCommitted = false;
 
     // First gets the tokens from msg.sender to this contract (Pool Controller)
-    bool returnValue = IERC20(newToken.addr).transferFrom(self.getController(), address(self), newToken.balance);
+    bool returnValue = BalancerIERC20(newToken.addr).transferFrom(self.getController(), address(self), newToken.balance);
     require(returnValue, "ERR_ERC20_FALSE");
 
     // Now with the tokens this contract can bind them to the pool it controls
     // Approves bPool to pull from this controller
     // Approve unlimited, same as when creating the pool, so they can join pools later
-    returnValue = SafeApprove.safeApprove(IERC20(newToken.addr), address(bPool), BalancerConstants.MAX_UINT);
+    returnValue = SafeApprove.safeApprove(BalancerIERC20(newToken.addr), address(bPool), BalancerConstants.MAX_UINT);
     require(returnValue, "ERR_ERC20_FALSE");
 
     bPool.bind(newToken.addr, newToken.balance, newToken.denorm);
@@ -319,7 +319,7 @@ library SmartPoolManager {
     bPool.unbind(token);
 
     // Now with the tokens this contract can send them to msg.sender
-    bool xfer = IERC20(token).transfer(self.getController(), balance);
+    bool xfer = BalancerIERC20(token).transfer(self.getController(), balance);
     require(xfer, "ERR_ERC20_FALSE");
 
     self.pullPoolShareFromLib(self.getController(), poolShares);
@@ -655,7 +655,7 @@ library SmartPoolManager {
 
   // Check for zero transfer, and make sure it returns true to returnValue
   function verifyTokenComplianceInternal(address token) internal {
-    bool returnValue = IERC20(token).transfer(msg.sender, 0);
+    bool returnValue = BalancerIERC20(token).transfer(msg.sender, 0);
     require(returnValue, "ERR_NONCONFORMING_TOKEN");
   }
 }

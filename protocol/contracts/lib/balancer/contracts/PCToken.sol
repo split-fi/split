@@ -4,7 +4,7 @@ pragma solidity 0.6.12;
 // Imports
 
 import "../libraries/BalancerSafeMath.sol";
-import "../interfaces/IERC20.sol";
+import "../interfaces/BalancerIERC20.sol";
 
 // Contracts
 
@@ -14,7 +14,7 @@ import "../interfaces/IERC20.sol";
  * @author Balancer Labs
  * @title Highly opinionated token implementation
  */
-contract PCToken is IERC20 {
+contract PCToken is BalancerIERC20 {
   using BalancerSafeMath for uint256;
 
   // State variables
@@ -222,7 +222,7 @@ contract PCToken is IERC20 {
    *
    * NOTE: This information is only used for _display_ purposes: it in
    * no way affects any of the arithmetic of the contract, including
-   * {IERC20-balanceOf} and {IERC20-transfer}.
+   * {BalancerIERC20-balanceOf} and {BalancerIERC20-transfer}.
    */
   function decimals() external pure returns (uint8) {
     return DECIMALS;
