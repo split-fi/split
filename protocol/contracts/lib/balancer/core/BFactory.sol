@@ -10,8 +10,8 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-pragma solidity 0.5.12;
+//SPDX-License-Identifier: AGPL-3.0
+pragma solidity 0.6.12;
 
 // Builds new BPools, logging their addresses and providing `isBPool(address) -> (bool)`
 

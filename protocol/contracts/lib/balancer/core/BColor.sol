@@ -10,18 +10,18 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//SPDX-License-Identifier: AGPL-3.0
+pragma solidity 0.6.12;
 
-pragma solidity 0.5.12;
-
-contract BColor {
+abstract contract BColor {
     function getColor()
-        external view
+        external view virtual
         returns (bytes32);
 }
 
 contract BBronze is BColor {
     function getColor()
-        external view
+        external view override
         returns (bytes32) {
             return bytes32("BRONZE");
         }

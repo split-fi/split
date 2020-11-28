@@ -32,8 +32,7 @@
     "add:component_set": "hardhat add_component_set",
     "mint:test_token": "hardhat mint_test_token",
     "verify:contract": "hardhat verify",
-    "build": "hardhat compile && hardhat typechain",
-    "compile": "hardhat compile",
+    "build": "hardhat compile",
     "test": "hardhat test"
   }
 }
