@@ -34,7 +34,8 @@
     "react-use": "^15.3.4",
     "react-use-gesture": "^7.0.16",
     "styled-components": "^5.2.0",
-    "use-immer": "^0.4.1"
+    "use-immer": "^0.4.1",
+    "web3modal": "^1.9.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.162",

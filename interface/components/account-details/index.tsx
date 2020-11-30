@@ -1,5 +1,6 @@
 import React, { useCallback, useContext } from "react";
 import styled, { ThemeContext } from "styled-components";
+import Link from "next/link";
 import { shortenAddress } from "../../utils/address";
 // import Copy from './Copy'
 // import Transaction from './Transaction'
@@ -11,66 +12,45 @@ import { WalletConnectIcon } from "../icons/wallet-connect";
 import { FortmaticIcon } from "../icons/fortmatic";
 import { SecondaryDarkButton } from "../button";
 import { ArrowRightIcon } from "../icons/arrow-right";
-import { H1, H3, P, PDark, Faded, FadedDark } from "../typography";
+import { H1, H3, P, PDark, Faded, FadedDark, LargeDisplayTextDark } from "../typography";
 import { useWeb3React } from "@web3-react/core";
 import { X } from "react-feather";
+import { useENSLookup } from "../../hooks/useENS";
+import { TxTable } from "../tables/transactions";
+import { useTransactionsMap } from "../../contexts/transaction";
+import { isEmpty } from "lodash";
 
 const HeaderRow = styled.div`
-  padding: 1rem 1rem;
+  padding: 16px;
 `;
 
-const StyledHeaderTitle = styled(H3)`
-  color: #0e2991;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.05rem;
+interface DisplayAddressProps {
+  isActive?: boolean;
+}
+
+const TxTableWrapper = styled.div`
+  width: 280px;
+  padding-bottom: 52px;
 `;
 
-const DisplayAddress = styled(H1)`
-  color: black;
-`;
-
-const UpperSection = styled.div`
+const AccountDetailsWrapper = styled.div`
   position: relative;
-
-  h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  h5:last-child {
-    margin-bottom: 0px;
-  }
-
-  h4 {
-    margin-top: 0;
-    font-weight: 500;
-  }
-`;
-
-const InfoCard = styled.div`
-  padding: 1rem;
-  border: 2px solid rgba(0, 0, 0, 0.05);
-  position: relative;
-  display: grid;
-  grid-row-gap: 12px;
-  margin-bottom: 20px;
 `;
 
 const AccountGroupingRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  justify-content: space-between;
+  display: flex;
   align-items: center;
-  font-weight: 400;
-  color: ${({ theme }) => theme.text1};
+  justify-content: center;
+  flex-direction: column;
+`;
 
-  div {
-    ${({ theme }) => theme.flexRowNoWrap}
-    align-items: center;
-  }
+const AccountHeaderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 36px 0 24px 0;
+  width: 280px;
 `;
 
 const AccountSection = styled.div`
@@ -79,60 +59,18 @@ const AccountSection = styled.div`
 
 const YourAccount = styled.div``;
 
-const LowerSection = styled.div`
-  padding: 24px 16px;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.05);
-  h5 {
-    margin: 0;
-    font-weight: 400;
-    color: ${({ theme }) => theme.text3};
-  }
-`;
-
-const AccountControl = styled.div`
-  display: flex;
-  justify-content: space-between;
-  min-width: 0;
-  width: 100%;
-
-  font-weight: 500;
-  font-size: 1.25rem;
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  p {
-    min-width: 0;
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
-
 const AccountActionsWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
+  width: 280px;
+  grid-template-columns: 1fr;
+  grid-gap: 12px;
+  padding: 12px 0 36px 0;
 `;
-
-// const AddressLink = styled(ExternalLink)<{ hasENS: boolean; isENS: boolean }>`
-//   font-size: 0.825rem;
-//   color: ${({ theme }) => theme.text3};
-//   margin-left: 1rem;
-//   font-size: 0.825rem;
-//   display: flex;
-//   :hover {
-//     color: ${({ theme }) => theme.text2};
-//   }
-// `
 
 const CloseIcon = styled.div`
   position: absolute;
   right: 1rem;
-  top: 14px;
+  top: 1rem;
   &:hover {
     cursor: pointer;
     opacity: 0.6;
@@ -146,65 +84,31 @@ const WalletName = styled.div`
   color: #000000;
 `;
 
-const IconWrapper = styled.div<{ size?: number }>`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  margin-right: 8px;
-  & > img,
-  span {
-    height: ${({ size }) => (size ? size + "px" : "32px")};
-    width: ${({ size }) => (size ? size + "px" : "32px")};
-  }
+const TxTableTitle = styled(P)`
+  font-size: 16px;
+  font-weight: 600;
+  color: black;
+  padding-bottom: 8px;
 `;
 
-const TransactionListWrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap};
+const TxTableSpacer = styled.div`
+  height: 24px;
+  width: 100%;
 `;
-
-// const WalletAction = styled(ButtonSecondary)`
-//   width: fit-content;
-//   font-weight: 400;
-//   margin-left: 8px;
-//   font-size: 0.825rem;
-//   padding: 4px 6px;
-//   :hover {
-//     cursor: pointer;
-//     text-decoration: underline;
-//   }
-// `
-
-// const MainWalletAction = styled(WalletAction)`
-//   color: ${({ theme }) => theme.primary1};
-// `
-
-// function renderTransactions(transactions: string[]) {
-//   return (
-//     <TransactionListWrapper>
-//       {transactions.map((hash, i) => {
-//         return <Transaction key={i} hash={hash} />
-//       })}
-//     </TransactionListWrapper>
-//   )
-// }
 
 interface AccountDetailsProps {
   toggleWalletModal: () => void;
-  pendingTransactions: string[];
-  confirmedTransactions: string[];
-  ENSName?: string;
   openOptions: () => void;
 }
 
 export default function AccountDetails({
   toggleWalletModal,
-  pendingTransactions,
-  confirmedTransactions,
-  ENSName,
   openOptions,
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useWeb3React();
   const theme = useContext(ThemeContext);
+  const ENSName = useENSLookup(account);
+  const txMap = useTransactionsMap();
 
   function formatConnectorName() {
     const { ethereum } = window;
@@ -218,149 +122,68 @@ export default function AccountDetails({
     return <WalletName>Connected with {name}</WalletName>;
   }
 
-  function getStatusIcon() {
-    if (connector === injected) {
-      return (
-        <IconWrapper size={16}>
-          <ArrowRightIcon />
-        </IconWrapper>
-      );
-    } else if (connector === walletconnect) {
-      return (
-        <IconWrapper size={16}>
-          <WalletConnectIcon />
-        </IconWrapper>
-      );
-    } else if (connector === fortmatic) {
-      return (
-        <IconWrapper size={16}>
-          <FortmaticIcon />
-        </IconWrapper>
-      );
-    }
-    return null;
-  }
-
   const clearAllTransactionsCallback = useCallback(() => {}, []);
 
   return (
-    <>
-      <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
-          <X color={"#000000"} />
-        </CloseIcon>
-        <HeaderRow>
-          <StyledHeaderTitle>Account</StyledHeaderTitle>
-        </HeaderRow>
-        <AccountSection>
-          <YourAccount>
-            <InfoCard>
-              <AccountGroupingRow id="web3-account-identifier-row">
-                <AccountControl>
-                  {ENSName ? (
-                    <>
-                      <div>
-                        {getStatusIcon()}
-                        <p> {ENSName}</p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <DisplayAddress> {account && shortenAddress(account)}</DisplayAddress>
-                      </div>
-                    </>
-                  )}
-                </AccountControl>
-                {formatConnectorName()}
-              </AccountGroupingRow>
-              <AccountGroupingRow>
-                <AccountActionsWrapper>
-                  {connector !== injected && connector !== walletlink && (
-                    <SecondaryDarkButton
-                      onClick={() => {
-                        (connector as any).close();
-                      }}
-                    >
-                      Disconnect
-                    </SecondaryDarkButton>
-                  )}
-                  <SecondaryDarkButton
-                    onClick={() => {
-                      openOptions();
-                    }}
-                  >
-                    Change
-                  </SecondaryDarkButton>
-                </AccountActionsWrapper>
-              </AccountGroupingRow>
-              {/* <AccountGroupingRow>
-                {ENSName ? (
-                  <>
-                    <AccountControl>
-                      <div>
-                        {account && (
-                          <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>Copy Address</span>
-                          </Copy>
-                        )}
-                        {chainId && account && (
-                          <AddressLink
-                            hasENS={!!ENSName}
-                            isENS={true}
-                            href={chainId && getEtherscanLink(chainId, ENSName, 'address')}
-                          >
-                            <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>View on Etherscan</span>
-                          </AddressLink>
-                        )}
-                      </div>
-                    </AccountControl>
-                  </>
-                ) : (
-                  <>
-                    <AccountControl>
-                      <div>
-                        {account && (
-                          <Copy toCopy={account}>
-                            <span style={{ marginLeft: '4px' }}>Copy Address</span>
-                          </Copy>
-                        )}
-                        {chainId && account && (
-                          <AddressLink
-                            hasENS={!!ENSName}
-                            isENS={false}
-                            href={getEtherscanLink(chainId, account, 'address')}
-                          >
-                            <LinkIcon size={16} />
-                            <span style={{ marginLeft: '4px' }}>View on Etherscan</span>
-                          </AddressLink>
-                        )}
-                      </div>
-                    </AccountControl>
-                  </>
-                )}
-                        </AccountGroupingRow> */}
-            </InfoCard>
-          </YourAccount>
-        </AccountSection>
-      </UpperSection>
-      {!!pendingTransactions.length || !!confirmedTransactions.length ? (
-        <LowerSection>
-          {/* <AutoRow mb={'1rem'} style={{ justifyContent: 'space-between' }}>
-            <TYPE.body>Recent Transactions</TYPE.body>
-            <LinkStyledButton onClick={clearAllTransactionsCallback}>(clear all)</LinkStyledButton>
-          </AutoRow>
-          {renderTransactions(pendingTransactions)}
-          {renderTransactions(confirmedTransactions)} */}
-        </LowerSection>
-      ) : (
-        <LowerSection>
-          <PDark>
-            <FadedDark>Your transactions will appear here...</FadedDark>
-          </PDark>
-        </LowerSection>
-      )}
-    </>
+    <AccountDetailsWrapper>
+      <CloseIcon onClick={toggleWalletModal}>
+        <X color={"#000000"} />
+      </CloseIcon>
+      <HeaderRow />
+      <AccountSection>
+        <YourAccount>
+          <AccountGroupingRow>
+            <AccountHeaderWrapper id="web3-account-identifier-row">
+              {ENSName ? (
+                <>
+                  <div>
+                    <LargeDisplayTextDark>{ENSName}</LargeDisplayTextDark>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <LargeDisplayTextDark>{account && shortenAddress(account)}</LargeDisplayTextDark>
+                  </div>
+                </>
+              )}
+              {formatConnectorName()}
+            </AccountHeaderWrapper>
+          </AccountGroupingRow>
+          <AccountGroupingRow>
+            <AccountActionsWrapper>
+              <SecondaryDarkButton
+                onClick={() => {
+                  openOptions();
+                }}
+              >
+                Change
+              </SecondaryDarkButton>
+              <Link href={chainId && getEtherscanLink(chainId, account, "address")}>
+                <SecondaryDarkButton>Etherscan</SecondaryDarkButton>
+              </Link>
+              {connector !== injected && connector !== walletlink && (
+                <SecondaryDarkButton
+                  onClick={() => {
+                    (connector as any).close();
+                  }}
+                >
+                  Disconnect
+                </SecondaryDarkButton>
+              )}
+            </AccountActionsWrapper>
+          </AccountGroupingRow>
+          <AccountGroupingRow>
+            {!isEmpty(txMap) && (
+              <TxTableWrapper>
+                <TxTableTitle>Transactions</TxTableTitle>
+                <TxTable />
+              </TxTableWrapper>
+            )}
+            {isEmpty(txMap) && <TxTableSpacer />}
+          </AccountGroupingRow>
+        </YourAccount>
+      </AccountSection>
+    </AccountDetailsWrapper>
   );
 }

@@ -19,24 +19,30 @@ import PendingView from "./PendingView";
 import { useModalState, useModalStateActions } from "../../../contexts/modal";
 import { AppModal } from "../../../types/app";
 import { ArrowLeft, ArrowUpLeft, X } from "react-feather";
-import { H1, H3, H3Dark, P, PDark } from "../../typography";
+import { H1, H3, H3Dark, LargeDisplayTextDark, P, PDark } from "../../typography";
 
-const BackIconWrapper = styled.div`
+const BackIcon = styled.div`
   cursor: pointer;
-  margin-right: 4px;
-`;
-
-const CloseIcon = styled.div`
   position: absolute;
-  right: 1rem;
-  top: 14px;
+  left: 1rem;
+  top: 1rem;
   &:hover {
     cursor: pointer;
     opacity: 0.6;
   }
 `;
 
-const Wrapper = styled.div`
+const CloseIcon = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+`;
+
+const ModalContentWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   margin: 0;
   padding: 0;
@@ -49,70 +55,31 @@ const HeaderRow = styled.div`
   padding: 1rem 1rem;
 `;
 
-const ContentWrapper = styled.div`
-  padding: 0 1rem 1rem 1rem;
-`;
-
-const UpperSection = styled.div`
-  position: relative;
-
-  h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  h5:last-child {
-    margin-bottom: 0px;
-  }
-
-  h4 {
-    margin-top: 0;
-    font-weight: 500;
-  }
-`;
-
-const StyledHeaderTitle = styled(H3)`
-  color: #0e2991;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.05rem;
-`;
-
-const Blurb = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
+const GroupingRow = styled.div`
+  display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 2rem;
+  flex-direction: column;
+`;
+
+const ErrorContentWrapper = styled.div`
+  width: 280px;
+  padding: 48px 0;
+`;
+
+const ConnectWalletContentWrapper = styled.div`
+  width: 280px;
+  padding: 48px 0 24px 0;
+`;
+
+const ContentWrapper = styled.div`
+  position: relative;
 `;
 
 const OptionGrid = styled.div`
   display: grid;
   grid-gap: 1rem;
-`;
-
-const HoverText = styled.div`
-  :hover {
-    cursor: pointer;
-  }
-`;
-
-const ErrorCard = styled.div`
-  margin-top: 1rem;
-  padding: 1rem;
-  border: 2px rgba(0, 0, 0, 0.05) solid;
-  background-color: #d36d6d;
-`;
-
-const LargeText = styled(H1)`
-  font-size: 48px;
-  font-weight: 900;
-  letter-spacing: 0.05rem;
-  color: white;
-  padding-bottom: 0.5rem;
+  width: 280px;
+  padding-bottom: 64px;
 `;
 
 const WALLET_VIEWS = {
@@ -295,77 +262,83 @@ export default function WalletModal() {
     const isMounted = useMountedState();
     if (error) {
       return (
-        <UpperSection>
+        <ContentWrapper>
           <CloseIcon onClick={closeModal}>
             <X color={"#000000"} />
           </CloseIcon>
-          <HeaderRow></HeaderRow>
-          <ContentWrapper>
-            <ErrorCard>
-              <LargeText>{"(✖╭╮✖)"}</LargeText>
-              <P>
+          <GroupingRow>
+            <ErrorContentWrapper>
+              <LargeDisplayTextDark style={{ textAlign: "center" }}>{"Oops!"}</LargeDisplayTextDark>
+              <PDark style={{ textAlign: "center" }}>
                 {error instanceof UnsupportedChainIdError
                   ? "Please connect to the appropriate Ethereum network."
-                  : "Error connecting. Try refreshing the page."}
-              </P>
-            </ErrorCard>
-          </ContentWrapper>
-        </UpperSection>
+                  : "Error connecting. Try refreshing."}
+              </PDark>
+            </ErrorContentWrapper>
+          </GroupingRow>
+        </ContentWrapper>
       );
     }
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
       return (
         <AccountDetails
           toggleWalletModal={closeModal}
-          pendingTransactions={[]} // TODO(dave4506)
-          confirmedTransactions={[]}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
         />
       );
     }
-    return (
-      <UpperSection>
+    if (true) {
+      return <ContentWrapper>
+        {walletView !== WALLET_VIEWS.ACCOUNT && (
+          <BackIcon
+            onClick={() => {
+              setPendingError(false);
+              setWalletView(WALLET_VIEWS.ACCOUNT);
+            }}
+          >
+            <ArrowLeft color="#000000" size={22} />
+          </BackIcon>
+        )}
         <CloseIcon onClick={closeModal}>
           <X color="#000000" />
         </CloseIcon>
-        <HeaderRow>
-          {walletView !== WALLET_VIEWS.ACCOUNT && (
-            <BackIconWrapper
-              onClick={() => {
-                setPendingError(false);
-                setWalletView(WALLET_VIEWS.ACCOUNT);
-              }}
-            >
-              <ArrowLeft color="#000000" size={22} />
-            </BackIconWrapper>
-          )}
-          <StyledHeaderTitle>Connect to a wallet</StyledHeaderTitle>
-        </HeaderRow>
-        <ContentWrapper>
-          {walletView === WALLET_VIEWS.PENDING ? (
-            <PendingView
-              connector={pendingWallet}
-              error={pendingError}
-              setPendingError={setPendingError}
-              tryActivation={tryActivation}
-            />
-          ) : (
-            <>{isMounted() && <OptionGrid>{getOptions()}</OptionGrid>}</>
-          )}
-          {/* {walletView !== WALLET_VIEWS.PENDING && (
-            <Blurb>
-              <span>New to Ethereum? &nbsp;</span>{' '}
-              <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
-            </Blurb>
-          )} */}
-        </ContentWrapper>
-      </UpperSection>
+        <GroupingRow>
+          <div style={{padding: '54px 0'}}>
+            <LargeDisplayTextDark style={{ textAlign: "center" }}>{"Initializing..."}</LargeDisplayTextDark>
+          </div>
+        </GroupingRow>
+        <GroupingRow>
+        </GroupingRow>
+      </ContentWrapper>;
+    }
+    return (
+      <ContentWrapper>
+        {walletView !== WALLET_VIEWS.ACCOUNT && (
+          <BackIcon
+            onClick={() => {
+              setPendingError(false);
+              setWalletView(WALLET_VIEWS.ACCOUNT);
+            }}
+          >
+            <ArrowLeft color="#000000" size={22} />
+          </BackIcon>
+        )}
+        <CloseIcon onClick={closeModal}>
+          <X color="#000000" />
+        </CloseIcon>
+        <GroupingRow>
+          <ConnectWalletContentWrapper>
+            <LargeDisplayTextDark style={{ textAlign: "center" }}>{"Connect to a wallet"}</LargeDisplayTextDark>
+          </ConnectWalletContentWrapper>
+        </GroupingRow>
+        <GroupingRow>{isMounted() && <OptionGrid>{getOptions()}</OptionGrid>}</GroupingRow>
+      </ContentWrapper>
     );
   }
 
   return (
     <Modal isOpen={walletModalOpen} onDismiss={closeModal} minHeight={false} maxHeight={90}>
-      <Wrapper>{getModalContent()}</Wrapper>
+      <ModalContentWrapper>{getModalContent()}</ModalContentWrapper>
     </Modal>
   );
 }

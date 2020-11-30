@@ -32,6 +32,7 @@ export const SecondaryDarkButton = styled.button`
   padding: 12px 32px;
   color: black;
   letter-spacing: 0.05rem;
+  border-radius: 999px;
   background-color: rgba(0, 0, 0, 0);
   font-size: 14px;
   &:focus:enabled {

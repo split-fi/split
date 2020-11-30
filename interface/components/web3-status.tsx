@@ -18,6 +18,7 @@ import { useEthBalance } from "../contexts/asset-balances";
 import { Faded } from "./typography";
 import { useEthToken } from "../hooks/useEthToken";
 import { formatTokenAmount } from "../utils/format";
+import { useENSLookup } from "../hooks/useENS";
 
 // import Identicon from '../Identicon'
 // import Loader from '../Loader'
@@ -39,7 +40,7 @@ const StyledFaded = styled(Faded)`
 `;
 
 const Web3StatusGeneric = styled(PrimaryButton)`
-  width: 240px;
+  width: 140px;
 `;
 
 const Web3StatusError = styled(Web3StatusGeneric)`
@@ -65,7 +66,7 @@ const Web3StatusConnected = styled(Web3StatusGeneric)`
   display: flex;
   padding-left: 16px;
   padding-right: 16px;
-  justify-content: space-between;
+  justify-content: center;
 `;
 
 const Text = styled.p`
@@ -113,7 +114,7 @@ function Web3StatusInner() {
   const { account, connector, error } = useWeb3React();
   const ethBalance = useEthBalance();
   const ethToken = useEthToken();
-  // const { ENSName } = useENSName(account ?? undefined)
+  const ENSName = useENSLookup(account);
 
   // const allTransactions = useAllTransactions()
 
@@ -139,8 +140,7 @@ function Web3StatusInner() {
             <Text>{ENSName || shortenAddress(account)}</Text>
           </>
         )} */}
-        <>{shortenAddress(account)}</>
-        {ethBalance && <StyledFaded>{formatTokenAmount(ethBalance, ethToken).minimizedWithUnits}</StyledFaded>}
+        <>{ENSName ?? shortenAddress(account)}</>
         {/* {connector && <StatusIcon connector={connector} />} */}
       </Web3StatusConnected>
     );

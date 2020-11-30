@@ -1,9 +1,9 @@
 import Decimal from "decimal.js";
 import React, { FC, useCallback, useMemo, useState } from "react";
-import { useTable } from "react-table";
+import { useTable, useFlexLayout, useResizeColumns } from "react-table";
 import styled from "styled-components";
 
-import { HeaderTR, TableContainer, TBody, TCell, TCellHeader, TR, TCellLabel } from "./common";
+import { HeaderTR, TableContainer, TBody, TCell, TCellHeader, TR, TCellLabel, TCellContent } from "./common";
 import { Asset, FullAsset } from "../../types/split";
 import { formatTokenAmount } from "../../utils/number";
 import { PrimaryButton } from "../button";
@@ -32,6 +32,10 @@ const CAPITAL_TABLE_SCHEMA = [
     Header: "Worth",
     accessor: "redeemableTokenAmount",
     id: "worth",
+    width: 140,
+    minWidth: 140,
+    maxWidth: 140,
+    disableResizing: true,
   },
 ];
 
@@ -40,6 +44,10 @@ const YIELD_TABLE_SCHEMA = CAPITAL_TABLE_SCHEMA.concat([
     Header: "",
     accessor: "type",
     id: "withdraw",
+    minWidth: 134,
+    maxWidth: 134,
+    width: 134,
+    disableResizing: true,
   },
 ]);
 
@@ -48,10 +56,14 @@ export interface YieldTableProps {
 }
 
 const YieldTable: React.FC<YieldTableProps> = ({ data }) => {
-  const { getTableProps, rows, prepareRow } = useTable({
-    columns: YIELD_TABLE_SCHEMA,
-    data,
-  });
+  const { getTableProps, rows, prepareRow } = useTable(
+    {
+      columns: YIELD_TABLE_SCHEMA,
+      data,
+    },
+    useResizeColumns,
+    useFlexLayout,
+  );
 
   const yieldContracts = useYieldTokenContracts(
     data.map(t => t.fullToken.componentTokens.yieldComponentToken.tokenAddress),
@@ -80,37 +92,41 @@ const YieldTable: React.FC<YieldTableProps> = ({ data }) => {
             yieldOfComponent,
           } = row.original as ComponentTokenWithFullAndBalance;
           return (
-            <TR key={fullToken.tokenAddress} {...(row.getRowProps() as any)}>
+            <TR {...(row.getRowProps() as any)}>
               {row.cells.map(cell => {
                 if (cell.column.id === "amount") {
                   return (
                     <TCell {...cell.getCellProps()}>
-                      <TCellHeader>
-                        {formatTokenAmount(balanceOfComponent, componentToken).minimizedWithUnits}
-                      </TCellHeader>
+                      <TCellContent>
+                        <TCellHeader>
+                          {formatTokenAmount(balanceOfComponent, componentToken).minimizedWithUnits}
+                        </TCellHeader>
+                      </TCellContent>
                     </TCell>
                   );
                 }
                 if (cell.column.id === "worth") {
                   return (
-                    <TCell {...cell.getCellProps()} style={{ flexDirection: "row-reverse" }}>
-                      <TCellLabel>
-                        withdraw {formatTokenAmount(yieldOfComponent, fullToken).minimizedWithUnits}
-                      </TCellLabel>
+                    <TCell {...cell.getCellProps()}>
+                      <TCellContent style={{ flexDirection: "row-reverse", paddingRight: "12px" }}>
+                        <TCellLabel>
+                          withdraw {formatTokenAmount(yieldOfComponent, fullToken).minimizedWithUnits}
+                        </TCellLabel>
+                      </TCellContent>
                     </TCell>
                   );
                 }
                 if (cell.column.id === "withdraw") {
                   return (
-                    <>
-                      <TCell {...cell.getCellProps()} style={{ flexDirection: "row-reverse" }}>
+                    <TCell {...cell.getCellProps()}>
+                      <TCellContent>
                         <WidthdrawAction
                           withdrawToken={componentToken}
                           withdrawTokenAmount={yieldOfComponent}
                           withdrawContract={yieldContractByAddress[componentToken.tokenAddress]}
                         />
-                      </TCell>
-                    </>
+                      </TCellContent>
+                    </TCell>
                   );
                 }
                 return <div {...cell.getCellProps()}>{cell.render("Cell")}</div>;
@@ -128,10 +144,14 @@ export interface CapitalTableProps {
 }
 
 const CapitalTable: React.FC<CapitalTableProps> = ({ data }) => {
-  const { getTableProps, rows, prepareRow } = useTable({
-    columns: CAPITAL_TABLE_SCHEMA,
-    data,
-  });
+  const { getTableProps, rows, prepareRow } = useTable(
+    {
+      columns: CAPITAL_TABLE_SCHEMA,
+      data,
+    },
+    useResizeColumns,
+    useFlexLayout,
+  );
 
   return (
     <div {...getTableProps()}>
@@ -141,27 +161,30 @@ const CapitalTable: React.FC<CapitalTableProps> = ({ data }) => {
           prepareRow(row);
           const { fullToken, componentToken, balanceOfComponent } = row.original as ComponentTokenWithFullAndBalance;
           return (
-            <TR key={fullToken.tokenAddress} {...(row.getRowProps() as any)}>
+            <TR {...(row.getRowProps() as any)}>
               {row.cells.map(cell => {
                 if (cell.column.id === "amount") {
                   return (
                     <TCell {...cell.getCellProps()}>
-                      <TCellHeader>
-                        {formatTokenAmount(balanceOfComponent, componentToken).minimizedWithUnits}
-                      </TCellHeader>
+                      <TCellContent>
+                        <TCellHeader>
+                          {formatTokenAmount(balanceOfComponent, componentToken).minimizedWithUnits}
+                        </TCellHeader>
+                      </TCellContent>
                     </TCell>
                   );
                 }
                 if (cell.column.id === "worth") {
-                  // TODO(fragosti): Need a better way of doing this. HACK.
                   return (
-                    <TCell {...cell.getCellProps()} style={{ flexDirection: "row-reverse" }}>
-                      <TCellLabel>
-                        worth{" "}
-                        {`${formatTokenAmount(balanceOfComponent, componentToken).minimized} ${
-                          fullToken.userlyingAssetMetaData.symbol
-                        }`}
-                      </TCellLabel>
+                    <TCell {...cell.getCellProps()}>
+                      <TCellContent style={{ flexDirection: "row-reverse" }}>
+                        <TCellLabel>
+                          worth{" "}
+                          {`${formatTokenAmount(balanceOfComponent, componentToken).minimized} ${
+                            fullToken.userlyingAssetMetaData.symbol
+                          }`}
+                        </TCellLabel>
+                      </TCellContent>
                     </TCell>
                   );
                 }

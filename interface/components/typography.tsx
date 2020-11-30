@@ -8,6 +8,12 @@ export const H1 = styled.h1`
   font-size: 40px;
 `;
 
+export const LargeDisplayTextDark = styled(H1)<{ isActive?: boolean }>`
+  color: black;
+  font-weight: ${props => (!props.isActive ? 700 : 300)};
+  font-style: ${props => (!props.isActive ? "italic" : "normal")};
+`;
+
 export const H2 = styled.h2`
   color: white;
   padding: 0;
