@@ -40,10 +40,11 @@ contract YieldComponentToken is ERC20Base, VaultControlled {
   /// @dev Mint new yield component tokens, computing the amount from an amount of full tokens
   /// @param account address of account to mint tokens to
   /// @param amountOfFull amount of full tokens to use for the calculation
-  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner {
+  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner returns (uint256 amountMinted) {
     uint256 currPrice = priceOracle.getPrice(fullToken);
     uint256 yieldTokenAmount = DSMath.wmul(amountOfFull, currPrice);
     _mint(account, yieldTokenAmount);
+    return yieldTokenAmount;
   }
 
   /// @dev Mint new tokens if the contract owner
