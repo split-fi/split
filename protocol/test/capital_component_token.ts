@@ -4,19 +4,17 @@ import { solidity } from "ethereum-waffle";
 
 import { CapitalComponentToken } from "../typechain/CapitalComponentToken";
 import { PriceOracleMock } from "../typechain/PriceOracleMock";
-import { CTokenMock } from "../typechain/CTokenMock";
+import { ERC20Mock } from "../typechain/ERC20Mock";
 import { SplitVaultMock } from "../typechain/SplitVaultMock";
 
-import { WAD } from "./constants";
+import { WAD, C_TOKEN_DECIMALS } from "./constants";
 import { ComponentTokenDependencyAddresses } from "./types";
-import { getDeployedCapitalComponentToken } from "./utils";
+import { getDeployedCapitalComponentToken, getErc20 } from "./utils";
 
 use(solidity);
 
-const ERC20_DECIMALS = 8;
-
 describe("CapitalComponentToken", () => {
-  let erc20Token: CTokenMock;
+  let erc20Token: ERC20Mock;
   let priceOracle: PriceOracleMock;
   let splitVault: SplitVaultMock;
   let deployedAddresses: ComponentTokenDependencyAddresses;
@@ -26,9 +24,7 @@ describe("CapitalComponentToken", () => {
     priceOracle = (await PriceOracleMockFactory.deploy()) as PriceOracleMock;
     await priceOracle.deployed();
 
-    const CTokenMockFactory = await ethers.getContractFactory("CTokenMock");
-    erc20Token = (await CTokenMockFactory.deploy("A Token", "AAA", ERC20_DECIMALS)) as CTokenMock;
-    await erc20Token.deployed();
+    erc20Token = await getErc20(C_TOKEN_DECIMALS);
 
     const SplitVaultFactory = await ethers.getContractFactory("SplitVaultMock");
     splitVault = (await SplitVaultFactory.deploy()) as SplitVaultMock;
@@ -136,7 +132,7 @@ describe("CapitalComponentToken", () => {
     it("should mint capital tokens corresponding to the underlying value of the fullToken in wads", async () => {
       const signers = await ethers.getSigners();
       const address = await signers[1].getAddress();
-      // ERC20_DECIMALS decimals
+      // C_TOKEN_DECIMALS decimals
       const amountOfFull = "2000000000";
       priceOracle.setPrice("12345678900000000000");
       let capitalComponentToken = await getDeployedCapitalComponentToken("X Token", "XXX", deployedAddresses);

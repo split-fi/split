@@ -3,55 +3,21 @@ import { ethers } from "hardhat";
 import { solidity } from "ethereum-waffle";
 
 import { PriceOracleMock } from "../typechain/PriceOracleMock";
-import { CTokenMock } from "../typechain/CTokenMock";
-import { SplitVault } from "../typechain/SplitVault";
+import { ERC20Mock } from "../typechain/ERC20Mock";
 
-import { ACCOUNT_1, NULL_ADDRESS, WAD } from "./constants";
-import { ComponentTokenDependencyAddresses } from "./types";
-import { getDeployedCapitalComponentToken, getDeployedYieldComponentToken } from "./utils";
-
-const ERC20_DECIMALS = 8;
+import { ACCOUNT_1, NULL_ADDRESS, WAD, C_TOKEN_DECIMALS } from "./constants";
+import { getDeployedContracts, SplitVaultDependencyAddresses, getPriceOracle, getErc20 } from "./utils";
 
 use(solidity);
 
-export interface SplitVaultDependencyAddresses {
-  fullTokenAddress: string;
-  oracleAddress: string;
-}
-
-const getDeployedContracts = async (addresses: SplitVaultDependencyAddresses) => {
-  const SplitVaultFactory = await ethers.getContractFactory("SplitVault");
-  const splitVault = (await SplitVaultFactory.deploy()) as SplitVault;
-  await splitVault.deployed();
-  const deployedAddresses: ComponentTokenDependencyAddresses = {
-    ...addresses,
-    splitVaultAddress: splitVault.address,
-  };
-  const name = "X Token";
-  const symbol = "XXX";
-  const yieldComponentToken = await getDeployedYieldComponentToken(name, symbol, deployedAddresses);
-  const capitalComponentToken = await getDeployedCapitalComponentToken(name, symbol, deployedAddresses);
-  return {
-    splitVault,
-    yieldComponentToken,
-    capitalComponentToken,
-  };
-};
-
 describe("SplitVault", function () {
-  let erc20Token: CTokenMock;
+  let erc20Token: ERC20Mock;
   let priceOracle: PriceOracleMock;
   let addresses: SplitVaultDependencyAddresses;
 
   before(async () => {
-    const PriceOracleMockFactory = await ethers.getContractFactory("PriceOracleMock");
-    priceOracle = (await PriceOracleMockFactory.deploy()) as PriceOracleMock;
-    await priceOracle.deployed();
-
-    const CTokenMockFactory = await ethers.getContractFactory("CTokenMock");
-    erc20Token = (await CTokenMockFactory.deploy("A Token", "AAA", ERC20_DECIMALS)) as CTokenMock;
-    await erc20Token.deployed();
-
+    erc20Token = await getErc20(C_TOKEN_DECIMALS);
+    priceOracle = await getPriceOracle();
     addresses = {
       fullTokenAddress: erc20Token.address,
       oracleAddress: priceOracle.address,
@@ -127,8 +93,8 @@ describe("SplitVault", function () {
       const [ownerSigner, senderSigner] = await ethers.getSigners();
       const [_, sender] = await Promise.all([ownerSigner.getAddress(), senderSigner.getAddress()]);
       const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
-      const mintAmount = "1000000000000000000000";
-      erc20Token.mint(sender, "1000000000000000000000");
+      const txn = await erc20Token.mint(sender, "1000000000000000000000");
+      await txn.wait();
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       await expect(splitVault.connect(senderSigner).split(WAD, addresses.fullTokenAddress)).to.be.revertedWith(
         "ERC20: transfer amount exceeds allowance",
@@ -140,7 +106,7 @@ describe("SplitVault", function () {
       const { splitVault, yieldComponentToken, capitalComponentToken } = await getDeployedContracts(addresses);
       const mintAmount = "1000000000000000000000";
       const splitAmount = "1000000000000";
-      erc20Token.mint(sender, mintAmount);
+      await erc20Token.mint(sender, mintAmount);
       expect(await erc20Token.balanceOf(splitVault.address)).to.eq(0);
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
@@ -156,7 +122,7 @@ describe("SplitVault", function () {
       const splitAmount = "1000000000000";
       expect(await yieldComponentToken.balanceOf(sender)).to.eq(0);
       expect(await capitalComponentToken.balanceOf(sender)).to.eq(0);
-      erc20Token.mint(sender, mintAmount);
+      await erc20Token.mint(sender, mintAmount);
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
       await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
@@ -185,7 +151,7 @@ describe("SplitVault", function () {
       const mintAmount = "100000000";
       const splitAmount = "100000000";
       const combineAmount = "100000000";
-      erc20Token.mint(sender, mintAmount);
+      await erc20Token.mint(sender, mintAmount);
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
       await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);
@@ -204,7 +170,7 @@ describe("SplitVault", function () {
       const mintAmount = "100000000";
       const splitAmount = "100000000";
       const combineAmount = "100000000";
-      erc20Token.mint(sender, mintAmount);
+      await erc20Token.mint(sender, mintAmount);
       await splitVault.add(addresses.fullTokenAddress, yieldComponentToken.address, capitalComponentToken.address);
       erc20Token.connect(senderSigner).approve(splitVault.address, mintAmount);
       await splitVault.connect(senderSigner).split(splitAmount, addresses.fullTokenAddress);

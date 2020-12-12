@@ -51,6 +51,7 @@ contract SplitPoolFactory is Ownable {
     uint256 fullTokenAmountIn,
     uint256 minPoolAmountOut
   ) external returns (uint256 poolAmountOut) {
+    // TODO: Make sure this works :)
     require(
       IERC20(fullTokeAddress).transferFrom(msg.sender, address(this), fullTokenAmountIn),
       "Failed to transfer tokens to SplitPool"
