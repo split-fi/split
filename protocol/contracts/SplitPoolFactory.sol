@@ -44,7 +44,7 @@ contract SplitPoolFactory is Ownable {
   /// Find the correct ratio of component tokens in the pool
   /// Swap the component tokens, either with each other or with the quote token to achieve the right ratio
   /// Supply and return LP tokens
-  function joinswapAndSplitExternAmountIn(
+  function joinPollBySplitting(
     address crpPoolAddress,
     address splitVaultAddress,
     address fullTokeAddress,
