@@ -249,7 +249,7 @@ contract BPool is BBronze, BToken, BMath {
   // Absorb any tokens that have been sent to this contract into the pool
   function gulp(address token) external _logs_ _lock_ {
     require(_records[token].bound, "ERR_NOT_BOUND");
-    _records[token].balance = IERC20(token).balanceOf(address(this));
+    _records[token].balance = B_IERC20(token).balanceOf(address(this));
   }
 
   function getSpotPrice(address tokenIn, address tokenOut) external view _viewlock_ returns (uint256 spotPrice) {
@@ -567,7 +567,7 @@ contract BPool is BBronze, BToken, BMath {
     address from,
     uint256 amount
   ) internal {
-    bool xfer = IERC20(erc20).transferFrom(from, address(this), amount);
+    bool xfer = B_IERC20(erc20).transferFrom(from, address(this), amount);
     require(xfer, "ERR_ERC20_FALSE");
   }
 
@@ -576,7 +576,7 @@ contract BPool is BBronze, BToken, BMath {
     address to,
     uint256 amount
   ) internal {
-    bool xfer = IERC20(erc20).transfer(to, amount);
+    bool xfer = B_IERC20(erc20).transfer(to, amount);
     require(xfer, "ERR_ERC20_FALSE");
   }
 

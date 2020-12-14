@@ -17,7 +17,7 @@ import "./BNum.sol";
 
 // Highly opinionated token implementation
 
-interface IERC20 {
+interface B_IERC20 {
   event Approval(address indexed src, address indexed dst, uint256 amt);
   event Transfer(address indexed src, address indexed dst, uint256 amt);
 
@@ -79,7 +79,7 @@ contract BTokenBase is BNum {
   }
 }
 
-contract BToken is BTokenBase, IERC20 {
+contract BToken is BTokenBase, B_IERC20 {
   string private _name = "Balancer Pool Token";
   string private _symbol = "BPT";
   uint8 private _decimals = 18;

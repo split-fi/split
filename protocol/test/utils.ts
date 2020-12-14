@@ -63,7 +63,9 @@ export interface VaultAndComponentTokens {
   capitalComponentToken: CapitalComponentToken;
 }
 
-export const getDeployedContracts = async (addresses: SplitVaultDependencyAddresses) => {
+export const getDeployedContracts = async (
+  addresses: SplitVaultDependencyAddresses,
+): Promise<VaultAndComponentTokens> => {
   const SplitVaultFactory = await ethers.getContractFactory("SplitVault");
   const splitVault = (await SplitVaultFactory.deploy()) as SplitVault;
   await splitVault.deployed();
