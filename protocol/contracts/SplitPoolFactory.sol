@@ -10,9 +10,7 @@ import "./lib/balancer/configurable-rights-pool/contracts/CRPFactory.sol";
 import "./lib/balancer/configurable-rights-pool/libraries/RightsManager.sol";
 import "./SplitVault.sol";
 
-/**
- * A wrapper around a CRPFactory to create pools configured for Split tokens.
- */
+/// @notice A wrapper around a CRPFactory to create pools configured for Split tokens.
 contract SplitPoolFactory is Ownable {
   address private _crpFactoryAddress;
   mapping(address => bool) private _isSplitPool;
@@ -48,7 +46,7 @@ contract SplitPoolFactory is Ownable {
   /// @param fullTokenAddress address of the token to pull and split
   /// @param fullTokenAmountIn amount of the token to pull in
   /// @param minPoolAmountOut a check to ensure that enough balancer pool tokens will be received
-  /// @return The amount of pool tokens received
+  /// @return poolAmountOut the amount of pool tokens received
   function joinPoolBySplitting(
     address crpPoolAddress,
     address splitVaultAddress,

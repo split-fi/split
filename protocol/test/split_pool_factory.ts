@@ -15,7 +15,6 @@ import {
 } from "../typechain";
 
 import { WAD } from "./constants";
-import { ComponentTokenDependencyAddresses } from "./types";
 import {
   getPriceOracle,
   getDeployedContracts,
@@ -139,7 +138,7 @@ const getDeployedFactories = async (libraries: Libraries): Promise<Factories> =>
 
 const ERC20_DECIMALS = 18;
 
-describe.only("SplitPoolFactory", () => {
+describe("SplitPoolFactory", () => {
   let libraries: Libraries;
   let addresses: SplitVaultDependencyAddresses;
   let vaultAndComponentTokens: VaultAndComponentTokens;

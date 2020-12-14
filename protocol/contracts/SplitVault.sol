@@ -50,7 +50,7 @@ contract SplitVault is Ownable {
   /// @dev Allows a holder of a whitelisted Compound token to split it into it's corresponding Yield and Capital tokens
   /// @param amount of tokens to split
   /// @param tokenAddress the address of token to split
-  /// @return amount of component tokens minted (each)
+  /// @return amountMintedForEach amount of component tokens minted (each)
   function split(uint256 amount, address tokenAddress) public returns (uint256 amountMintedForEach) {
     ComponentSet memory componentSet = tokensToComponents[tokenAddress];
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
