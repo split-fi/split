@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: AGPL-3.0
-pragma solidity ^0.6.8;
+pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -32,10 +32,12 @@ contract CapitalComponentToken is ERC20, VaultControlled {
   /// @dev Mint new capital component tokens, but compute the amount from an amount of full tokens.
   /// @param account address of account to mint tokens to
   /// @param amountOfFull amount of full tokens to use for the calculation
-  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner {
+  /// @return amountMinted amount minted
+  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner returns (uint256 amountMinted) {
     uint256 price = priceOracle.getPrice(fullToken);
     uint256 componentTokenAmount = DSMath.wmul(amountOfFull, price);
     _mint(account, componentTokenAmount);
+    return componentTokenAmount;
   }
 
   /// @dev Mint new tokens if the contract owner

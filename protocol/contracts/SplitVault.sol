@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: AGPL-3.0
-pragma solidity ^0.6.8;
+pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -50,7 +50,8 @@ contract SplitVault is Ownable {
   /// @dev Allows a holder of a whitelisted Compound token to split it into it's corresponding Yield and Capital tokens
   /// @param amount of tokens to split
   /// @param tokenAddress the address of token to split
-  function split(uint256 amount, address tokenAddress) public {
+  /// @return amountMintedForEach amount of component tokens minted (each)
+  function split(uint256 amount, address tokenAddress) public returns (uint256 amountMintedForEach) {
     ComponentSet memory componentSet = tokensToComponents[tokenAddress];
     if (componentSet.yieldToken == address(0) || componentSet.capitalToken == address(0)) {
       revert("Attempted to split unsupported token");
@@ -61,8 +62,9 @@ contract SplitVault is Ownable {
       "Failed to transfer tokens to SplitVault."
     );
     CapitalComponentToken(componentSet.capitalToken).mintFromFull(msg.sender, amount);
-    YieldComponentToken(componentSet.yieldToken).mintFromFull(msg.sender, amount);
+    uint256 yieldComponentTokenAmount = YieldComponentToken(componentSet.yieldToken).mintFromFull(msg.sender, amount);
     emit Split(tokenAddress, amount);
+    return yieldComponentTokenAmount;
   }
 
   /// @dev Allows a holder of both Yield and Capital tokens to combine them into the underlying full tokens

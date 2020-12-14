@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: AGPL-3.0
-pragma solidity ^0.6.8;
+pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -40,10 +40,12 @@ contract YieldComponentToken is ERC20Base, VaultControlled {
   /// @dev Mint new yield component tokens, computing the amount from an amount of full tokens
   /// @param account address of account to mint tokens to
   /// @param amountOfFull amount of full tokens to use for the calculation
-  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner {
+  /// @return amountMinted the amount minted
+  function mintFromFull(address account, uint256 amountOfFull) public onlyVaultOrOwner returns (uint256 amountMinted) {
     uint256 currPrice = priceOracle.getPrice(fullToken);
     uint256 yieldTokenAmount = DSMath.wmul(amountOfFull, currPrice);
     _mint(account, yieldTokenAmount);
+    return yieldTokenAmount;
   }
 
   /// @dev Mint new tokens if the contract owner
@@ -175,6 +177,7 @@ contract YieldComponentToken is ERC20Base, VaultControlled {
   /// @dev Public method for calculating the outstanding yield for a yield token holder and a new fullToken price
   /// @param owner Owner and future recipient of the accrued yield
   /// @param currPrice The price of fullToken to use for the calculation. Must be more than internally stored lastPrice
+  /// @param lastPrice The last price of fullToken to use for the calculation. Must be less than `currPrice`.
   /// @return The payout amount denoted in fullToken
   function calculatePayoutAmount(
     address owner,
