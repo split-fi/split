@@ -34,6 +34,7 @@
     "deploy:split_pool": "hardhat deploy_split_pool",
     "add:component_set": "hardhat add_component_set",
     "mint:test_token": "hardhat mint_test_token",
+    "swap:tokens": "hardhat swap_tokens",
     "verify:contract": "hardhat verify",
     "build": "hardhat compile",
     "test": "hardhat test"
