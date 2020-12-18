@@ -2,7 +2,6 @@ import { task } from "hardhat/config";
 import { ethers } from "ethers";
 import axios from "axios";
 
-import { SplitPoolFactory, ERC20, ConfigurableRightsPool } from "../typechain";
 import { deployments } from "../deployments";
 import { ComponentSet } from "../deployments/types";
 
@@ -142,7 +141,7 @@ task("deploy_split_pool", "deploys a new Configurable Rights Pool through the Sp
     console.log("CapitalComponentToken address used: ", capitalComponentTokenAddress);
 
     const SplitPoolFactoryFactory = await bre.ethers.getContractFactory("SplitPoolFactory");
-    const splitPoolFactory = SplitPoolFactoryFactory.attach(splitPoolFactoryAddress) as SplitPoolFactory;
+    const splitPoolFactory = SplitPoolFactoryFactory.attach(splitPoolFactoryAddress);
 
     const tokenInfos: PoolTokenInfo[] = [
       {
@@ -217,14 +216,14 @@ task("deploy_split_pool", "deploys a new Configurable Rights Pool through the Sp
       const txn = await splitPoolFactory.newSplitPool(newSplitPoolArgs[0], newSplitPoolArgs[1], newSplitPoolArgs[2]);
       console.log("Creating Configurable Rights Pool. Txn hash: ", txn.hash);
       const txReceipt = await txn.wait();
-      const result = txReceipt.events?.find(event => event.event === "LogNewSplitPool")?.args;
+      const result = txReceipt.events?.find((event: any) => event.event === "LogNewSplitPool")?.args;
       crpAddress = (result ?? [])[1];
     }
 
     console.log("Configurable Rights Pool deployed to:", crpAddress);
     logSplitPoolArgs(newSplitPoolArgs);
     if (!args.shouldSkipCreatePool) {
-      const tokens = tokenInfos.map(tokenInfo => Erc20Factory.attach(tokenInfo.address) as ERC20);
+      const tokens = tokenInfos.map(tokenInfo => Erc20Factory.attach(tokenInfo.address));
       if (!args.shouldSkipApprovals) {
         for (const token of tokens) {
           console.log("Setting max approval on token: ", token.address);
@@ -252,7 +251,7 @@ task("deploy_split_pool", "deploys a new Configurable Rights Pool through the Sp
       const ConfigurableRightsPoolFactory = await bre.ethers.getContractFactory("ConfigurableRightsPool", {
         libraries: deployment.libraries,
       });
-      const configurableRightsPool = ConfigurableRightsPoolFactory.attach(crpAddress) as ConfigurableRightsPool;
+      const configurableRightsPool = ConfigurableRightsPoolFactory.attach(crpAddress);
       const txn = await configurableRightsPool["createPool(uint256)"](toWei(args.initialSupply), {
         gasLimit: "10000000",
       });

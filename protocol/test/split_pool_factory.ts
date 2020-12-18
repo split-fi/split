@@ -169,7 +169,7 @@ describe("SplitPoolFactory", () => {
       const { splitPoolFactory, bFactory } = await getDeployedFactories(libraries);
       const tx = await splitPoolFactory.newSplitPool(bFactory.address, poolParams, getPoolRights());
       const txReceipt = await tx.wait();
-      const result = txReceipt.events?.find(event => event.event === "LogNewSplitPool")?.args;
+      const result = txReceipt.events?.find((event: any) => event.event === "LogNewSplitPool")?.args;
       expect(result).to.not.be.undefined;
       const address = (result ?? [])[1];
       expect(address).to.not.be.undefined;
