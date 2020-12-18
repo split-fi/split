@@ -2,6 +2,12 @@ import { Deployments } from "./types";
 
 export const deployments: Deployments = {
   mainnet: {
+    compAddress: "0xc00e94Cb662C3520282E6f5717214004A7f26888",
+    usdcAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    // TODO: Deploy
+    splitPoolFactoryAddress: "",
+    balancerPoolFactoryAddress: "0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd",
+    balancerSmartPoolFactoryAddress: "0xed52D8E202401645eDAD1c0AA21e872498ce47D0",
     splitVaultAddress: "0x8e31d1F69Cd5185527517F6fAc8A43edd24C93D7",
     priceOracleAddress: "0x09d75570c572d9D0193CAc4D4F4213a1D3c8A5bd",
     componentSets: {
@@ -21,8 +27,20 @@ export const deployments: Deployments = {
         yieldComponentTokenAddress: "0x6b12838a3128F590887e956638e212Dd1306c3EA",
       },
     },
+    splitPools: {},
+    libraries: {
+      BalancerSafeMath: "0xCfE28868F6E0A24b7333D22D8943279e76aC2cdc",
+      RightsManager: "0x0F811b1AF2B6B447B008eFF31eCceeE5A0b1d842",
+      SmartPoolManager: "0xA3F9145CB0B50D907930840BB2dcfF4146df8Ab4",
+    },
   },
   rinkeby: {
+    // HACK: there is no COMP on Rinkeby, so using WETH instead.
+    compAddress: "0xc778417e063141139fce010982780140aa0cd5ab",
+    usdcAddress: "0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b",
+    splitPoolFactoryAddress: "0x208426c2B281aC34f7005A03f638F43C6489505e",
+    balancerPoolFactoryAddress: "0x9C84391B443ea3a48788079a5f98e2EaD55c9309",
+    balancerSmartPoolFactoryAddress: "0xA3F9145CB0B50D907930840BB2dcfF4146df8Ab4",
     splitVaultAddress: "0x17B9f2f7DE226eC18E77FEDB2c741d1B0D851bdA",
     priceOracleAddress: "0x9D8693092361ECCCdD30Ea2875a6054DF80D2472",
     componentSets: {
@@ -47,5 +65,17 @@ export const deployments: Deployments = {
         yieldComponentTokenAddress: "0x7220eD76f750554f4384600BC4C66fe808502F3b",
       },
     },
+    splitPools: {
+      // cETH
+      "0xd6801a1dffcd0a410336ef88def4320d6df1883e": {
+        poolAddress: "0x5CDE85734A2A07D3Eb59c8005D9035cf3C94b337",
+      },
+    },
+    libraries: {
+      BalancerSafeMath: "0x0F811b1AF2B6B447B008eFF31eCceeE5A0b1d842",
+      RightsManager: "0x4aCB6685da2B5FcB29b1614E71825CE67464440b",
+      SmartPoolManager: "0xb3a3f6826281525dd57f7BA837235E4Fa71C6248",
+    },
   },
+  // TODO: deploy to kovan
 };
