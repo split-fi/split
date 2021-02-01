@@ -11,7 +11,7 @@
   "author": "me@bydavidsun.com",
   "license": "ISC",
   "dependencies": {
-    "@reach/dialog": "^0.11.2",
+    "@reach/dialog": "^0.13.0",
     "@web3-react/core": "^6.1.1",
     "@web3-react/fortmatic-connector": "^6.1.6",
     "@web3-react/injected-connector": "^6.0.7",
